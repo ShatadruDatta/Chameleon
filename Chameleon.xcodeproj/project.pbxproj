@@ -216,7 +216,6 @@
 			children = (
 				5F0304C82B3C5143000A012A /* Application */,
 				5F0304CB2B3C5143000A012A /* APIManager */,
-				5F0304D02B3C5181000A012A /* ModelClass */,
 				5F03057E2B3C5633000A012A /* Controllers */,
 				5F0305792B3C55BF000A012A /* Extensions */,
 				5F0304D12B3C554F000A012A /* Utilities */,
@@ -261,13 +260,6 @@
 				5F0304CC2B3C5143000A012A /* AFWrapper.swift */,
 			);
 			path = APIManager;
-			sourceTree = "<group>";
-		};
-		5F0304D02B3C5181000A012A /* ModelClass */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ModelClass;
 			sourceTree = "<group>";
 		};
 		5F0304D12B3C554F000A012A /* Utilities */ = {
