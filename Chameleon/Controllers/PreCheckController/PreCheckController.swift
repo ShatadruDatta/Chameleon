@@ -7,8 +7,6 @@
 
 import UIKit
 
-
-
 class PreCheckController: BaseViewController {
 
     @IBOutlet weak var tblPrecheck: UITableView!
