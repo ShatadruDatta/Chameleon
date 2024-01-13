@@ -76,6 +76,9 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
             let cellMenu = tableView.dequeueReusableCell(withIdentifier: "MenuCell", for: indexPath) as! MenuCell
             if indexPath.section == 1 {
                 cellMenu.datasource = arrMenuSecOne[indexPath.row] as AnyObject
+                if indexPath.row == 0 {
+                    cellMenu.btnMenu.addTarget(self, action: #selector(homePage), for: .touchUpInside)
+                }
             } else if indexPath.section == 2 {
                 cellMenu.datasource = arrMenuSecTwo[indexPath.row] as AnyObject
             } else {
@@ -95,6 +98,27 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
         } else {
             return 60.0
         }
+    }
+    
+    // MARK: HomePage
+    @objc func homePage() {
+        let allViewController: [UIViewController] =  NavigationHelper.helper.contentNavController!.viewControllers as [UIViewController]
+        for aviewcontroller: UIViewController in allViewController
+        {
+            if aviewcontroller.isKind(of: WorkViewController.classForCoder())
+            {
+                NavigationHelper.helper.contentNavController!.popToViewController(aviewcontroller, animated: true)
+                self.checkController = true
+                break
+            }
+        }
+        
+        if self.checkController == false {
+            let homePageVC = mainStoryboard.instantiateViewController(withIdentifier: "SignInController") as! WorkViewController
+            NavigationHelper.helper.contentNavController!.pushViewController(homePageVC, animated: true)
+        }
+        self.checkController = false
+        NavigationHelper.helper.openSidePanel(open: false)
     }
     
     //MARK: LogOutFunction

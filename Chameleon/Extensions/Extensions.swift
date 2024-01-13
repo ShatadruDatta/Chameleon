@@ -1078,3 +1078,36 @@ extension CLLocation {
         CLGeocoder().reverseGeocodeLocation(self) { completion($0?.first?.locality, $0?.first?.administrativeArea, $0?.first?.country, $1) }
     }
 }
+
+
+// MARK: CustomPoppinsFont
+extension UIFont {
+
+    public enum PoppinsType: String {
+        case medium = "-Medium"
+        case black = "-Black"
+        case extraboldItalic = "-ExtraboldItalic"
+        case semiboldItalic = "-SemiboldItalic"
+        case semibold = "-SemiBold"
+        case regular = ""
+        case lightItalic = "Light-Italic"
+        case light = "-Light"
+        case italic = "-Italic"
+        case extraBold = "-Extrabold"
+        case boldItalic = "-BoldItalic"
+        case bold = "-Bold"
+    }
+
+    static func Poppins(_ type: PoppinsType = .regular, size: CGFloat = UIFont.systemFontSize) -> UIFont {
+        return UIFont(name: "Poppins\(type.rawValue)", size: size)!
+    }
+
+    var isBold: Bool {
+        return fontDescriptor.symbolicTraits.contains(.traitBold)
+    }
+
+    var isItalic: Bool {
+        return fontDescriptor.symbolicTraits.contains(.traitItalic)
+    }
+
+}

@@ -145,6 +145,11 @@ class WorkListCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVie
         return workListCollCell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PreCheckController") as! PreCheckController
+        NavigationHelper.helper.contentNavController!.pushViewController(precheckVC, animated: true)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: "NC123456".size(withAttributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]).width + 25, height: 24)
     }
