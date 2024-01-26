@@ -146,7 +146,7 @@ class WorkListCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PreCheckController") as! PreCheckController
+        let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "ClosureController") as! ClosureController
         NavigationHelper.helper.contentNavController!.pushViewController(precheckVC, animated: true)
     }
     

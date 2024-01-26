@@ -8,7 +8,7 @@
 
 import Foundation
 
-let APP_TITLE = "StripDeals"
+let APP_TITLE = "Chameleon"
 let DOWNLOAD_COMPLETED = "Download completed"
 let DOWNLOAD_FAILED = "Download failed, please try again"
 let CHECK_IP_ADDRESS = "Please check IP address and Port number"

@@ -733,6 +733,16 @@ extension UIColor {
                        blue:  .random(),
                        alpha: 1.0)
     }
+    
+    static var bgColor = UIColor.init(hexString: "#F8F9FF")
+    static var blueColor = UIColor.init(hexString: "#123393")
+    static var textFieldColor = UIColor.init(hexString: "#F2F4FE")
+    static var fontColor = UIColor.init(hexString: "#525D85")
+    static var greenColor = UIColor.init(hexString: "#8CC96F")
+    static var greenBorderColor = UIColor.init(hexString: "#7AB75F")
+    static var yellowColor = UIColor.init(hexString: "#F19D38")
+    static var yellowBorderColor = UIColor.init(hexString: "#CC852F")
+    static var redColor = UIColor.init(hexString: "#CC514B")
 }
 
 //MARK: CGFloat

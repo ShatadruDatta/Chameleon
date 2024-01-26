@@ -6,8 +6,6 @@
 //  Copyright © 2020 Procentris. All rights reserved.
 //
 
-
-
 import Foundation
 import UIKit
 
@@ -21,7 +19,7 @@ let MAIN_WINDOW = UIApplication.shared.windows.first
 let RISTRICTED_CHARACTERS = "'*=+[]\\|;:'\",<>/?%"
 
 //MARK: AppName
-let appName = "Cosmos"
+let appName = "Chameleon"
 
 // MARK: BASEURL
 
@@ -347,4 +345,5 @@ var strDeviceID : String
         return UIDevice.current.identifierForVendor!.uuidString
     }
 }
+
 
