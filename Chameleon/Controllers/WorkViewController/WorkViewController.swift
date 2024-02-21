@@ -131,15 +131,19 @@ class WorkListCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVie
         case 0:
             workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "f8eede")
             workListCollCell.lblTask.textColor = UIColor.init(hexString: "f19e38")
+            workListCollCell.imgIcon.image = UIImage(named: "Doc_yellow")
         case 1:
             workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "e3e9fa")
             workListCollCell.lblTask.textColor = UIColor.init(hexString: "123293")
+            workListCollCell.imgIcon.image = UIImage(named: "solar_phone")
         case 2:
             workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "e5fef5")
             workListCollCell.lblTask.textColor = UIColor.init(hexString: "56b880")
+            workListCollCell.imgIcon.image = UIImage(named: "Loc_Green")
         default:
             workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "ede5fd")
             workListCollCell.lblTask.textColor = UIColor.init(hexString: "794fcc")
+            workListCollCell.imgIcon.image = UIImage(named: "Car_Purple")
         }
         workListCollCell.datasource = "" as AnyObject
         return workListCollCell
@@ -151,7 +155,7 @@ class WorkListCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: "NC123456".size(withAttributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]).width + 25, height: 24)
+        return CGSize(width: 160, height: 24)
     }
 
 }
@@ -161,10 +165,11 @@ class WorkListCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVie
 class WorkListCollCell: BaseCollectionViewCell {
     @IBOutlet weak var parentCollView: UIView!
     @IBOutlet weak var lblTask: UILabel!
+    @IBOutlet weak var imgIcon: UIImageView!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
-                parentCollView.layer.cornerRadius = 12.0
+                parentCollView.layer.cornerRadius = 5.0
                 lblTask.text = "NC123456"
             }
         }

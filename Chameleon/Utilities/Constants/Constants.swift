@@ -15,7 +15,6 @@ let SCREEN_WIDTH = UIScreen.main.bounds.width
 let SCREEN_HEIGHT = UIScreen.main.bounds.height
 let MAIN_WINDOW = UIApplication.shared.windows.first
 
-
 let RISTRICTED_CHARACTERS = "'*=+[]\\|;:'\",<>/?%"
 
 //MARK: AppName
@@ -23,75 +22,16 @@ let appName = "Chameleon"
 
 // MARK: BASEURL
 
-let baseurlLive = "https://www.stripdeals.net/api/" //StagingURL
+let baseurl = "https://engapi.chameleonerp.net/dev"
+
+let accessDefaultKey = "accesskey=VzEzfHBhc3N3b3Jk"
+
+let accessParam = "accesskey="
+
+let apiKey = "U1fR9vsaXV16QUVdpDAlt9GEZErnGdbm9u1LHsg8"
 
 let Feed = "social/users/"
 
-//MARK: DealList
-let DealList = "deals/users/"
-
-//MARK: ClubList
-let ClubList = "places/users/"
-
-//MARK: ClubDetails
-let ClubDetails = "place_details/users/"
-
-//MARK: DealCount
-let DealCount = "deals/count/"
-
-//MARK: FeedCount
-let FeedCount = "social/count/"
-
-//MARK: ClubCount
-let ClubCount = "places/count/"
-
-//MARK: DealDetails
-let DealDetails = "deal_details/users/"
-
-//MARK: Reviews
-let Reviews = "places/reviews/"
-
-//MARK: Gallery
-let Gallery = "places/gallery/"
-
-//MARK: CategoryKey
-let categoryKey = "category_get_data.php"
-
-//MARK: Register
-let registerKey = "user_create.php"
-
-//MARK: CountryKey
-let countryKey = "get_country_list.php"
-
-//MARK: SendOTP
-let sendotp = "send_otp.php"
-
-//MARK: UpdatePass
-let resetPass = "reset_password.php"
-
-//MARK: VerifyOTP
-let verifyotp = "verify_otp.php"
-
-//MARK: StateKey
-let stateKey = "get_state_list.php"
-
-//MARK: CityKey
-let cityKey = "get_city_list.php"
-
-//MARK: UserLog
-let userLog = "read_user_log.php"
-
-//MARK: OrderList
-let getOrderList = "read_order_listing.php"
-
-//MARK: UploadImage
-let createOrder = "create_order.php"
-
-//MARK: UpdateOrder
-let updateOrderStatus = "update_order_status.php"
-
-//MARK: GetProduct
-let getProduct = "product_get_data.php"
 
 //MARK: AES256 Key & iv
 let iv = "1234567891123456"
@@ -284,8 +224,6 @@ struct GlobalMethods {
     }
 }
 
-
-
 func commandFrom(dict:Dictionary<String,Any>) -> String
 {
     let jsonData: Data? = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
@@ -323,27 +261,3 @@ struct Platform
     }
     
 }
-
-struct APP {
-    static var claimNumber = ""
-    static var gopNumber = ""
-    static var claimComments = ""
-    static var isNotifyLang = false
-    static var noteENG = ""
-    static var noteFR = ""
-    static var isSubmitClaimVC = false
-}
-
-var strDeviceID : String
-{
-    if Platform.isSimulator
-    {
-        return "901D98FC-74E1-4862-860E-BD996B1CA31C"
-    }
-    else
-    {
-        return UIDevice.current.identifierForVendor!.uuidString
-    }
-}
-
-

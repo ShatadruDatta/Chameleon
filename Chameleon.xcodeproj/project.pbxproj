@@ -63,6 +63,7 @@
 		5F40B9AF2B3E256F004D9AE2 /* SignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F40B9AE2B3E256F004D9AE2 /* SignInController.swift */; };
 		5F6266ED2B6027120039A8FA /* ClosureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6266EC2B6027120039A8FA /* ClosureController.swift */; };
 		5F782AFC2B4CA4630088F3E3 /* PreCheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F782AFB2B4CA4630088F3E3 /* PreCheckController.swift */; };
+		5FE5FC1E2B6D83270053E4D9 /* PrecheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */; };
 		7837B444388CCBAE0AE7345D /* Pods_ChameleonTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEFA2DFCFC98C25140B9A81 /* Pods_ChameleonTests.framework */; };
 		8B72AC847FBA6F50ECCFD0BF /* Pods_Chameleon_ChameleonUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B16BAF1486C140C852B2BFF /* Pods_Chameleon_ChameleonUITests.framework */; };
 /* End PBXBuildFile section */
@@ -146,6 +147,7 @@
 		5F40B9AE2B3E256F004D9AE2 /* SignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInController.swift; sourceTree = "<group>"; };
 		5F6266EC2B6027120039A8FA /* ClosureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosureController.swift; sourceTree = "<group>"; };
 		5F782AFB2B4CA4630088F3E3 /* PreCheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreCheckController.swift; sourceTree = "<group>"; };
+		5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrecheckController.swift; sourceTree = "<group>"; };
 		6156A05CC98ACF53B9999275 /* Pods-Chameleon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chameleon.debug.xcconfig"; path = "Target Support Files/Pods-Chameleon/Pods-Chameleon.debug.xcconfig"; sourceTree = "<group>"; };
 		6E800F0329E2E8FDDF2BF612 /* Pods_Chameleon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Chameleon.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0BF89E682D1F4C5D0142EC /* Pods-ChameleonTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChameleonTests.debug.xcconfig"; path = "Target Support Files/Pods-ChameleonTests/Pods-ChameleonTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -379,8 +381,9 @@
 		5F03057E2B3C5633000A012A /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				5FE5FC1C2B6D83150053E4D9 /* PrecheckController */,
 				5F6266EB2B6026D30039A8FA /* ClosureController */,
-				5F782AF82B4CA4380088F3E3 /* PreCheckController */,
+				5F782AF82B4CA4380088F3E3 /* JobSheetController */,
 				5F3022322B474202001E5DAA /* WorkViewController */,
 				5F40B9AD2B3E2542004D9AE2 /* SignInController */,
 				5F40B9822B3E0D6D004D9AE2 /* IntroController */,
@@ -484,12 +487,20 @@
 			path = ClosureController;
 			sourceTree = "<group>";
 		};
-		5F782AF82B4CA4380088F3E3 /* PreCheckController */ = {
+		5F782AF82B4CA4380088F3E3 /* JobSheetController */ = {
 			isa = PBXGroup;
 			children = (
 				5F782AFB2B4CA4630088F3E3 /* PreCheckController.swift */,
 			);
-			path = PreCheckController;
+			path = JobSheetController;
+			sourceTree = "<group>";
+		};
+		5FE5FC1C2B6D83150053E4D9 /* PrecheckController */ = {
+			isa = PBXGroup;
+			children = (
+				5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */,
+			);
+			path = PrecheckController;
 			sourceTree = "<group>";
 		};
 		FE7D7DCAC2461F2251643F94 /* Pods */ = {
@@ -786,6 +797,7 @@
 				5F0305722B3C5550000A012A /* Reachability.swift in Sources */,
 				5F0305782B3C5550000A012A /* Helpers.swift in Sources */,
 				5F03058A2B3C62A1000A012A /* LaunchController.swift in Sources */,
+				5FE5FC1E2B6D83270053E4D9 /* PrecheckController.swift in Sources */,
 				5F0305772B3C5550000A012A /* BaseTableViewController.swift in Sources */,
 				5F0304CF2B3C5143000A012A /* AFWrapper.swift in Sources */,
 				5F0305862B3C5640000A012A /* HeaderViewController.swift in Sources */,

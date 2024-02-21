@@ -551,13 +551,10 @@ extension Date {
     }
 }
 
-
 extension String {
-    
     func toDate (format: String) -> Date? {
         return DateFormatter(format: format).date(from: self)
     }
-    
     func toDateString (outputFormat:String) -> String? {
         if let date = toDate(format: "yyyy.MM.dd'T'HH:mm:ss") {
             return DateFormatter(format: outputFormat).string(from: date)
@@ -600,6 +597,18 @@ extension String {
 
         let time24 = df.string(from: date!)
         return time24
+    }
+    
+    func fromBase64() -> String? {
+        guard let data = Data(base64Encoded: self) else {
+            return nil
+        }
+
+        return String(data: data, encoding: .utf8)
+    }
+
+    func toBase64() -> String {
+        return Data(self.utf8).base64EncodedString()
     }
 }
 

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PreCheckController: BaseViewController {
+class JobSheetController: BaseViewController {
 
     @IBOutlet weak var tblPrecheck: UITableView!
     @IBOutlet weak var viewPreCheck: UIView!
@@ -43,7 +43,7 @@ class PreCheckController: BaseViewController {
 }
 
 // MARK: TableViewDelegate, TableViewDataSource
-extension PreCheckController: UITableViewDelegate, UITableViewDataSource {
+extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
 
      func numberOfSections(in tableView: UITableView) -> Int {
         return 6
