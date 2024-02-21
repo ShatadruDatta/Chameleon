@@ -91,7 +91,12 @@ class SignInController: BaseViewController {
 // MARK: TextFieldDelegate
 extension SignInController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
+        if textField == txtUsername {
+            txtPassword.becomeFirstResponder()
+            return false
+        } else {
+            textField.resignFirstResponder()
+            return true
+        }
     }
 }
