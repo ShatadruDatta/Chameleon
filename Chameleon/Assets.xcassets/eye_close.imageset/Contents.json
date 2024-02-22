@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "chameleon.png",
+      "filename" : "Hide.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "chameleon@2x.png",
+      "filename" : "Hide@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "chameleon@3x.png",
+      "filename" : "Hide@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

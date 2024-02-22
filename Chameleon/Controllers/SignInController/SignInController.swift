@@ -22,6 +22,9 @@ class SignInController: BaseViewController {
         super.viewDidLoad()
         self.txtUsername.layer.cornerRadius = 24.0
         self.txtPassword.layer.cornerRadius = 24.0
+        btnEye.isSelected = true
+        btnEye.setImage(UIImage(named: "eye_close"), for: .normal)
+        txtPassword.isSecureTextEntry = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -34,6 +37,18 @@ class SignInController: BaseViewController {
         super.viewWillDisappear(animated)
         txtUsername.text = ""
         txtPassword.text = ""
+    }
+    
+    @IBAction func hideClose(_ sender: UIButton) {
+        if btnEye.isSelected {
+            btnEye.isSelected = false
+            btnEye.setImage(UIImage(named: "eye"), for: .normal)
+            txtPassword.isSecureTextEntry = false
+        } else {
+            btnEye.isSelected = true
+            btnEye.setImage(UIImage(named: "eye_close"), for: .normal)
+            txtPassword.isSecureTextEntry = true
+        }
     }
 
     @IBAction func signin(_ sender: UIButton) {
