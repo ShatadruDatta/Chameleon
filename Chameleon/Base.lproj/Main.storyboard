@@ -1304,17 +1304,28 @@
                                     <constraint firstItem="EH3-iW-o5j" firstAttribute="top" secondItem="Wt4-3R-3u4" secondAttribute="top" constant="20" id="r1B-Nf-jlp"/>
                                 </constraints>
                             </view>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="NaB-Z8-n5q">
+                                <rect key="frame" x="197" y="358" width="20" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="20" id="P70-U8-hyR"/>
+                                    <constraint firstAttribute="height" constant="20" id="jrK-3B-fGm"/>
+                                </constraints>
+                                <color key="color" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="cF2-pT-WaF"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="Wt4-3R-3u4" firstAttribute="trailing" secondItem="cF2-pT-WaF" secondAttribute="trailing" id="3uD-Ra-49V"/>
+                            <constraint firstItem="NaB-Z8-n5q" firstAttribute="centerX" secondItem="63S-vo-sNK" secondAttribute="centerX" id="5pM-3E-hrV"/>
                             <constraint firstItem="Wt4-3R-3u4" firstAttribute="top" secondItem="cF2-pT-WaF" secondAttribute="top" constant="-20" id="MLw-98-WHa"/>
                             <constraint firstItem="Wt4-3R-3u4" firstAttribute="bottom" secondItem="cF2-pT-WaF" secondAttribute="bottom" id="VKm-WB-ao1"/>
                             <constraint firstItem="Wt4-3R-3u4" firstAttribute="leading" secondItem="cF2-pT-WaF" secondAttribute="leading" id="aNF-Kc-xB3"/>
+                            <constraint firstItem="NaB-Z8-n5q" firstAttribute="centerY" secondItem="63S-vo-sNK" secondAttribute="centerY" id="bxz-Jf-RNS"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activity" destination="NaB-Z8-n5q" id="108-80-4ds"/>
                         <outlet property="customSegmentControl" destination="NOM-oh-sga" id="FSC-VG-RQC"/>
                         <outlet property="parentViewSegment" destination="Gtj-2b-mhb" id="AXc-X2-H1G"/>
                         <outlet property="tblViewWorklist" destination="s5e-2n-a7Q" id="mOL-4W-wlL"/>
@@ -2086,7 +2097,7 @@
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="EU22 KCX" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VBE-Or-cU8">
-                                                                            <rect key="frame" x="64" y="38" width="51.666666666666657" height="20"/>
+                                                                            <rect key="frame" x="64" y="38" width="52" height="20"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="height" constant="20" id="kjt-zP-P2Y"/>
                                                                                 <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="38" id="otO-lV-J7I"/>
@@ -2146,7 +2157,7 @@
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="EU22 KCX" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rcy-SL-Tjc">
-                                                                            <rect key="frame" x="64" y="59" width="51.666666666666657" height="20"/>
+                                                                            <rect key="frame" x="64" y="59" width="52" height="20"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="38" id="4Eq-CU-fKP"/>
                                                                                 <constraint firstAttribute="height" constant="20" id="BMD-DN-yJW"/>
@@ -2166,7 +2177,7 @@
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="EU22 KCX" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d1d-Pc-PFm">
-                                                                            <rect key="frame" x="64" y="80" width="51.666666666666657" height="20"/>
+                                                                            <rect key="frame" x="64" y="80" width="52" height="20"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="height" constant="20" id="VFr-jn-hKX"/>
                                                                                 <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="38" id="WBR-ht-d6u"/>

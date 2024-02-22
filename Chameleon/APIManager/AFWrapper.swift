@@ -12,14 +12,13 @@ import SwiftyJSON
 
 class AFWrapper: NSObject {
     
-    class func requestGETURL(_ strURL: String, headers : [String : String]?, success:@escaping (JSON) -> Void, failure:@escaping (Error) -> Void) {
+    class func requestGETURL(_ strURL: String, headers : [String : String]?, success: @escaping (JSON, Data) -> Void, failure: @escaping (Error) -> Void) {
         
         if Reachability.isConnectedToNetwork() {
             Alamofire.request(strURL, method: .get, encoding: URLEncoding.default, headers: headers).responseJSON { (responseObject) -> Void in
-                print(responseObject)
                 if responseObject.result.isSuccess {
                     let resJson = JSON(responseObject.result.value!)
-                    success(resJson)
+                    success(resJson, responseObject.data!)
                 }
                 if responseObject.result.isFailure {
                     let error : Error = responseObject.result.error!
@@ -29,6 +28,15 @@ class AFWrapper: NSObject {
         } else {
             // No code now
         }
+    }
+    
+    func jsonToNSData(json: AnyObject) -> NSData?{
+        do {
+            return try JSONSerialization.data(withJSONObject: json, options: JSONSerialization.WritingOptions.prettyPrinted) as NSData
+        } catch let myJSONError {
+            print(myJSONError)
+        }
+        return nil;
     }
     
     class func requestPOSTURL(_ strURL : String, params : [String : AnyObject]?, headers : [String : String]?, success:@escaping (JSON) -> Void, failure:@escaping (Error) -> Void){

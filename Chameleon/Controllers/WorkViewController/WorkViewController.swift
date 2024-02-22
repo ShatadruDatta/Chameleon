@@ -14,7 +14,10 @@ class WorkViewController: BaseViewController {
     @IBOutlet weak var customSegmentControl: SJFluidSegmentedControl!
     @IBOutlet weak var parentViewSegment: UIView!
     @IBOutlet weak var tblViewWorklist: UITableView!
+    @IBOutlet weak var activity: UIActivityIndicatorView!
+    @Published var workDataModel: WorkViewDataModel?
     var currentIndex = 0
+    var workStatus = "today"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +29,31 @@ class WorkViewController: BaseViewController {
         self.tblViewWorklist.estimatedRowHeight = 130.0
         self.tblViewWorklist.rowHeight = UITableView.automaticDimension
         NavigationHelper.helper.tabBarViewController?.isShowBottomBar(isShow: true)
-        // Do any additional setup after loading the view.
+        self.workView()
+    }
+    
+    //  MARK: WorkViewAPI
+    @objc func workView() {
+        self.activity.startAnimating()
+        let baseurl = "\(baseurl)/v1/joborder?filter=\(workStatus)"
+        print(baseurl)
+        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+        AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data in
+            print(jsonVal)
+            self.workDataModel = nil
+            self.activity.stopAnimating()
+            do {
+                let decoder = JSONDecoder()
+                let data = try decoder.decode(WorkViewDataModel.self, from: data)
+                workDataModel = data
+                self.tblViewWorklist.reloadData()
+            } catch {
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error.localizedDescription)
+            }
+        } failure: { error in
+            self.activity.stopAnimating()
+            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error.localizedDescription)
+        }
     }
     
     @IBAction func menu(_ sender: UIButton) {
@@ -68,7 +95,7 @@ extension WorkViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return self.workDataModel?.result.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -79,6 +106,15 @@ extension WorkViewController: UITableViewDelegate, UITableViewDataSource {
         if currentIndex == 0 {
             let workListCell = self.tblViewWorklist.dequeueReusableCell(withIdentifier: "WorkListCell", for: indexPath) as! WorkListCell
             workListCell.datasource = "" as AnyObject
+            workListCell.lblDesc.text = "\(self.workDataModel?.result[indexPath.row].serviceID.name ?? "") \(self.workDataModel?.result[indexPath.row].productInstallID.name ?? "")"
+            let time = self.workDataModel?.result[indexPath.row].appointment.components(separatedBy: " ")
+            let dateAsString = time?[1].timeConversion12(time24: time?[1] ?? "")
+            workListCell.time.text = dateAsString ?? ""
+            workListCell.personName.text = self.workDataModel?.result[indexPath.row].contactName ?? ""
+            workListCell.ncNumber = self.workDataModel?.result[indexPath.row].ncBNCNumber
+            workListCell.contactNo = self.workDataModel?.result[indexPath.row].contactNumber
+            workListCell.carRegNo = self.workDataModel?.result[indexPath.row].carRegNo
+            workListCell.zipCode = self.workDataModel?.result[indexPath.row].installationAddress.postcode
             workListCell.selectionStyle = .none
             return workListCell
         } else if currentIndex == 1 {
@@ -110,12 +146,15 @@ class WorkListCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVie
     @IBOutlet weak var btnMap: UIImageView!
     @IBOutlet weak var collTask: UICollectionView!
     @IBOutlet weak var lblDesc: UILabel!
+    var ncNumber: String?
+    var contactNo: String?
+    var zipCode: String?
+    var carRegNo: String?
     
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
                 parentView.layer.cornerRadius = 15.0
-                self.lblDesc.text = "khadgfhdagfhafghakdfgakhfgadfkadgh"
                 collTask.reloadData()
             }
         }
@@ -131,18 +170,22 @@ class WorkListCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVie
         case 0:
             workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "f8eede")
             workListCollCell.lblTask.textColor = UIColor.init(hexString: "f19e38")
+            workListCollCell.lblTask.text = ncNumber
             workListCollCell.imgIcon.image = UIImage(named: "Doc_yellow")
         case 1:
             workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "e3e9fa")
             workListCollCell.lblTask.textColor = UIColor.init(hexString: "123293")
+            workListCollCell.lblTask.text = contactNo
             workListCollCell.imgIcon.image = UIImage(named: "solar_phone")
         case 2:
             workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "e5fef5")
             workListCollCell.lblTask.textColor = UIColor.init(hexString: "56b880")
+            workListCollCell.lblTask.text = zipCode
             workListCollCell.imgIcon.image = UIImage(named: "Loc_Green")
         default:
             workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "ede5fd")
             workListCollCell.lblTask.textColor = UIColor.init(hexString: "794fcc")
+            workListCollCell.lblTask.text = carRegNo
             workListCollCell.imgIcon.image = UIImage(named: "Car_Purple")
         }
         workListCollCell.datasource = "" as AnyObject
@@ -170,7 +213,6 @@ class WorkListCollCell: BaseCollectionViewCell {
         didSet {
             if datasource != nil {
                 parentCollView.layer.cornerRadius = 5.0
-                lblTask.text = "NC123456"
             }
         }
     }

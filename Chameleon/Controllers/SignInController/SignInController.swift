@@ -58,7 +58,11 @@ class SignInController: BaseViewController {
     @objc func checkCred() {
         if txtUsername.text != "" {
             if txtPassword.text != "" {
-                self.generateToken()
+                activity.startAnimating()
+                let username = txtUsername.text
+                let password = txtPassword.text
+                let credBase64 = "\(username ?? "")|\(password ?? "")".toBase64()
+                self.signInApi(usernamePasswordBase64: credBase64)
             } else {
                 SharedClass.sharedInstance.alert(view: self, title: APP_TITLE, message: "Please enter password")
             }
@@ -67,29 +71,12 @@ class SignInController: BaseViewController {
         }
     }
     
-    // MARK: GenerateToken API
-    @objc func generateToken() {
-        activity.startAnimating()
-        let baseurl = "\(baseurl)/v1/token?\(accessDefaultKey)"
-        print(baseurl)
-        let headers = ["x-api-key" : apiKey]
-        AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal in
-            print(jsonVal)
-            let username = txtUsername.text
-            let password = txtPassword.text
-            let credBase64 = "\(username ?? "")|\(password ?? "")".toBase64()
-            self.signInApi(usernamePasswordBase64: credBase64, token: jsonVal["token"].stringValue)
-        } failure: { error in
-            print(error)
-        }
-    }
-    
     // MARK: SignIn API
-    @objc func signInApi(usernamePasswordBase64: String, token: String) {
+    @objc func signInApi(usernamePasswordBase64: String) {
         let baseurl = "\(baseurl)/v1/token?\(accessParam)\(usernamePasswordBase64)"
         print(baseurl)
-        let headers = ["x-api-key" : apiKey, "token": Chameleon.token]
-        AFWrapper.requestGETURL(baseurl, headers: headers) { jsonVal in
+        let headers = ["x-api-key": apiKey]
+        AFWrapper.requestGETURL(baseurl, headers: headers) { jsonVal, _  in
             print(jsonVal)
             self.activity.stopAnimating()
             Chameleon.token = jsonVal["token"].stringValue
@@ -98,6 +85,8 @@ class SignInController: BaseViewController {
                 NavigationHelper.helper.contentNavController!.pushViewController(workViewVC, animated: true)
             }
         } failure: { error in
+            self.activity.stopAnimating()
+            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: "Please try again with proper credentials")
             print(error)
         }
     }

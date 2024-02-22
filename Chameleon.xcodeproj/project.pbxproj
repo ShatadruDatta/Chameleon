@@ -63,6 +63,7 @@
 		5F40B9AF2B3E256F004D9AE2 /* SignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F40B9AE2B3E256F004D9AE2 /* SignInController.swift */; };
 		5F6266ED2B6027120039A8FA /* ClosureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6266EC2B6027120039A8FA /* ClosureController.swift */; };
 		5F782AFC2B4CA4630088F3E3 /* PreCheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F782AFB2B4CA4630088F3E3 /* PreCheckController.swift */; };
+		5FE02D732B87810B00AC9C91 /* WorkViewDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE02D722B87810B00AC9C91 /* WorkViewDataModel.swift */; };
 		5FE5FC1E2B6D83270053E4D9 /* PrecheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */; };
 		7837B444388CCBAE0AE7345D /* Pods_ChameleonTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEFA2DFCFC98C25140B9A81 /* Pods_ChameleonTests.framework */; };
 		8B72AC847FBA6F50ECCFD0BF /* Pods_Chameleon_ChameleonUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B16BAF1486C140C852B2BFF /* Pods_Chameleon_ChameleonUITests.framework */; };
@@ -147,6 +148,7 @@
 		5F40B9AE2B3E256F004D9AE2 /* SignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInController.swift; sourceTree = "<group>"; };
 		5F6266EC2B6027120039A8FA /* ClosureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosureController.swift; sourceTree = "<group>"; };
 		5F782AFB2B4CA4630088F3E3 /* PreCheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreCheckController.swift; sourceTree = "<group>"; };
+		5FE02D722B87810B00AC9C91 /* WorkViewDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkViewDataModel.swift; sourceTree = "<group>"; };
 		5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrecheckController.swift; sourceTree = "<group>"; };
 		6156A05CC98ACF53B9999275 /* Pods-Chameleon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chameleon.debug.xcconfig"; path = "Target Support Files/Pods-Chameleon/Pods-Chameleon.debug.xcconfig"; sourceTree = "<group>"; };
 		6E800F0329E2E8FDDF2BF612 /* Pods_Chameleon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Chameleon.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -425,6 +427,7 @@
 			isa = PBXGroup;
 			children = (
 				5F3022332B47421B001E5DAA /* WorkViewController.swift */,
+				5FE02D712B8780EB00AC9C91 /* WorkViewModels */,
 			);
 			path = WorkViewController;
 			sourceTree = "<group>";
@@ -493,6 +496,14 @@
 				5F782AFB2B4CA4630088F3E3 /* PreCheckController.swift */,
 			);
 			path = JobSheetController;
+			sourceTree = "<group>";
+		};
+		5FE02D712B8780EB00AC9C91 /* WorkViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				5FE02D722B87810B00AC9C91 /* WorkViewDataModel.swift */,
+			);
+			path = WorkViewModels;
 			sourceTree = "<group>";
 		};
 		5FE5FC1C2B6D83150053E4D9 /* PrecheckController */ = {
@@ -791,6 +802,7 @@
 				5F0305712B3C5550000A012A /* CustomTextField.swift in Sources */,
 				5F40B9AF2B3E256F004D9AE2 /* SignInController.swift in Sources */,
 				5F03057D2B3C55BF000A012A /* Extensions.swift in Sources */,
+				5FE02D732B87810B00AC9C91 /* WorkViewDataModel.swift in Sources */,
 				5F03049D2B3C4C14000A012A /* ViewController.swift in Sources */,
 				5F03057C2B3C55BF000A012A /* UIDevice+Extra.swift in Sources */,
 				5F03052D2B3C5550000A012A /* DeviceSettings.swift in Sources */,
