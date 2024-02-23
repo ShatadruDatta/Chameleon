@@ -14,30 +14,28 @@ struct WorkViewDataModel: Codable {
 
 // MARK: - Result
 struct Result: Codable {
-    let insPartnerContactPerson: [InsContactPerson]
     let productInstallID: ID
-    let appointment: String
-    let insClientContactPerson: [InsContactPerson]
-    let state: String
-    let serviceID: ID
-    let ncBNCNumber: String
+    let insPartnerContactPerson: [InsContactPerson]
+    let carRegNo: String
     let id: Int
-    let carRegNo, contactName, contactNumber: String
+    let serviceID: ID
+    let insClientContactPerson: [InsContactPerson]
+    let state, appointment, contactName, ncBNCNumber: String
     let installationAddress: InstallationAddress
+    let contactNumber: String
 
     enum CodingKeys: String, CodingKey {
-        case insPartnerContactPerson = "ins_partner_contact_person"
         case productInstallID = "product_install_id"
-        case appointment
-        case insClientContactPerson = "ins_client_contact_person"
-        case state
-        case serviceID = "service_id"
-        case ncBNCNumber = "nc_bnc_number"
-        case id
+        case insPartnerContactPerson = "ins_partner_contact_person"
         case carRegNo = "car_reg_no"
+        case id
+        case serviceID = "service_id"
+        case insClientContactPerson = "ins_client_contact_person"
+        case state, appointment
         case contactName = "contact_name"
-        case contactNumber = "contact_number"
+        case ncBNCNumber = "nc_bnc_number"
         case installationAddress = "installation_address"
+        case contactNumber = "contact_number"
     }
 }
 
@@ -71,49 +69,22 @@ enum InsContactPerson: Codable {
 
 // MARK: - InstallationAddress
 struct InstallationAddress: Codable {
-    let postcode, customerContactName, clientContactName, street: String
-    let street2: Street2
-    let street3: Bool
-    let latitude, longitude: Int
+    let clientContactName: String
+    let latitude: Int
+    let customerContactName, postcode, street, street2: String
+    let street3: String
+    let longitude: Int
 
     enum CodingKeys: String, CodingKey {
-        case postcode
-        case customerContactName = "customer_contact_name"
         case clientContactName = "client_contact_name"
-        case street, street2, street3, latitude, longitude
-    }
-}
-
-enum Street2: Codable {
-    case bool(Bool)
-    case string(String)
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        if let x = try? container.decode(Bool.self) {
-            self = .bool(x)
-            return
-        }
-        if let x = try? container.decode(String.self) {
-            self = .string(x)
-            return
-        }
-        throw DecodingError.typeMismatch(Street2.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for Street2"))
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        switch self {
-        case .bool(let x):
-            try container.encode(x)
-        case .string(let x):
-            try container.encode(x)
-        }
+        case latitude
+        case customerContactName = "customer_contact_name"
+        case postcode, street, street2, street3, longitude
     }
 }
 
 // MARK: - ID
 struct ID: Codable {
-    let id: Int
     let name: String
+    let id: Int
 }

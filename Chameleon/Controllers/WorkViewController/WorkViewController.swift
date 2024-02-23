@@ -16,6 +16,7 @@ class WorkViewController: BaseViewController {
     @IBOutlet weak var tblViewWorklist: UITableView!
     @IBOutlet weak var activity: UIActivityIndicatorView!
     @Published var workDataModel: WorkViewDataModel?
+    @Published var arrBookingInformation: [(roomBookedName: String, createdAt: String, id: Int, datasheetId: Int, roomConfirmationNumber: String, hotelZip: String, hotelState: String, sessionId: Int, hotelName: String, hotelPhone: String, hotelId: Int, roomCost: Int, hotelCity: String, createdBy: String, hotelAddress: String)] = []
     var currentIndex = 0
     var workStatus = "today"
     
@@ -35,6 +36,7 @@ class WorkViewController: BaseViewController {
     //  MARK: WorkViewAPI
     @objc func workView() {
         self.activity.startAnimating()
+        self.tblViewWorklist.isHidden = true
         let baseurl = "\(baseurl)/v1/joborder?filter=\(workStatus)"
         print(baseurl)
         let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
@@ -46,12 +48,15 @@ class WorkViewController: BaseViewController {
                 let decoder = JSONDecoder()
                 let data = try decoder.decode(WorkViewDataModel.self, from: data)
                 workDataModel = data
+                self.tblViewWorklist.isHidden = false
                 self.tblViewWorklist.reloadData()
             } catch {
-                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error.localizedDescription)
+                self.tblViewWorklist.isHidden = true
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
             }
         } failure: { error in
             self.activity.stopAnimating()
+            self.tblViewWorklist.isHidden = true
             SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error.localizedDescription)
         }
     }
@@ -84,7 +89,17 @@ extension WorkViewController: SJFluidSegmentedControlDataSource, SJFluidSegmente
                                          didChangeFromSegmentAtIndex fromIndex: Int,
                           toSegmentAtIndex toIndex:Int) {
         currentIndex = toIndex
-        self.tblViewWorklist.reloadData()
+        switch currentIndex {
+        case 0:
+            workStatus = "today"
+        case 1:
+            workStatus = "to_be_closed"
+        case 2:
+            workStatus = ""
+        default:
+            workStatus = "closed"
+        }
+        self.workView()
     }
 }
 
@@ -120,16 +135,47 @@ extension WorkViewController: UITableViewDelegate, UITableViewDataSource {
         } else if currentIndex == 1 {
             let closedListCell = self.tblViewWorklist.dequeueReusableCell(withIdentifier: "ToBeClosedListCell", for: indexPath) as! ToBeClosedListCell
             closedListCell.datasource = "" as AnyObject
+            closedListCell.lblDesc.text = "\(self.workDataModel?.result[indexPath.row].serviceID.name ?? "") \(self.workDataModel?.result[indexPath.row].productInstallID.name ?? "")"
+            closedListCell.taskName.text = self.workDataModel?.result[indexPath.row].ncBNCNumber
+            if self.workDataModel?.result[indexPath.row].contactNumber.count ?? 0 > 3 {
+                closedListCell.contactNo = self.workDataModel?.result[indexPath.row].contactNumber
+            } else {
+                closedListCell.contactNo = "NA"
+            }
+            if self.workDataModel?.result[indexPath.row].carRegNo.count ?? 0 > 3 {
+                closedListCell.carRegNo = self.workDataModel?.result[indexPath.row].carRegNo
+            } else {
+                closedListCell.carRegNo = "NA"
+            }
+            closedListCell.zipCode = self.workDataModel?.result[indexPath.row].installationAddress.postcode
             closedListCell.selectionStyle = .none
             return closedListCell
         } else if currentIndex == 2 {
             let assignedListCell = self.tblViewWorklist.dequeueReusableCell(withIdentifier: "AssignedListCell", for: indexPath) as! AssignedListCell
             assignedListCell.datasource = "" as AnyObject
+            assignedListCell.lblDescAssigned.text = "\(self.workDataModel?.result[indexPath.row].serviceID.name ?? "") \(self.workDataModel?.result[indexPath.row].productInstallID.name ?? "")"
+            assignedListCell.taskName.text = self.workDataModel?.result[indexPath.row].ncBNCNumber
+            let time = self.workDataModel?.result[indexPath.row].appointment.components(separatedBy: " ")
+            let dateAsString = time?[1].timeConversion12(time24: time?[1] ?? "")
+            assignedListCell.time.text = dateAsString ?? ""
             assignedListCell.selectionStyle = .none
             return assignedListCell
         } else {
             let closedListCell = self.tblViewWorklist.dequeueReusableCell(withIdentifier: "ClosedListCell", for: indexPath) as! ClosedListCell
             closedListCell.datasource = "" as AnyObject
+            closedListCell.lblDesc.text = "\(self.workDataModel?.result[indexPath.row].serviceID.name ?? "") \(self.workDataModel?.result[indexPath.row].productInstallID.name ?? "")"
+            closedListCell.taskName.text = self.workDataModel?.result[indexPath.row].ncBNCNumber
+            if self.workDataModel?.result[indexPath.row].contactNumber.count ?? 0 > 3 {
+                closedListCell.contactNo = self.workDataModel?.result[indexPath.row].contactNumber
+            } else {
+                closedListCell.contactNo = "NA"
+            }
+            if self.workDataModel?.result[indexPath.row].carRegNo.count ?? 0 > 3 {
+                closedListCell.carRegNo = self.workDataModel?.result[indexPath.row].carRegNo
+            } else {
+                closedListCell.carRegNo = "NA"
+            }
+            closedListCell.zipCode = self.workDataModel?.result[indexPath.row].installationAddress.postcode
             closedListCell.selectionStyle = .none
             return closedListCell
         }
@@ -227,43 +273,55 @@ class ToBeClosedListCell: BaseTableViewCell, UICollectionViewDelegate, UICollect
     @IBOutlet weak var date: UILabel!
     @IBOutlet weak var collTask: UICollectionView!
     @IBOutlet weak var lblDesc: UILabel!
+    var contactNo: String?
+    var zipCode: String?
+    var carRegNo: String?
     
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
                 parentView.layer.cornerRadius = 15.0
-                self.lblDesc.text = "khadgfhdagfhafghakdfgakhfgadfkadgh"
                 collTask.reloadData()
             }
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 2
+        return 3
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let workListCollCell = self.collTask.dequeueReusableCell(withReuseIdentifier: "WorkListCollCell", for: indexPath) as! WorkListCollCell
         switch indexPath.item {
         case 0:
-            workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "f8eede")
-            workListCollCell.lblTask.textColor = UIColor.init(hexString: "f19e38")
-        case 1:
-            workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "e3e9fa")
-            workListCollCell.lblTask.textColor = UIColor.init(hexString: "123293")
-        case 2:
             workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "e5fef5")
             workListCollCell.lblTask.textColor = UIColor.init(hexString: "56b880")
-        default:
+            workListCollCell.lblTask.text = zipCode
+            workListCollCell.imgIcon.image = UIImage(named: "Loc_Green")
+        case 1:
             workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "ede5fd")
             workListCollCell.lblTask.textColor = UIColor.init(hexString: "794fcc")
+            workListCollCell.lblTask.text = carRegNo
+            workListCollCell.imgIcon.image = UIImage(named: "Car_Purple")
+        default:
+            workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "e3e9fa")
+            workListCollCell.lblTask.textColor = UIColor.init(hexString: "123293")
+            workListCollCell.lblTask.text = contactNo
+            workListCollCell.imgIcon.image = UIImage(named: "solar_phone")
         }
         workListCollCell.datasource = "" as AnyObject
         return workListCollCell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: "NC123456".size(withAttributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]).width + 25, height: 24)
+        switch indexPath.item {
+        case 0:
+            return CGSize(width: (zipCode?.size(withAttributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]).width ?? 0) + 50, height: 24)
+        case 1:
+            return CGSize(width: (carRegNo?.size(withAttributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]).width ?? 0) + 50, height: 24)
+        default:
+            return CGSize(width: (contactNo?.size(withAttributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]).width ?? 0) + 50, height: 24)
+        }
     }
 }
 
@@ -280,7 +338,6 @@ class AssignedListCell: BaseTableViewCell {
         didSet {
             if datasource != nil {
                 parentView.layer.cornerRadius = 15.0
-                self.lblDescAssigned.text = "khadgfhdagfhafghakdfgakhfgadfkadgh"
             }
         }
     }
@@ -297,43 +354,55 @@ class ClosedListCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionV
     @IBOutlet weak var btnRedCar: UIButton!
     @IBOutlet weak var btnYellowCar: UIButton!
     @IBOutlet weak var btnGreenCar: UIButton!
+    var contactNo: String?
+    var zipCode: String?
+    var carRegNo: String?
     
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
                 parentView.layer.cornerRadius = 15.0
-                self.lblDesc.text = "khadgfhdagfhafghakdfgakhfgadfkadgh"
                 collTask.reloadData()
             }
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 2
+        return 3
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let workListCollCell = self.collTask.dequeueReusableCell(withReuseIdentifier: "WorkListCollCell", for: indexPath) as! WorkListCollCell
         switch indexPath.item {
         case 0:
-            workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "f8eede")
-            workListCollCell.lblTask.textColor = UIColor.init(hexString: "f19e38")
-        case 1:
-            workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "e3e9fa")
-            workListCollCell.lblTask.textColor = UIColor.init(hexString: "123293")
-        case 2:
             workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "e5fef5")
             workListCollCell.lblTask.textColor = UIColor.init(hexString: "56b880")
-        default:
+            workListCollCell.lblTask.text = zipCode
+            workListCollCell.imgIcon.image = UIImage(named: "Loc_Green")
+        case 1:
             workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "ede5fd")
             workListCollCell.lblTask.textColor = UIColor.init(hexString: "794fcc")
+            workListCollCell.lblTask.text = carRegNo
+            workListCollCell.imgIcon.image = UIImage(named: "Car_Purple")
+        default:
+            workListCollCell.parentCollView.backgroundColor = UIColor.init(hexString: "e3e9fa")
+            workListCollCell.lblTask.textColor = UIColor.init(hexString: "123293")
+            workListCollCell.lblTask.text = contactNo
+            workListCollCell.imgIcon.image = UIImage(named: "solar_phone")
         }
         workListCollCell.datasource = "" as AnyObject
         return workListCollCell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: "NC123456".size(withAttributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]).width + 25, height: 24)
+        switch indexPath.item {
+        case 0:
+            return CGSize(width: (zipCode?.size(withAttributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]).width ?? 0) + 50, height: 24)
+        case 1:
+            return CGSize(width: (carRegNo?.size(withAttributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]).width ?? 0) + 50, height: 24)
+        default:
+            return CGSize(width: (contactNo?.size(withAttributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]).width ?? 0) + 50, height: 24)
+        }
     }
 
 }
