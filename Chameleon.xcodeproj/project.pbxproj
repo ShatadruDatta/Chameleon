@@ -62,7 +62,8 @@
 		5F40B9AC2B3E21C8004D9AE2 /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5F40B9992B3E21C8004D9AE2 /* Poppins-MediumItalic.ttf */; };
 		5F40B9AF2B3E256F004D9AE2 /* SignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F40B9AE2B3E256F004D9AE2 /* SignInController.swift */; };
 		5F6266ED2B6027120039A8FA /* ClosureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6266EC2B6027120039A8FA /* ClosureController.swift */; };
-		5F782AFC2B4CA4630088F3E3 /* PreCheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F782AFB2B4CA4630088F3E3 /* PreCheckController.swift */; };
+		5F782AFC2B4CA4630088F3E3 /* JobSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F782AFB2B4CA4630088F3E3 /* JobSheetController.swift */; };
+		5F8ED62E2B8F60BE00A4B504 /* JobSheetModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED62D2B8F60BE00A4B504 /* JobSheetModels.swift */; };
 		5FE02D732B87810B00AC9C91 /* WorkViewDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE02D722B87810B00AC9C91 /* WorkViewDataModel.swift */; };
 		5FE5FC1E2B6D83270053E4D9 /* PrecheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */; };
 		7837B444388CCBAE0AE7345D /* Pods_ChameleonTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEFA2DFCFC98C25140B9A81 /* Pods_ChameleonTests.framework */; };
@@ -147,7 +148,8 @@
 		5F40B9992B3E21C8004D9AE2 /* Poppins-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-MediumItalic.ttf"; sourceTree = "<group>"; };
 		5F40B9AE2B3E256F004D9AE2 /* SignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInController.swift; sourceTree = "<group>"; };
 		5F6266EC2B6027120039A8FA /* ClosureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosureController.swift; sourceTree = "<group>"; };
-		5F782AFB2B4CA4630088F3E3 /* PreCheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreCheckController.swift; sourceTree = "<group>"; };
+		5F782AFB2B4CA4630088F3E3 /* JobSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSheetController.swift; sourceTree = "<group>"; };
+		5F8ED62D2B8F60BE00A4B504 /* JobSheetModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSheetModels.swift; sourceTree = "<group>"; };
 		5FE02D722B87810B00AC9C91 /* WorkViewDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkViewDataModel.swift; sourceTree = "<group>"; };
 		5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrecheckController.swift; sourceTree = "<group>"; };
 		6156A05CC98ACF53B9999275 /* Pods-Chameleon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chameleon.debug.xcconfig"; path = "Target Support Files/Pods-Chameleon/Pods-Chameleon.debug.xcconfig"; sourceTree = "<group>"; };
@@ -493,9 +495,18 @@
 		5F782AF82B4CA4380088F3E3 /* JobSheetController */ = {
 			isa = PBXGroup;
 			children = (
-				5F782AFB2B4CA4630088F3E3 /* PreCheckController.swift */,
+				5F782AFB2B4CA4630088F3E3 /* JobSheetController.swift */,
+				5F8ED62C2B8F609A00A4B504 /* JobSheetModels */,
 			);
 			path = JobSheetController;
+			sourceTree = "<group>";
+		};
+		5F8ED62C2B8F609A00A4B504 /* JobSheetModels */ = {
+			isa = PBXGroup;
+			children = (
+				5F8ED62D2B8F60BE00A4B504 /* JobSheetModels.swift */,
+			);
+			path = JobSheetModels;
 			sourceTree = "<group>";
 		};
 		5FE02D712B8780EB00AC9C91 /* WorkViewModels */ = {
@@ -794,7 +805,7 @@
 				5F3022342B47421B001E5DAA /* WorkViewController.swift in Sources */,
 				5F0305732B3C5550000A012A /* BaseTableViewCell.swift in Sources */,
 				5F0305872B3C5640000A012A /* TabBarController.swift in Sources */,
-				5F782AFC2B4CA4630088F3E3 /* PreCheckController.swift in Sources */,
+				5F782AFC2B4CA4630088F3E3 /* JobSheetController.swift in Sources */,
 				5F0305842B3C5640000A012A /* SlideMenuViewController.swift in Sources */,
 				5F0305852B3C5640000A012A /* MainContainerController.swift in Sources */,
 				5F0305762B3C5550000A012A /* BaseViewController.swift in Sources */,
@@ -813,6 +824,7 @@
 				5F0305772B3C5550000A012A /* BaseTableViewController.swift in Sources */,
 				5F0304CF2B3C5143000A012A /* AFWrapper.swift in Sources */,
 				5F0305862B3C5640000A012A /* HeaderViewController.swift in Sources */,
+				5F8ED62E2B8F60BE00A4B504 /* JobSheetModels.swift in Sources */,
 				5F03052F2B3C5550000A012A /* Constants.swift in Sources */,
 				5F0305752B3C5550000A012A /* BaseCollectionViewController.swift in Sources */,
 				5F0305742B3C5550000A012A /* BaseCollectionViewCell.swift in Sources */,

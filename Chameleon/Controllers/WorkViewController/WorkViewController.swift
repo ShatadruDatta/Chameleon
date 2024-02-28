@@ -130,6 +130,7 @@ extension WorkViewController: UITableViewDelegate, UITableViewDataSource {
             workListCell.contactNo = self.workDataModel?.result[indexPath.row].contactNumber
             workListCell.carRegNo = self.workDataModel?.result[indexPath.row].carRegNo
             workListCell.zipCode = self.workDataModel?.result[indexPath.row].installationAddress.postcode
+            workListCell.jobId = self.workDataModel?.result[indexPath.row].id
             workListCell.selectionStyle = .none
             return workListCell
         } else if currentIndex == 1 {
@@ -192,18 +193,27 @@ class WorkListCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVie
     @IBOutlet weak var btnMap: UIImageView!
     @IBOutlet weak var collTask: UICollectionView!
     @IBOutlet weak var lblDesc: UILabel!
+    @IBOutlet weak var btnStartNow: UIButton!
     var ncNumber: String?
     var contactNo: String?
     var zipCode: String?
     var carRegNo: String?
+    var jobId: Int!
     
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
                 parentView.layer.cornerRadius = 15.0
                 collTask.reloadData()
+                btnStartNow.addTarget(self, action: #selector(startNow), for: .touchUpInside)
             }
         }
+    }
+    
+    @objc func startNow() {
+        let jobSheetVC = mainStoryboard.instantiateViewController(withIdentifier: "JobSheetController") as! JobSheetController
+        jobSheetVC.jobId = jobId
+        NavigationHelper.helper.contentNavController!.pushViewController(jobSheetVC, animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -404,5 +414,4 @@ class ClosedListCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionV
             return CGSize(width: (contactNo?.size(withAttributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]).width ?? 0) + 50, height: 24)
         }
     }
-
 }

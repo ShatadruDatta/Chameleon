@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import MapKit
 
 class JobSheetController: BaseViewController {
 
@@ -13,10 +14,13 @@ class JobSheetController: BaseViewController {
     @IBOutlet weak var viewPreCheck: UIView!
     @IBOutlet weak var viewPostCheck: UIView!
     @IBOutlet weak var viewClosure: UIView!
+    @IBOutlet weak var activity: UIActivityIndicatorView!
+    @Published var jobSheetDataModel: JobSheetModels?
+    var jobId: Int!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tblPrecheck.reloadData()
+        self.tblPrecheck.isHidden = true
         tblPrecheck.estimatedRowHeight = 100.0
         tblPrecheck.rowHeight = UITableView.automaticDimension
         viewPreCheck.layer.cornerRadius = 10.0
@@ -31,10 +35,39 @@ class JobSheetController: BaseViewController {
         
         self.viewClosure.layer.masksToBounds = false
         self.viewClosure.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)
+        
+        // MARK: JobSheetAPICall
+        self.tblPrecheck.reloadData()
+        self.jobSheet()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+    }
+    
+    //  MARK: JobSheetAPI
+    @objc func jobSheet() {
+        self.activity.startAnimating()
+        let baseurl = "\(baseurl)/v1/joborder/\(jobId ?? 0)"
+        print(baseurl)
+        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+        AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data in
+            print(jsonVal)
+            self.activity.stopAnimating()
+            do {
+                let decoder = JSONDecoder()
+                let data = try decoder.decode(JobSheetModels.self, from: data)
+                jobSheetDataModel = data
+                self.tblPrecheck.isHidden = false
+                self.tblPrecheck.reloadData()
+            } catch {
+                self.tblPrecheck.isHidden = true
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+            }
+        } failure: { error in
+            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error.localizedDescription)
+            self.activity.stopAnimating()
+        }
     }
     
     @IBAction func menu(_ sender: UIButton) {
@@ -103,11 +136,11 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
      func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
          switch section {
          case 0:
-             return 3
+             return 4
          case 1,3,4:
              return 1
          case 2:
-             return 3
+             return self.jobSheetDataModel?.partList.count ?? 0
          default:
              return 1
          }
@@ -119,23 +152,52 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
              case 0:
                  let custCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "CustomerCell", for: indexPath) as! CustomerCell
                  custCell.datasource = "" as AnyObject
+                 custCell.lblCust.text = "Customer:"
+                 custCell.lblDetail.text = self.jobSheetDataModel?.customer.name
+                 custCell.lblCust2.text = "Customer:"
+                 custCell.lblDetail2.text = self.jobSheetDataModel?.customerClient.name
+                 custCell.viewBG.backgroundColor = UIColor.init(hexString: "EFF3FC")
+                 custCell.viewBG2.backgroundColor = UIColor.init(hexString: "F5EFF8")
                  return custCell
              case 1:
                  let custCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "CustomerCell", for: indexPath) as! CustomerCell
                  custCell.datasource = "" as AnyObject
+                 custCell.lblCust.text = "Ref:"
+                 custCell.lblDetail.text = self.jobSheetDataModel?.clientOrderRef
+                 custCell.lblCust2.text = "Con No:"
+                 custCell.lblDetail2.text = self.jobSheetDataModel?.installationAddress.contactNumber
+                 custCell.viewBG.backgroundColor = UIColor.init(hexString: "F1F8F3")
+                 custCell.viewBG2.backgroundColor = UIColor.init(hexString: "F7F2EB")
+                 return custCell
+             case 2:
+                 let custCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "CustomerCell", for: indexPath) as! CustomerCell
+                 custCell.datasource = "" as AnyObject
+                 custCell.lblCust.text = "Install Date:"
+                 custCell.lblDetail.text = self.jobSheetDataModel?.appointment.components(separatedBy: " ")[0]
+                 custCell.lblCust2.text = "Install Time:"
+                 custCell.lblDetail2.text = self.jobSheetDataModel?.appointment.components(separatedBy: " ")[1]
+                 custCell.viewBG.backgroundColor = UIColor.init(hexString: "F5EFF8")
+                 custCell.viewBG2.backgroundColor = UIColor.init(hexString: "F1F8F3")
                  return custCell
              default:
                  let serviceCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "ServiceCell", for: indexPath) as! ServiceCell
                  serviceCell.datasource = "" as AnyObject
+                 serviceCell.lblDetail.text = self.jobSheetDataModel?.service.name
+                 serviceCell.lblFee.text = "£" + String(self.jobSheetDataModel?.service.engineerFee ?? 0)
                  return serviceCell
              }
          } else if indexPath.section == 1 {
              let conDetCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "ContactDetailsCell", for: indexPath) as! ContactDetailsCell
              conDetCell.datasource = "" as AnyObject
+             conDetCell.lblContactName.text = self.jobSheetDataModel?.installationAddress.contactName
+             conDetCell.lblContactNo.text = self.jobSheetDataModel?.installationAddress.contactNumber
+             conDetCell.lblContactMail.text = self.jobSheetDataModel?.installationAddress.email
+             conDetCell.lblInstallation.text = (self.jobSheetDataModel?.installationAddress.street ?? "")
+             conDetCell.lblDeliveryAddress.text = (self.jobSheetDataModel?.deliveryAddress.street ?? "")
              return conDetCell
          } else if indexPath.section == 2 {
              let partsCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "PartsCell", for: indexPath) as! PartsCell
-             partsCell.datasource = "1 x [RH6SL256] - Color Gas] - RH600 Single Lens 256GB\n Serial Number : 123456" as AnyObject
+             partsCell.datasource = "\(self.jobSheetDataModel?.partList[indexPath.row].productID.name ?? "")\n Serial Number : NA" as AnyObject
              if indexPath.row % 2 == 0 {
                  partsCell.viewBG.backgroundColor = UIColor.init(hexString: "F0EEF5")
              } else {
@@ -145,20 +207,44 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
          } else if indexPath.section == 3 {
              let installCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "InstallationCell", for: indexPath) as! InstallationCell
              installCell.datasource = "" as AnyObject
+             // Installation Details
+             installCell.lblDetail.text = "Details Vehicle: \(self.jobSheetDataModel?.installationVehicleDetails.vehicle ?? "")"
+             installCell.lblReg.text = self.jobSheetDataModel?.installationVehicleDetails.reg
+             installCell.lblYOM.text = "NA"
+             installCell.lblColour.text = "NA"
+             installCell.lblVIN.text = self.jobSheetDataModel?.installationVehicleDetails.vin
+             installCell.lblFuel.text = "NA"
              return installCell
          } else if indexPath.section == 4 {
              let installCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "InstallationCell", for: indexPath) as! InstallationCell
              installCell.datasource = "" as AnyObject
+             // Deinstallation Details
+             installCell.lblDetail.text = "Details Vehicle: \(self.jobSheetDataModel?.installationVehicleDetails.vehicle ?? "")"
+             installCell.lblReg.text = self.jobSheetDataModel?.installationVehicleDetails.reg
+             installCell.lblYOM.text = "NA"
+             installCell.lblColour.text = "NA"
+             installCell.lblVIN.text = self.jobSheetDataModel?.installationVehicleDetails.vin
+             installCell.lblFuel.text = "NA"
              return installCell
          } else {
              let noteCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "PartsCell", for: indexPath) as! PartsCell
-             noteCell.datasource = "Bursting with imagery, motion, interaction and distraction though it is, today’s World Wide Web is still primarily a conduit for textual information. In HTML5, the focus on writing and authorship is more pronounced than ever. It’s evident in the very way that new elements such as article and aside are named. HTML5 asks us to treat the HTML document more as… well, a document." as AnyObject
+             noteCell.datasource = self.jobSheetDataModel?.engineerNotes2 as AnyObject
              noteCell.viewBG.backgroundColor = .white
              return noteCell
          }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            if indexPath.row == 3 {
+                return 110.0
+            } else {
+                return UITableView.automaticDimension
+            }
+        }
+        if indexPath.section == 1 {
+            return 350.0
+        }
         if indexPath.section == 3 || indexPath.section == 4 {
             return 115.0
         } else {
@@ -198,6 +284,7 @@ class ServiceCell: BaseTableViewCell {
     @IBOutlet weak var lblCust: UILabel!
     @IBOutlet weak var imgIcon: UIImageView!
     @IBOutlet weak var lblDetail: UILabel!
+    @IBOutlet weak var lblFee: UILabel!
     @IBOutlet weak var viewBG: UIView!
     override var datasource: AnyObject? {
         didSet {
@@ -215,10 +302,29 @@ class ServiceCell: BaseTableViewCell {
 class ContactDetailsCell: BaseTableViewCell {
     
     @IBOutlet weak var viewBG: UIView!
+    @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var lblContactName: UILabel!
+    @IBOutlet weak var lblContactNo: UILabel!
+    @IBOutlet weak var lblContactMail: UILabel!
+    @IBOutlet weak var lblInstallation: UILabel!
+    @IBOutlet weak var lblDeliveryAddress: UILabel!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
                 viewBG.layer.cornerRadius = 10.0
+                mapView.layer.cornerRadius = 12.0
+                mapView.layer.masksToBounds = true
+                mapView.mapType = .standard
+                let location = CLLocationCoordinate2D(latitude: 11.361516, longitude: 76.30274)
+                let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+                let region = MKCoordinateRegion(center: location, span: span)
+                mapView.setRegion(region, animated: true)
+                    
+                let annotation = MKPointAnnotation()
+                annotation.coordinate = location
+                annotation.title = "Edakkara"
+                annotation.subtitle = "Nilambur"
+                mapView.addAnnotation(annotation)
             }
         }
     }
