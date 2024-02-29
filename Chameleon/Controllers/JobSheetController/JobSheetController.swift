@@ -37,13 +37,18 @@ class JobSheetController: BaseViewController {
         self.viewClosure.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)
         
         // MARK: JobSheetAPICall
-        self.tblPrecheck.reloadData()
         self.jobSheet()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
+    
+    @IBAction func precheck(_ sender: UIButton) {
+        let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
+        NavigationHelper.helper.contentNavController!.pushViewController(precheckVC, animated: true)
+    }
+    
     
     //  MARK: JobSheetAPI
     @objc func jobSheet() {
@@ -358,12 +363,6 @@ class InstallationCell: BaseTableViewCell {
         didSet {
             if datasource != nil {
                 viewBG.layer.cornerRadius = 10.0
-                lblDetail.text = "Details Vehicle: Jeep Rehegade Nightangle"
-                lblReg.text = "EU22 KCX"
-                lblYOM.text = "2024"
-                lblColour.text = "Black"
-                lblVIN.text = "123456789abcdef"
-                lblFuel.text = "Pertrol"
             }
         }
     }

@@ -64,6 +64,7 @@
 		5F6266ED2B6027120039A8FA /* ClosureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6266EC2B6027120039A8FA /* ClosureController.swift */; };
 		5F782AFC2B4CA4630088F3E3 /* JobSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F782AFB2B4CA4630088F3E3 /* JobSheetController.swift */; };
 		5F8ED62E2B8F60BE00A4B504 /* JobSheetModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED62D2B8F60BE00A4B504 /* JobSheetModels.swift */; };
+		5F8ED6332B90BB1C00A4B504 /* CameraHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED6322B90BB1C00A4B504 /* CameraHandler.swift */; };
 		5FE02D732B87810B00AC9C91 /* WorkViewDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE02D722B87810B00AC9C91 /* WorkViewDataModel.swift */; };
 		5FE5FC1E2B6D83270053E4D9 /* PrecheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */; };
 		7837B444388CCBAE0AE7345D /* Pods_ChameleonTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEFA2DFCFC98C25140B9A81 /* Pods_ChameleonTests.framework */; };
@@ -150,6 +151,7 @@
 		5F6266EC2B6027120039A8FA /* ClosureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosureController.swift; sourceTree = "<group>"; };
 		5F782AFB2B4CA4630088F3E3 /* JobSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSheetController.swift; sourceTree = "<group>"; };
 		5F8ED62D2B8F60BE00A4B504 /* JobSheetModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSheetModels.swift; sourceTree = "<group>"; };
+		5F8ED6322B90BB1C00A4B504 /* CameraHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraHandler.swift; sourceTree = "<group>"; };
 		5FE02D722B87810B00AC9C91 /* WorkViewDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkViewDataModel.swift; sourceTree = "<group>"; };
 		5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrecheckController.swift; sourceTree = "<group>"; };
 		6156A05CC98ACF53B9999275 /* Pods-Chameleon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chameleon.debug.xcconfig"; path = "Target Support Files/Pods-Chameleon/Pods-Chameleon.debug.xcconfig"; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 				5F0304CB2B3C5143000A012A /* APIManager */,
 				5F03057E2B3C5633000A012A /* Controllers */,
 				5F0305792B3C55BF000A012A /* Extensions */,
+				5F8ED6302B90BB0600A4B504 /* Libraries */,
 				5F0304D12B3C554F000A012A /* Utilities */,
 				5F03049C2B3C4C14000A012A /* ViewController.swift */,
 				5F03049E2B3C4C14000A012A /* Main.storyboard */,
@@ -507,6 +510,22 @@
 				5F8ED62D2B8F60BE00A4B504 /* JobSheetModels.swift */,
 			);
 			path = JobSheetModels;
+			sourceTree = "<group>";
+		};
+		5F8ED6302B90BB0600A4B504 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				5F8ED6312B90BB1C00A4B504 /* CameraHandler */,
+			);
+			path = Libraries;
+			sourceTree = "<group>";
+		};
+		5F8ED6312B90BB1C00A4B504 /* CameraHandler */ = {
+			isa = PBXGroup;
+			children = (
+				5F8ED6322B90BB1C00A4B504 /* CameraHandler.swift */,
+			);
+			path = CameraHandler;
 			sourceTree = "<group>";
 		};
 		5FE02D712B8780EB00AC9C91 /* WorkViewModels */ = {
@@ -809,6 +828,7 @@
 				5F0305842B3C5640000A012A /* SlideMenuViewController.swift in Sources */,
 				5F0305852B3C5640000A012A /* MainContainerController.swift in Sources */,
 				5F0305762B3C5550000A012A /* BaseViewController.swift in Sources */,
+				5F8ED6332B90BB1C00A4B504 /* CameraHandler.swift in Sources */,
 				5F40B9842B3E0D94004D9AE2 /* IntroController.swift in Sources */,
 				5F0305712B3C5550000A012A /* CustomTextField.swift in Sources */,
 				5F40B9AF2B3E256F004D9AE2 /* SignInController.swift in Sources */,
