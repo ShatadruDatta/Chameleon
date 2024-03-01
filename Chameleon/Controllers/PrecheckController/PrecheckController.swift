@@ -7,7 +7,6 @@
 
 import UIKit
 import Photos
-import IQDropDownTextField
 
 class PrecheckController: BaseViewController {
 
@@ -872,8 +871,7 @@ class CollImgCell: BaseCollectionViewCell {
 
 // MARK: CustSignCell
 class CustSignCell: BaseTableViewCell, UITextFieldDelegate, UITextViewDelegate {
-    @IBOutlet weak var txtViewSign: UITextView!
-    @IBOutlet weak var parentTxtView: UIView!
+    @IBOutlet weak var signatureView: SignatureView!
     @IBOutlet weak var txtName: CustomTextField!
     @IBOutlet weak var viewBG: UIView!
     override var datasource: AnyObject? {
@@ -881,9 +879,17 @@ class CustSignCell: BaseTableViewCell, UITextFieldDelegate, UITextViewDelegate {
             if datasource != nil {
                 viewBG.layer.cornerRadius = 10.0
                 txtName.layer.cornerRadius = 25.0
-                parentTxtView.layer.cornerRadius = 10.0
+                signatureView.layer.cornerRadius = 10.0
+                setupViews()
+                signatureView.setStrokeColor(color: .black)
             }
         }
+    }
+    
+    func setupViews() {
+        signatureView.layer.borderWidth = 0.5
+        signatureView.layer.borderColor = UIColor.black.cgColor
+        signatureView.layer.cornerRadius = 10
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -915,41 +921,5 @@ class SaveCell: BaseTableViewCell {
     
     @objc func resetData(_ sender: UIButton) {
         self.didReset!(true)
-    }
-}
-
-
-extension UIImage {
-    func resized(withPercentage percentage: CGFloat, isOpaque: Bool = true) -> UIImage? {
-        let canvas = CGSize(width: size.width * percentage, height: size.height * percentage)
-        let format = imageRendererFormat
-        format.opaque = isOpaque
-        return UIGraphicsImageRenderer(size: canvas, format: format).image {
-            _ in draw(in: CGRect(origin: .zero, size: canvas))
-        }
-    }
-
-    func compress(to kb: Int, allowedMargin: CGFloat = 0.2) -> Data {
-        let bytes = kb * 1024
-        var compression: CGFloat = 1.0
-        let step: CGFloat = 0.05
-        var holderImage = self
-        var complete = false
-        while(!complete) {
-            if let data = holderImage.jpegData(compressionQuality: 1.0) {
-                let ratio = data.count / bytes
-                if data.count < Int(CGFloat(bytes) * (1 + allowedMargin)) {
-                    complete = true
-                    return data
-                } else {
-                    let multiplier:CGFloat = CGFloat((ratio / 5) + 1)
-                    compression -= (step * multiplier)
-                }
-            }
-            
-            guard let newImage = holderImage.resized(withPercentage: compression) else { break }
-            holderImage = newImage
-        }
-        return Data()
     }
 }
