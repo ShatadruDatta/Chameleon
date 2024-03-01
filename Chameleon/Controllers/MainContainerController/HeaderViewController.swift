@@ -31,13 +31,7 @@ class HeaderViewController: UIViewController {
     
     //.........
     func isShowNavBar(isShow: Bool, content: String) {
-        if isShow == true {
-            NavigationHelper.helper.mainContainerViewController!.headerHeightConstraint.constant = DeviceType.IS_IPAD ? 74.0 : (content == "StripList" ? 74.0 : 54.0)
-            NavigationHelper.helper.mainContainerViewController!.view.layoutIfNeeded()
-        } else {
-            NavigationHelper.helper.mainContainerViewController!.headerHeightConstraint.constant = 0
-            NavigationHelper.helper.mainContainerViewController!.view.layoutIfNeeded()
-        }
+        
     }
     
 }

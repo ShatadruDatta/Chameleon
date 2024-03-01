@@ -12,7 +12,6 @@ import SwiftyJSON
 
 class MainContainerController: UIViewController {
 
-    @IBOutlet weak var imgBackground: UIImageView!
     @IBOutlet weak var menuContainer: UIView!
     @IBOutlet weak var blurView: UIView!
     @IBOutlet weak var tabBarView: UIView!

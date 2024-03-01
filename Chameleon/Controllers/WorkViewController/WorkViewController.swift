@@ -15,6 +15,7 @@ class WorkViewController: BaseViewController {
     @IBOutlet weak var parentViewSegment: UIView!
     @IBOutlet weak var tblViewWorklist: UITableView!
     @IBOutlet weak var activity: UIActivityIndicatorView!
+    @IBOutlet weak var lblNoDataFound: UILabel!
     @Published var workDataModel: WorkViewDataModel?
     @Published var arrBookingInformation: [(roomBookedName: String, createdAt: String, id: Int, datasheetId: Int, roomConfirmationNumber: String, hotelZip: String, hotelState: String, sessionId: Int, hotelName: String, hotelPhone: String, hotelId: Int, roomCost: Int, hotelCity: String, createdBy: String, hotelAddress: String)] = []
     var currentIndex = 0
@@ -48,8 +49,14 @@ class WorkViewController: BaseViewController {
                 let decoder = JSONDecoder()
                 let data = try decoder.decode(WorkViewDataModel.self, from: data)
                 workDataModel = data
-                self.tblViewWorklist.isHidden = false
-                self.tblViewWorklist.reloadData()
+                if workDataModel?.result.count ?? 0 > 0 {
+                    self.tblViewWorklist.isHidden = false
+                    self.lblNoDataFound.isHidden = true
+                    self.tblViewWorklist.reloadData()
+                } else {
+                    self.tblViewWorklist.isHidden = true
+                    self.lblNoDataFound.isHidden = false
+                }
             } catch {
                 self.tblViewWorklist.isHidden = true
                 SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
@@ -99,6 +106,7 @@ extension WorkViewController: SJFluidSegmentedControlDataSource, SJFluidSegmente
         default:
             workStatus = "closed"
         }
+        self.lblNoDataFound.isHidden = true
         self.workView()
     }
 }

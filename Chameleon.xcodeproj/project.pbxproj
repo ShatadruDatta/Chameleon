@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		081C099E0C3D3729A958C154 /* Pods_Chameleon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E800F0329E2E8FDDF2BF612 /* Pods_Chameleon.framework */; };
-		5F03049D2B3C4C14000A012A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F03049C2B3C4C14000A012A /* ViewController.swift */; };
 		5F0304A02B3C4C14000A012A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5F03049E2B3C4C14000A012A /* Main.storyboard */; };
 		5F0304A22B3C4C15000A012A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F0304A12B3C4C15000A012A /* Assets.xcassets */; };
 		5F0304A52B3C4C15000A012A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5F0304A32B3C4C15000A012A /* LaunchScreen.storyboard */; };
@@ -65,6 +64,7 @@
 		5F782AFC2B4CA4630088F3E3 /* JobSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F782AFB2B4CA4630088F3E3 /* JobSheetController.swift */; };
 		5F8ED62E2B8F60BE00A4B504 /* JobSheetModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED62D2B8F60BE00A4B504 /* JobSheetModels.swift */; };
 		5F8ED6332B90BB1C00A4B504 /* CameraHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED6322B90BB1C00A4B504 /* CameraHandler.swift */; };
+		5F8ED6362B91D9D300A4B504 /* PickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED6352B91D9D300A4B504 /* PickerViewController.swift */; };
 		5FE02D732B87810B00AC9C91 /* WorkViewDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE02D722B87810B00AC9C91 /* WorkViewDataModel.swift */; };
 		5FE5FC1E2B6D83270053E4D9 /* PrecheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */; };
 		7837B444388CCBAE0AE7345D /* Pods_ChameleonTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEFA2DFCFC98C25140B9A81 /* Pods_ChameleonTests.framework */; };
@@ -92,7 +92,6 @@
 		196855F83AD4C8B3C67CAECF /* Pods-ChameleonTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChameleonTests.release.xcconfig"; path = "Target Support Files/Pods-ChameleonTests/Pods-ChameleonTests.release.xcconfig"; sourceTree = "<group>"; };
 		3C634F4BB763B960136FF81B /* Pods-Chameleon-ChameleonUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chameleon-ChameleonUITests.release.xcconfig"; path = "Target Support Files/Pods-Chameleon-ChameleonUITests/Pods-Chameleon-ChameleonUITests.release.xcconfig"; sourceTree = "<group>"; };
 		5F0304952B3C4C14000A012A /* Chameleon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chameleon.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F03049C2B3C4C14000A012A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5F03049F2B3C4C14000A012A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5F0304A12B3C4C15000A012A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5F0304A42B3C4C15000A012A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -152,6 +151,7 @@
 		5F782AFB2B4CA4630088F3E3 /* JobSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSheetController.swift; sourceTree = "<group>"; };
 		5F8ED62D2B8F60BE00A4B504 /* JobSheetModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSheetModels.swift; sourceTree = "<group>"; };
 		5F8ED6322B90BB1C00A4B504 /* CameraHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraHandler.swift; sourceTree = "<group>"; };
+		5F8ED6352B91D9D300A4B504 /* PickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewController.swift; sourceTree = "<group>"; };
 		5FE02D722B87810B00AC9C91 /* WorkViewDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkViewDataModel.swift; sourceTree = "<group>"; };
 		5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrecheckController.swift; sourceTree = "<group>"; };
 		6156A05CC98ACF53B9999275 /* Pods-Chameleon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chameleon.debug.xcconfig"; path = "Target Support Files/Pods-Chameleon/Pods-Chameleon.debug.xcconfig"; sourceTree = "<group>"; };
@@ -232,7 +232,6 @@
 				5F0305792B3C55BF000A012A /* Extensions */,
 				5F8ED6302B90BB0600A4B504 /* Libraries */,
 				5F0304D12B3C554F000A012A /* Utilities */,
-				5F03049C2B3C4C14000A012A /* ViewController.swift */,
 				5F03049E2B3C4C14000A012A /* Main.storyboard */,
 				5F0304A12B3C4C15000A012A /* Assets.xcassets */,
 				5F0304A32B3C4C15000A012A /* LaunchScreen.storyboard */,
@@ -388,6 +387,7 @@
 		5F03057E2B3C5633000A012A /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				5F8ED6342B91D9BB00A4B504 /* PickerController */,
 				5FE5FC1C2B6D83150053E4D9 /* PrecheckController */,
 				5F6266EB2B6026D30039A8FA /* ClosureController */,
 				5F782AF82B4CA4380088F3E3 /* JobSheetController */,
@@ -526,6 +526,14 @@
 				5F8ED6322B90BB1C00A4B504 /* CameraHandler.swift */,
 			);
 			path = CameraHandler;
+			sourceTree = "<group>";
+		};
+		5F8ED6342B91D9BB00A4B504 /* PickerController */ = {
+			isa = PBXGroup;
+			children = (
+				5F8ED6352B91D9D300A4B504 /* PickerViewController.swift */,
+			);
+			path = PickerController;
 			sourceTree = "<group>";
 		};
 		5FE02D712B8780EB00AC9C91 /* WorkViewModels */ = {
@@ -820,6 +828,7 @@
 				5F03052C2B3C5550000A012A /* ContentNavigationController.swift in Sources */,
 				5F03052E2B3C5550000A012A /* NavigationHelper.swift in Sources */,
 				5F0304CD2B3C5143000A012A /* AppDelegate.swift in Sources */,
+				5F8ED6362B91D9D300A4B504 /* PickerViewController.swift in Sources */,
 				5F6266ED2B6027120039A8FA /* ClosureController.swift in Sources */,
 				5F3022342B47421B001E5DAA /* WorkViewController.swift in Sources */,
 				5F0305732B3C5550000A012A /* BaseTableViewCell.swift in Sources */,
@@ -834,7 +843,6 @@
 				5F40B9AF2B3E256F004D9AE2 /* SignInController.swift in Sources */,
 				5F03057D2B3C55BF000A012A /* Extensions.swift in Sources */,
 				5FE02D732B87810B00AC9C91 /* WorkViewDataModel.swift in Sources */,
-				5F03049D2B3C4C14000A012A /* ViewController.swift in Sources */,
 				5F03057C2B3C55BF000A012A /* UIDevice+Extra.swift in Sources */,
 				5F03052D2B3C5550000A012A /* DeviceSettings.swift in Sources */,
 				5F0305722B3C5550000A012A /* Reachability.swift in Sources */,

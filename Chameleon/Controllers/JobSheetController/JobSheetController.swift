@@ -145,7 +145,7 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
          case 1,3,4:
              return 1
          case 2:
-             return self.jobSheetDataModel?.partList.count ?? 0
+             return self.jobSheetDataModel?.partList?.count ?? 0
          default:
              return 1
          }
@@ -159,7 +159,7 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
                  custCell.datasource = "" as AnyObject
                  custCell.lblCust.text = "Customer:"
                  custCell.lblDetail.text = self.jobSheetDataModel?.customer.name
-                 custCell.lblCust2.text = "Customer:"
+                 custCell.lblCust2.text = "Client:"
                  custCell.lblDetail2.text = self.jobSheetDataModel?.customerClient.name
                  custCell.viewBG.backgroundColor = UIColor.init(hexString: "EFF3FC")
                  custCell.viewBG2.backgroundColor = UIColor.init(hexString: "F5EFF8")
@@ -170,7 +170,7 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
                  custCell.lblCust.text = "Ref:"
                  custCell.lblDetail.text = self.jobSheetDataModel?.clientOrderRef
                  custCell.lblCust2.text = "Con No:"
-                 custCell.lblDetail2.text = self.jobSheetDataModel?.installationAddress.contactNumber
+                 custCell.lblDetail2.text = "NA"
                  custCell.viewBG.backgroundColor = UIColor.init(hexString: "F1F8F3")
                  custCell.viewBG2.backgroundColor = UIColor.init(hexString: "F7F2EB")
                  return custCell
@@ -197,12 +197,12 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
              conDetCell.lblContactName.text = self.jobSheetDataModel?.installationAddress.contactName
              conDetCell.lblContactNo.text = self.jobSheetDataModel?.installationAddress.contactNumber
              conDetCell.lblContactMail.text = self.jobSheetDataModel?.installationAddress.email
-             conDetCell.lblInstallation.text = (self.jobSheetDataModel?.installationAddress.street ?? "")
-             conDetCell.lblDeliveryAddress.text = (self.jobSheetDataModel?.deliveryAddress.street ?? "")
+             conDetCell.lblInstallation.text = (self.jobSheetDataModel?.installationAddress.street ?? "") + (self.jobSheetDataModel?.installationAddress.street2 ?? "") + (self.jobSheetDataModel?.installationAddress.street3 ?? "")
+             conDetCell.lblDeliveryAddress.text = (self.jobSheetDataModel?.deliveryAddress.street ?? "") + (self.jobSheetDataModel?.deliveryAddress.street2 ?? "") + (self.jobSheetDataModel?.deliveryAddress.street3 ?? "")
              return conDetCell
          } else if indexPath.section == 2 {
              let partsCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "PartsCell", for: indexPath) as! PartsCell
-             partsCell.datasource = "\(self.jobSheetDataModel?.partList[indexPath.row].productID.name ?? "")\n Serial Number : NA" as AnyObject
+             partsCell.datasource = "\(self.jobSheetDataModel?.partList?[indexPath.row].productID.name ?? "")\n Serial Number : NA" as AnyObject
              if indexPath.row % 2 == 0 {
                  partsCell.viewBG.backgroundColor = UIColor.init(hexString: "F0EEF5")
              } else {

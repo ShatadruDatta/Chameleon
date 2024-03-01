@@ -7,6 +7,7 @@
 
 import UIKit
 import Photos
+import IQDropDownTextField
 
 class PrecheckController: BaseViewController {
 
@@ -14,12 +15,17 @@ class PrecheckController: BaseViewController {
     @IBOutlet weak var viewPreCheck: UIView!
     @IBOutlet weak var viewPostCheck: UIView!
     @IBOutlet weak var viewClosure: UIView!
+    var arrImgElectricalIssue: [UIImage] = []
     var isReset: Bool = false
     var isSave: Bool = false
     var issueIndex: Int = -1
+    var service = ""
+    var miles = ""
     var isIssueElectrical: Bool = false
     var isIssueExterior: Bool = false
     var isIssueInterior: Bool = false
+    var serviceArray = ["Electrician", "Exteriors", "Interiour", "Outside", "Inside"]
+    var milesArray = ["Miles", "Kilometer"]
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tblPreCheck.reloadData()
@@ -75,11 +81,19 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 return 20.0
             } else {
                 if indexPath.row == 2 {
-                    return isIssueElectrical ? 245 : 45.0
+                    if isIssueElectrical {
+                        if arrImgElectricalIssue.count > 0 {
+                            return 245.0
+                        } else {
+                            return 180.0
+                        }
+                    } else {
+                        return 45.0
+                    }
                 } else if indexPath.row == 3 {
-                    return isIssueExterior ? 245 : 45.0
+                    return isIssueExterior ? 180 : 45.0
                 } else {
-                    return isIssueInterior ? 245 : 45.0
+                    return isIssueInterior ? 180 : 45.0
                 }
             }
         } else {
@@ -99,6 +113,15 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
             case 0:
                 let serviceCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ServicePrecheckCell", for: indexPath) as! ServicePrecheckCell
                 serviceCell.datasource = "" as AnyObject
+                serviceCell.txtService.text = service
+                serviceCell.didSendSignal = { chk  in
+                    PickerViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, arrPickerVal: self.serviceArray) { val in
+                        self.service = val
+                        self.tblPreCheck.reloadData()
+                    } didFinish: { txt in
+                        
+                    }
+                }
                 return serviceCell
             case 1:
                 let modelCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ModelCell", for: indexPath) as! ModelCell
@@ -111,10 +134,21 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
             case 3:
                 let odometerCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "OdometerCell", for: indexPath) as! OdometerCell
                 odometerCell.datasource = "" as AnyObject
+                odometerCell.txtMiles.text = self.miles
+                odometerCell.didSendSignal = { chk  in
+                    PickerViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, arrPickerVal: self.milesArray) { val in
+                        self.miles = val
+                        self.tblPreCheck.reloadData()
+                    } didFinish: { txt in
+                        
+                    }
+                }
                 return odometerCell
             case 4:
-                let imgCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ImageCaptureCell", for: indexPath) as! ImageCaptureCell
+                let imgCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "DashImageCaptureCell", for: indexPath) as! DashImageCaptureCell
                 imgCell.datasource = "" as AnyObject
+                imgCell.lblImg1.text = "Dash\n(powered on)"
+                imgCell.lblImg2.text = "Reg/VIN"
                 imgCell.didFirstImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
@@ -147,8 +181,10 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 }
                 return imgCell
             case 5:
-                let imgCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ImageCaptureCell", for: indexPath) as! ImageCaptureCell
+                let imgCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "FrontImageCaptureCell", for: indexPath) as! FrontImageCaptureCell
                 imgCell.datasource = "" as AnyObject
+                imgCell.lblImg1.text = "Front"
+                imgCell.lblImg2.text = "Rear"
                 imgCell.didFirstImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
@@ -181,8 +217,10 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 }
                 return imgCell
             case 6:
-                let imgCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ImageCaptureCell", for: indexPath) as! ImageCaptureCell
+                let imgCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "PassengerImageCaptureCell", for: indexPath) as! PassengerImageCaptureCell
                 imgCell.datasource = "" as AnyObject
+                imgCell.lblImg1.text = "Passenger Side"
+                imgCell.lblImg2.text = "Driver Side"
                 imgCell.didFirstImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
@@ -235,16 +273,24 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 whiteBottomCell.datasource = "" as AnyObject
                 return whiteBottomCell
             } else if indexPath.row == 2 {
-                let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "IssueCell", for: indexPath) as! IssueCell
+                let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ElectricalIssueCell", for: indexPath) as! ElectricalIssueCell
                 issueCell.datasource = "" as AnyObject
                 issueIndex = indexPath.row
                 issueCell.didSendYes = { check in
                     self.isIssueElectrical = check
                     self.tblPreCheck.reloadData()
                 }
+                issueCell.arrImg = self.arrImgElectricalIssue
+                issueCell.didcaptureCamera = { capture in
+                    CameraHandler.shared.showActionSheet(vc: self)
+                    CameraHandler.shared.imagePickedBlock = { (image) in
+                        self.arrImgElectricalIssue.append(image)
+                        self.tblPreCheck.reloadData()
+                    }
+                }
                 return issueCell
             } else if indexPath.row == 3 {
-                let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "IssueCell", for: indexPath) as! IssueCell
+                let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ExteriorIssueCell", for: indexPath) as! ExteriorIssueCell
                 issueCell.datasource = "" as AnyObject
                 issueIndex = indexPath.row
                 issueCell.didSendYes = { check in
@@ -253,7 +299,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 }
                 return issueCell
             } else {
-                let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "IssueCell", for: indexPath) as! IssueCell
+                let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "InteriorIssueCell", for: indexPath) as! InteriorIssueCell
                 issueCell.datasource = "" as AnyObject
                 issueIndex = indexPath.row
                 issueCell.didSendYes = { check in
@@ -295,6 +341,7 @@ class ServicePrecheckCell: BaseTableViewCell, UITextFieldDelegate {
     @IBOutlet weak var imgDropDown: UIImageView!
     @IBOutlet weak var txtService: CustomTextField!
     @IBOutlet weak var viewBG: UIView!
+    var didSendSignal:((Bool) -> ())!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
@@ -306,6 +353,7 @@ class ServicePrecheckCell: BaseTableViewCell, UITextFieldDelegate {
     }
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        self.didSendSignal!(true)
         return false
     }
     
@@ -337,6 +385,7 @@ class OdometerCell: BaseTableViewCell, UITextFieldDelegate {
     @IBOutlet weak var txtOdometer: CustomTextField!
     @IBOutlet weak var txtSelect: CustomTextField!
     @IBOutlet weak var txtMiles: CustomTextField!
+    var didSendSignal:((Bool) -> ())!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
@@ -353,9 +402,16 @@ class OdometerCell: BaseTableViewCell, UITextFieldDelegate {
         if textField == txtOdometer {
             return true
         } else {
+            self.didSendSignal!(true)
             return false
         }
     }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
 }
 
 
@@ -377,10 +433,110 @@ class RegPrecheckCell: BaseTableViewCell, UITextFieldDelegate {
 }
 
 
-// MARK: ImageCaptureCell
-class ImageCaptureCell: BaseTableViewCell {
+// MARK: DashImageCaptureCell
+class DashImageCaptureCell: BaseTableViewCell {
     @IBOutlet weak var lblImg1: UILabel!
-    @IBOutlet weak var lnlImg2: UILabel!
+    @IBOutlet weak var lblImg2: UILabel!
+    @IBOutlet weak var imgView1: UIImageView!
+    @IBOutlet weak var imgView2: UIImageView!
+    @IBOutlet weak var lblAddImage1: UILabel!
+    @IBOutlet weak var lblAddImage2: UILabel!
+    @IBOutlet weak var imgCamera1: UIImageView!
+    @IBOutlet weak var imgCamera2: UIImageView!
+    @IBOutlet weak var btnDel1: UIButton!
+    @IBOutlet weak var btnDel2: UIButton!
+    var file: UIImage?
+    var didFirstImg:((String) -> ())!
+    var didSecondImg:((String) -> ())!
+    var delImage1:((Bool) -> ())!
+    var delImage2:((Bool) -> ())!
+    override var datasource: AnyObject? {
+        didSet {
+            if datasource != nil {
+                imgView1.layer.cornerRadius = 10.0
+                imgView2.layer.cornerRadius = 10.0
+                let tapGestureRecognizer1 = UITapGestureRecognizer(target: self, action: #selector(imageTapped1(tapGestureRecognizer:)))
+                imgView1.addGestureRecognizer(tapGestureRecognizer1)
+                let tapGestureRecognizer2 = UITapGestureRecognizer(target: self, action: #selector(imageTapped2(tapGestureRecognizer:)))
+                imgView2.addGestureRecognizer(tapGestureRecognizer2)
+                btnDel1.addTarget(self, action: #selector(delImg1), for: .touchUpInside)
+                btnDel2.addTarget(self, action: #selector(delImg2), for: .touchUpInside)
+            }
+        }
+    }
+    
+    @objc func imageTapped1(tapGestureRecognizer: UITapGestureRecognizer) {
+        print("Test")
+        self.didFirstImg!("Img1")
+    }
+    
+    @objc func imageTapped2(tapGestureRecognizer: UITapGestureRecognizer) {
+        self.didSecondImg!("Img2")
+    }
+    
+    @objc func delImg1(_ sender: UIButton) {
+        self.delImage1!(true)
+    }
+    
+    @objc func delImg2(_ sender: UIButton) {
+        self.delImage2!(true)
+    }
+}
+
+// MARK: FrontImageCaptureCell
+class FrontImageCaptureCell: BaseTableViewCell {
+    @IBOutlet weak var lblImg1: UILabel!
+    @IBOutlet weak var lblImg2: UILabel!
+    @IBOutlet weak var imgView1: UIImageView!
+    @IBOutlet weak var imgView2: UIImageView!
+    @IBOutlet weak var lblAddImage1: UILabel!
+    @IBOutlet weak var lblAddImage2: UILabel!
+    @IBOutlet weak var imgCamera1: UIImageView!
+    @IBOutlet weak var imgCamera2: UIImageView!
+    @IBOutlet weak var btnDel1: UIButton!
+    @IBOutlet weak var btnDel2: UIButton!
+    var file: UIImage?
+    var didFirstImg:((String) -> ())!
+    var didSecondImg:((String) -> ())!
+    var delImage1:((Bool) -> ())!
+    var delImage2:((Bool) -> ())!
+    override var datasource: AnyObject? {
+        didSet {
+            if datasource != nil {
+                imgView1.layer.cornerRadius = 10.0
+                imgView2.layer.cornerRadius = 10.0
+                let tapGestureRecognizer1 = UITapGestureRecognizer(target: self, action: #selector(imageTapped1(tapGestureRecognizer:)))
+                imgView1.addGestureRecognizer(tapGestureRecognizer1)
+                let tapGestureRecognizer2 = UITapGestureRecognizer(target: self, action: #selector(imageTapped2(tapGestureRecognizer:)))
+                imgView2.addGestureRecognizer(tapGestureRecognizer2)
+                btnDel1.addTarget(self, action: #selector(delImg1), for: .touchUpInside)
+                btnDel2.addTarget(self, action: #selector(delImg2), for: .touchUpInside)
+            }
+        }
+    }
+    
+    @objc func imageTapped1(tapGestureRecognizer: UITapGestureRecognizer) {
+        print("Test")
+        self.didFirstImg!("Img1")
+    }
+    
+    @objc func imageTapped2(tapGestureRecognizer: UITapGestureRecognizer) {
+        self.didSecondImg!("Img2")
+    }
+    
+    @objc func delImg1(_ sender: UIButton) {
+        self.delImage1!(true)
+    }
+    
+    @objc func delImg2(_ sender: UIButton) {
+        self.delImage2!(true)
+    }
+}
+
+// MARK: PassengerImageCaptureCell
+class PassengerImageCaptureCell: BaseTableViewCell {
+    @IBOutlet weak var lblImg1: UILabel!
+    @IBOutlet weak var lblImg2: UILabel!
     @IBOutlet weak var imgView1: UIImageView!
     @IBOutlet weak var imgView2: UIImageView!
     @IBOutlet weak var lblAddImage1: UILabel!
@@ -469,8 +625,91 @@ class HeaderCell: BaseTableViewCell {
 }
 
 
-// MARK: IssuesCell
-class IssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+// MARK: ElectricalIssuesCell
+class ElectricalIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextViewDelegate {
+    @IBOutlet weak var lblContent: UILabel!
+    @IBOutlet weak var imgYes: UIImageView!
+    @IBOutlet weak var imgNo: UIImageView!
+    @IBOutlet weak var btnYes: UIButton!
+    @IBOutlet weak var btnNo: UIButton!
+    @IBOutlet weak var txtView: UITextView!
+    @IBOutlet weak var btnClip: UIButton!
+    @IBOutlet weak var btnCamera: UIButton!
+    @IBOutlet weak var collImg: UICollectionView!
+    @IBOutlet weak var parentTxtView: UIView!
+    var didSendYes:((Bool) -> ())!
+    var didcaptureCamera:((Bool) -> ())!
+    var arrImg: [UIImage] = []
+    override var datasource: AnyObject? {
+        didSet {
+            if datasource != nil {
+                txtView.textColor = .fontColor
+                parentTxtView.layer.cornerRadius = 10.0
+                collImg.reloadData()
+                btnYes.addTarget(self, action: #selector(yes), for: .touchUpInside)
+                btnNo.addTarget(self, action: #selector(no), for: .touchUpInside)
+                btnCamera.addTarget(self, action: #selector(cameraCapture), for: .touchUpInside)
+            }
+        }
+    }
+    
+    @objc func cameraCapture(_ sender: UIButton) {
+        self.didcaptureCamera!(true)
+    }
+    
+    @objc func yes(_ sender: UIButton) {
+        imgYes.image = UIImage(named: "check")
+        imgNo.image = UIImage(named: "uncheck")
+        self.didSendYes!(true)
+    }
+    
+    @objc func no(_ sender: UIButton) {
+        imgYes.image = UIImage(named: "uncheck")
+        imgNo.image = UIImage(named: "check")
+        self.didSendYes!(false)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return arrImg.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let collImgCell = self.collImg.dequeueReusableCell(withReuseIdentifier: "CollImgCell", for: indexPath) as! CollImgCell
+        collImgCell.datasource = "" as AnyObject
+        collImgCell.imgView.image = arrImg[indexPath.item]
+        collImgCell.imgView.contentMode = .scaleAspectFit
+        return collImgCell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 60.0, height: 60.0)
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == UIColor.fontColor {
+            textView.text = nil
+            textView.textColor = UIColor.black
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = "Text Message"
+            textView.textColor = UIColor.fontColor
+        }
+    }
+}
+
+// MARK: ExteriorIssuesCell
+class ExteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextViewDelegate {
     @IBOutlet weak var lblContent: UILabel!
     @IBOutlet weak var imgYes: UIImageView!
     @IBOutlet weak var imgNo: UIImageView!
@@ -485,6 +724,81 @@ class IssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionViewDa
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
+                txtView.textColor = .fontColor
+                parentTxtView.layer.cornerRadius = 10.0
+                btnYes.addTarget(self, action: #selector(yes), for: .touchUpInside)
+                btnNo.addTarget(self, action: #selector(no), for: .touchUpInside)
+                collImg.reloadData()
+            }
+        }
+    }
+    
+    @objc func yes(_ sender: UIButton) {
+        imgYes.image = UIImage(named: "check")
+        imgNo.image = UIImage(named: "uncheck")
+        self.didSendYes!(true)
+    }
+    
+    @objc func no(_ sender: UIButton) {
+        imgYes.image = UIImage(named: "uncheck")
+        imgNo.image = UIImage(named: "check")
+        self.didSendYes!(false)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 4
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let collImgCell = self.collImg.dequeueReusableCell(withReuseIdentifier: "CollImgCell", for: indexPath) as! CollImgCell
+        collImgCell.datasource = "" as AnyObject
+        return collImgCell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 60.0, height: 60.0)
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == UIColor.fontColor {
+            textView.text = nil
+            textView.textColor = UIColor.black
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = "Text Message"
+            textView.textColor = UIColor.fontColor
+        }
+    }
+}
+
+// MARK: InteriorIssuesCell
+class InteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextViewDelegate {
+    @IBOutlet weak var lblContent: UILabel!
+    @IBOutlet weak var imgYes: UIImageView!
+    @IBOutlet weak var imgNo: UIImageView!
+    @IBOutlet weak var btnYes: UIButton!
+    @IBOutlet weak var btnNo: UIButton!
+    @IBOutlet weak var txtView: UITextView!
+    @IBOutlet weak var btnClip: UIButton!
+    @IBOutlet weak var btnCamera: UIButton!
+    @IBOutlet weak var collImg: UICollectionView!
+    @IBOutlet weak var parentTxtView: UIView!
+    var didSendYes:((Bool) -> ())!
+    override var datasource: AnyObject? {
+        didSet {
+            if datasource != nil {
+                txtView.textColor = .fontColor
                 parentTxtView.layer.cornerRadius = 10.0
                 collImg.reloadData()
                 btnYes.addTarget(self, action: #selector(yes), for: .touchUpInside)
@@ -517,6 +831,28 @@ class IssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionViewDa
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 60.0, height: 60.0)
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == UIColor.fontColor {
+            textView.text = nil
+            textView.textColor = UIColor.black
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = "Text Message"
+            textView.textColor = UIColor.fontColor
+        }
     }
 }
 
@@ -579,5 +915,41 @@ class SaveCell: BaseTableViewCell {
     
     @objc func resetData(_ sender: UIButton) {
         self.didReset!(true)
+    }
+}
+
+
+extension UIImage {
+    func resized(withPercentage percentage: CGFloat, isOpaque: Bool = true) -> UIImage? {
+        let canvas = CGSize(width: size.width * percentage, height: size.height * percentage)
+        let format = imageRendererFormat
+        format.opaque = isOpaque
+        return UIGraphicsImageRenderer(size: canvas, format: format).image {
+            _ in draw(in: CGRect(origin: .zero, size: canvas))
+        }
+    }
+
+    func compress(to kb: Int, allowedMargin: CGFloat = 0.2) -> Data {
+        let bytes = kb * 1024
+        var compression: CGFloat = 1.0
+        let step: CGFloat = 0.05
+        var holderImage = self
+        var complete = false
+        while(!complete) {
+            if let data = holderImage.jpegData(compressionQuality: 1.0) {
+                let ratio = data.count / bytes
+                if data.count < Int(CGFloat(bytes) * (1 + allowedMargin)) {
+                    complete = true
+                    return data
+                } else {
+                    let multiplier:CGFloat = CGFloat((ratio / 5) + 1)
+                    compression -= (step * multiplier)
+                }
+            }
+            
+            guard let newImage = holderImage.resized(withPercentage: compression) else { break }
+            holderImage = newImage
+        }
+        return Data()
     }
 }

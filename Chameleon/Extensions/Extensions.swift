@@ -1081,11 +1081,7 @@ struct AES {
     }
 }
 
-
-
-
 extension UIApplication {
-
     var statusBarView: UIView? {
         return value(forKey: "statusBar") as? UIView
     }
@@ -1098,10 +1094,8 @@ extension CLLocation {
     }
 }
 
-
 // MARK: CustomPoppinsFont
 extension UIFont {
-
     public enum PoppinsType: String {
         case medium = "-Medium"
         case black = "-Black"
@@ -1116,17 +1110,13 @@ extension UIFont {
         case boldItalic = "-BoldItalic"
         case bold = "-Bold"
     }
-
     static func Poppins(_ type: PoppinsType = .regular, size: CGFloat = UIFont.systemFontSize) -> UIFont {
         return UIFont(name: "Poppins\(type.rawValue)", size: size)!
     }
-
     var isBold: Bool {
         return fontDescriptor.symbolicTraits.contains(.traitBold)
     }
-
     var isItalic: Bool {
         return fontDescriptor.symbolicTraits.contains(.traitItalic)
     }
-
 }
