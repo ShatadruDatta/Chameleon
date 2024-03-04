@@ -37,10 +37,10 @@ class LaunchController: BaseViewController {
     }
     
     @objc func moveToIntroPage() {
-        let introVC = mainStoryboard.instantiateViewController(withIdentifier: "IntroController") as! IntroController
-        NavigationHelper.helper.contentNavController!.pushViewController(introVC, animated: true)
-        
-//        let introVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
+//        let introVC = mainStoryboard.instantiateViewController(withIdentifier: "IntroController") as! IntroController
 //        NavigationHelper.helper.contentNavController!.pushViewController(introVC, animated: true)
+        
+        let introVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckController") as! PostCheckController
+        NavigationHelper.helper.contentNavController!.pushViewController(introVC, animated: true)
     }
 }
