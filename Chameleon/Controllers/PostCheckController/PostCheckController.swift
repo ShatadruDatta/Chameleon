@@ -104,7 +104,12 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                 return 140.0
             }
         } else if indexPath.section == 2 || indexPath.section == 3 {
-            return 50.0
+            switch indexPath.row {
+            case 0:
+                return 50.0
+            default:
+                return UITableView.automaticDimension
+            }
         } else if indexPath.section == 4 {
             switch indexPath.row {
             case 0:
@@ -296,15 +301,18 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                 partsRowCell.txtParts.text = self.arrBufferParts[indexPath.row - 2].partsName
                 partsRowCell.txtSerial.text = self.arrBufferParts[indexPath.row - 2].serialNo
                 partsRowCell.txtConsumed.text = self.arrBufferParts[indexPath.row - 2].consumed
-                partsRowCell.parts = { val, index in
-                    for (indexPart, partsVal) in self.arrBufferParts.enumerated() {
-                        if indexPart == index - 2 {
-                            self.arrBufferParts.remove(at: indexPart)
-                            self.arrBufferParts.insert((id: partsVal.id, partsName: val, serialNo: partsVal.serialNo, consumed: partsVal.consumed, partsImg: partsVal.partsImg), at: indexPart)
-                            self.tblPostCheck.scrollsToTop = true
-                            self.tblPostCheck.reloadData()
+                partsRowCell.parts = { check, index in
+                    let prodPartsVC = mainStoryboard.instantiateViewController(withIdentifier: "ProductController") as! ProductController
+                    prodPartsVC.didSelectProd = { parts in
+                        for (indexPart, partsVal) in self.arrBufferParts.enumerated() {
+                            if indexPart == index - 2 {
+                                self.arrBufferParts.remove(at: indexPart)
+                                self.arrBufferParts.insert((id: partsVal.id, partsName: parts, serialNo: partsVal.serialNo, consumed: partsVal.consumed, partsImg: partsVal.partsImg), at: indexPart)
+                                self.tblPostCheck.reloadData()
+                            }
                         }
                     }
+                    NavigationHelper.helper.contentNavController!.pushViewController(prodPartsVC, animated: true)
                 }
                 partsRowCell.serialNo = { val, index in
                     for (indexPart, partsVal) in self.arrBufferParts.enumerated() {
@@ -352,14 +360,18 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                 partsRowCell.txtParts.text = self.arrPartsToReturn[indexPath.row - 2].partsName
                 partsRowCell.txtSerial.text = self.arrPartsToReturn[indexPath.row - 2].serialNo
                 partsRowCell.txtConsumed.text = self.arrPartsToReturn[indexPath.row - 2].returnedBy
-                partsRowCell.parts = { val, index in
-                    for (indexPart, partsVal) in self.arrPartsToReturn.enumerated() {
-                        if indexPart == index - 2 {
-                            self.arrPartsToReturn.remove(at: indexPart)
-                            self.arrPartsToReturn.insert((id: partsVal.id, partsName: val, serialNo: partsVal.serialNo, returnedBy: partsVal.returnedBy, partsImg: partsVal.partsImg), at: indexPart)
-                            self.tblPostCheck.reloadData()
+                partsRowCell.parts = { check, index in
+                    let prodPartsVC = mainStoryboard.instantiateViewController(withIdentifier: "ProductController") as! ProductController
+                    prodPartsVC.didSelectProd = { parts in
+                        for (indexPart, partsVal) in self.arrPartsToReturn.enumerated() {
+                            if indexPart == index - 2 {
+                                self.arrPartsToReturn.remove(at: indexPart)
+                                self.arrPartsToReturn.insert((id: partsVal.id, partsName: parts, serialNo: partsVal.serialNo, returnedBy: partsVal.returnedBy, partsImg: partsVal.partsImg), at: indexPart)
+                                self.tblPostCheck.reloadData()
+                            }
                         }
                     }
+                    NavigationHelper.helper.contentNavController!.pushViewController(prodPartsVC, animated: true)
                 }
                 partsRowCell.serialNo = { val, index in
                     for (indexPart, partsVal) in self.arrPartsToReturn.enumerated() {
@@ -600,7 +612,8 @@ class BufferPartsHeaderCell: BaseTableViewCell {
 
 // MARK: BufferPartsRowCell
 class BufferPartsRowCell: BaseTableViewCell, UITextFieldDelegate {
-    @IBOutlet weak var txtParts: CustomTextField!
+    @IBOutlet weak var txtParts: UILabel!
+    @IBOutlet weak var btnParts: UIButton!
     @IBOutlet weak var txtSerial: CustomTextField!
     @IBOutlet weak var txtConsumed: CustomTextField!
     @IBOutlet weak var btnDots: UIButton!
@@ -608,7 +621,7 @@ class BufferPartsRowCell: BaseTableViewCell, UITextFieldDelegate {
     var index: Int!
     var didSendSignalConsumed:((Bool) -> ())!
     var didAddRow:((Bool) -> ())!
-    var parts:((String, Int) -> ())!
+    var parts:((Bool, Int) -> ())!
     var serialNo:((String, Int) -> ())!
     var didSendSignal:((Bool) -> ())!
     override var datasource: AnyObject? {
@@ -616,8 +629,13 @@ class BufferPartsRowCell: BaseTableViewCell, UITextFieldDelegate {
             if datasource != nil {
                 parentView.layer.cornerRadius = 10.0
                 btnDots.addTarget(self, action: #selector(dots), for: .touchUpInside)
+                btnParts.addTarget(self, action: #selector(products), for: .touchUpInside)
             }
         }
+    }
+    
+    @objc func products(_ sender: UIButton) {
+        self.parts!(true, index)
     }
     
     @objc func dots(_ sender: UIButton) {
@@ -634,11 +652,7 @@ class BufferPartsRowCell: BaseTableViewCell, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if textField == txtParts {
-            self.parts!(textField.text ?? "", index)
-        } else  {
-            self.serialNo!(textField.text ?? "", index)
-        }
+        self.serialNo!(textField.text ?? "", index)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

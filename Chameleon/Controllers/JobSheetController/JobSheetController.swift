@@ -45,7 +45,7 @@ class JobSheetController: BaseViewController {
     }
     
     @IBAction func precheck(_ sender: UIButton) {
-        let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
+        let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckController") as! PostCheckController
         NavigationHelper.helper.contentNavController!.pushViewController(precheckVC, animated: true)
     }
     
