@@ -69,6 +69,7 @@
 		5F8ED6F72B93B99A00A4B504 /* WorkReportController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED6F62B93B99A00A4B504 /* WorkReportController.swift */; };
 		5FB724652B95C0A50006BA98 /* PostCheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB724642B95C0A50006BA98 /* PostCheckController.swift */; };
 		5FB724672B9732CF0006BA98 /* PostCheckPartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB724662B9732CF0006BA98 /* PostCheckPartController.swift */; };
+		5FB724692B97540E0006BA98 /* SignatureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB724682B97540E0006BA98 /* SignatureViewController.swift */; };
 		5FE02D732B87810B00AC9C91 /* WorkViewDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE02D722B87810B00AC9C91 /* WorkViewDataModel.swift */; };
 		5FE5FC1E2B6D83270053E4D9 /* PrecheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */; };
 		7837B444388CCBAE0AE7345D /* Pods_ChameleonTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEFA2DFCFC98C25140B9A81 /* Pods_ChameleonTests.framework */; };
@@ -160,6 +161,7 @@
 		5F8ED6F62B93B99A00A4B504 /* WorkReportController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkReportController.swift; sourceTree = "<group>"; };
 		5FB724642B95C0A50006BA98 /* PostCheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCheckController.swift; sourceTree = "<group>"; };
 		5FB724662B9732CF0006BA98 /* PostCheckPartController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCheckPartController.swift; sourceTree = "<group>"; };
+		5FB724682B97540E0006BA98 /* SignatureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureViewController.swift; sourceTree = "<group>"; };
 		5FE02D722B87810B00AC9C91 /* WorkViewDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkViewDataModel.swift; sourceTree = "<group>"; };
 		5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrecheckController.swift; sourceTree = "<group>"; };
 		6156A05CC98ACF53B9999275 /* Pods-Chameleon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chameleon.debug.xcconfig"; path = "Target Support Files/Pods-Chameleon/Pods-Chameleon.debug.xcconfig"; sourceTree = "<group>"; };
@@ -576,6 +578,7 @@
 			children = (
 				5FE5FC1D2B6D83270053E4D9 /* PrecheckController.swift */,
 				5F8ED6F32B92741800A4B504 /* SignatureView.swift */,
+				5FB724682B97540E0006BA98 /* SignatureViewController.swift */,
 			);
 			path = PrecheckController;
 			sourceTree = "<group>";
@@ -869,6 +872,7 @@
 				5F0305762B3C5550000A012A /* BaseViewController.swift in Sources */,
 				5F8ED6332B90BB1C00A4B504 /* CameraHandler.swift in Sources */,
 				5F40B9842B3E0D94004D9AE2 /* IntroController.swift in Sources */,
+				5FB724692B97540E0006BA98 /* SignatureViewController.swift in Sources */,
 				5F0305712B3C5550000A012A /* CustomTextField.swift in Sources */,
 				5F40B9AF2B3E256F004D9AE2 /* SignInController.swift in Sources */,
 				5F03057D2B3C55BF000A012A /* Extensions.swift in Sources */,

@@ -352,6 +352,15 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
             } else if indexPath.row == 1 {
                 let custSignCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "CustSignCell", for: indexPath) as! CustSignCell
                 custSignCell.datasource = "" as AnyObject
+                custSignCell.didExpand = { chk  in
+                    if chk {
+                        SignatureViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!) { val in
+                
+                        } didFinish: { txt in
+                
+                        }
+                    }
+                }
                 return custSignCell
             } else {
                 let saveCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "SaveCell", for: indexPath) as! SaveCell
@@ -951,7 +960,9 @@ class CollImgCell: BaseCollectionViewCell {
 class CustSignCell: BaseTableViewCell, UITextFieldDelegate, UITextViewDelegate {
     @IBOutlet weak var signatureView: SignatureView!
     @IBOutlet weak var txtName: CustomTextField!
+    @IBOutlet weak var btnExpand: UIButton!
     @IBOutlet weak var viewBG: UIView!
+    var didExpand:((Bool) -> ())!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
@@ -960,8 +971,14 @@ class CustSignCell: BaseTableViewCell, UITextFieldDelegate, UITextViewDelegate {
                 signatureView.layer.cornerRadius = 10.0
                 setupViews()
                 signatureView.setStrokeColor(color: .black)
+                btnExpand.addTarget(self, action: #selector(expand), for: .touchUpInside)
             }
         }
+    }
+    
+    @objc func expand(_ sender: UIButton) {
+        signatureView.clear()
+        self.didExpand!(true)
     }
     
     func setupViews() {
