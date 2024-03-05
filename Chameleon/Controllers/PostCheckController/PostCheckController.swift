@@ -20,6 +20,17 @@ class PostCheckController: BaseViewController {
     var arrImg: [UIImage] = []
     var isReset: Bool = false
     var isSave: Bool = false
+    
+    var isIssueElectrical: Bool = false
+    var issueIndexElectrical: Int = -1
+    var arrImgElectricalIssue: [UIImage] = []
+    
+    var isIssueExterior: Bool = false
+    var arrImgExteriorIssue: [UIImage] = []
+    
+    var isIssueInterior: Bool = false
+    var arrImgInteriorIssue: [UIImage] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tblPostCheck.reloadData()
@@ -43,18 +54,13 @@ class PostCheckController: BaseViewController {
     }
     
     @IBAction func menu(_ sender: UIButton) {
-       // NavigationHelper.helper.openSidePanel(open: true)
-        CameraHandler.shared.showActionSheet(vc: self)
-        CameraHandler.shared.imagePickedBlock = { (image) in
-            self.arrImg.append(image)
-            self.tblPostCheck.reloadData()
-        }
+        NavigationHelper.helper.openSidePanel(open: true)
     }
 }
 
 extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 8
+        return 9
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -68,10 +74,12 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
         case 3:
             return 2 + arrPartsToReturn.count
         case 4:
-            return 2
+            return 4 // ElectricalIssue, ExteriorIssue, InteriorIssue
         case 5:
             return 2
         case 6:
+            return 2
+        case 7:
             return 2
         default:
             return 1
@@ -101,17 +109,52 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
             switch indexPath.row {
             case 0:
                 return 50.0
+            case 1:
+                if isIssueElectrical {
+                    if arrImgElectricalIssue.count > 0 {
+                        return 245.0
+                    } else {
+                        return 180.0
+                    }
+                } else {
+                    return 50.0
+                }
+            case 2:
+                if isIssueExterior {
+                    if arrImgExteriorIssue.count > 0 {
+                        return 245.0
+                    } else {
+                        return 180.0
+                    }
+                } else {
+                    return 50.0
+                }
             default:
-                return 210.0
+                if isIssueInterior {
+                    if arrImgInteriorIssue.count > 0 {
+                        return 245.0
+                    } else {
+                        return 180.0
+                    }
+                } else {
+                    return 50.0
+                }
             }
         } else if indexPath.section == 5 {
             switch indexPath.row {
             case 0:
                 return 50.0
             default:
-                return 240.0
+                return 210.0
             }
         } else if indexPath.section == 6 {
+            switch indexPath.row {
+            case 0:
+                return 50.0
+            default:
+                return 240.0
+            }
+        } else if indexPath.section == 7 {
             switch indexPath.row {
             case 0:
                 return 50.0
@@ -217,7 +260,11 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                 let partsCell = self.tblPostCheck.dequeueReusableCell(withIdentifier: "SentPartsCell", for: indexPath) as! SentPartsCell
                 partsCell.datasource = "" as AnyObject
                 partsCell.didCaptureCamera = { check in
-                    print(check)
+                    let postPartVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckPartController") as! PostCheckPartController
+                    postPartVC.didCaptureData = { unitPosition, permConn, earthConn, ignConn, serial, loom, comments in
+                        
+                    }
+                    NavigationHelper.helper.contentNavController!.pushViewController(postPartVC, animated: true)
                 }
                 return partsCell
             }
@@ -338,6 +385,64 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
             case 0:
                 let headerCell = self.tblPostCheck.dequeueReusableCell(withIdentifier: "HeaderCell", for: indexPath) as! HeaderCell
                 headerCell.datasource = "" as AnyObject
+                headerCell.lblContent.text = "Issues"
+                headerCell.imgContent.image = UIImage(named: "TestReport")
+                return headerCell
+            case 1:
+                let issueCell = self.tblPostCheck.dequeueReusableCell(withIdentifier: "ElectricalIssueCell", for: indexPath) as! ElectricalIssueCell
+                issueCell.datasource = "Electrical" as AnyObject
+                issueIndexElectrical = indexPath.row
+                issueCell.didSendYes = { check in
+                    self.isIssueElectrical = check
+                    self.tblPostCheck.reloadData()
+                }
+                issueCell.arrImg = self.arrImgElectricalIssue
+                issueCell.didcaptureCamera = { capture in
+                    CameraHandler.shared.showActionSheet(vc: self)
+                    CameraHandler.shared.imagePickedBlock = { (image) in
+                        self.arrImgElectricalIssue.append(image)
+                        self.tblPostCheck.reloadData()
+                    }
+                }
+                return issueCell
+            case 2:
+                let issueCell = self.tblPostCheck.dequeueReusableCell(withIdentifier: "ExteriorIssueCell", for: indexPath) as! ExteriorIssueCell
+                issueCell.datasource = "Exterior" as AnyObject
+                issueCell.didSendYes = { check in
+                    self.isIssueExterior = check
+                    self.tblPostCheck.reloadData()
+                }
+                issueCell.arrImg = self.arrImgExteriorIssue
+                issueCell.didcaptureCamera = { capture in
+                    CameraHandler.shared.showActionSheet(vc: self)
+                    CameraHandler.shared.imagePickedBlock = { (image) in
+                        self.arrImgExteriorIssue.append(image)
+                        self.tblPostCheck.reloadData()
+                    }
+                }
+                return issueCell
+            default:
+                let issueCell = self.tblPostCheck.dequeueReusableCell(withIdentifier: "InteriorIssueCell", for: indexPath) as! InteriorIssueCell
+                issueCell.datasource = "Interior" as AnyObject
+                issueCell.didSendYes = { check in
+                    self.isIssueInterior = check
+                    self.tblPostCheck.reloadData()
+                }
+                issueCell.arrImg = self.arrImgInteriorIssue
+                issueCell.didcaptureCamera = { capture in
+                    CameraHandler.shared.showActionSheet(vc: self)
+                    CameraHandler.shared.imagePickedBlock = { (image) in
+                        self.arrImgInteriorIssue.append(image)
+                        self.tblPostCheck.reloadData()
+                    }
+                }
+                return issueCell
+            }
+        } else if indexPath.section == 5 {
+            switch indexPath.row {
+            case 0:
+                let headerCell = self.tblPostCheck.dequeueReusableCell(withIdentifier: "HeaderCell", for: indexPath) as! HeaderCell
+                headerCell.datasource = "" as AnyObject
                 headerCell.lblContent.text = "Declaration"
                 headerCell.imgContent.image = UIImage(named: "declaration")
                 return headerCell
@@ -346,7 +451,7 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                 engDeclCell.datasource = "" as AnyObject
                 return engDeclCell
             }
-        } else if indexPath.section == 5 {
+        } else if indexPath.section == 6 {
             switch indexPath.row {
             case 0:
                 let headerCell = self.tblPostCheck.dequeueReusableCell(withIdentifier: "HeaderCell", for: indexPath) as! HeaderCell
@@ -359,7 +464,7 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                 signCell.datasource = "" as AnyObject
                 return signCell
             }
-        } else if indexPath.section == 6 {
+        } else if indexPath.section == 7 {
             switch indexPath.row {
             case 0:
                 let headerCell = self.tblPostCheck.dequeueReusableCell(withIdentifier: "HeaderCell", for: indexPath) as! HeaderCell

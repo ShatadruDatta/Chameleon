@@ -40,7 +40,7 @@ class LaunchController: BaseViewController {
 //        let introVC = mainStoryboard.instantiateViewController(withIdentifier: "IntroController") as! IntroController
 //        NavigationHelper.helper.contentNavController!.pushViewController(introVC, animated: true)
         
-        let introVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckController") as! PostCheckController
+        let introVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
         NavigationHelper.helper.contentNavController!.pushViewController(introVC, animated: true)
     }
 }

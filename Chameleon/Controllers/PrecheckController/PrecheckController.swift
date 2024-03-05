@@ -15,6 +15,8 @@ class PrecheckController: BaseViewController {
     @IBOutlet weak var viewPostCheck: UIView!
     @IBOutlet weak var viewClosure: UIView!
     var arrImgElectricalIssue: [UIImage] = []
+    var arrImgExteriorIssue: [UIImage] = []
+    var arrImgInteriorIssue: [UIImage] = []
     var isReset: Bool = false
     var isSave: Bool = false
     var issueIndex: Int = -1
@@ -40,6 +42,10 @@ class PrecheckController: BaseViewController {
         
         self.viewClosure.layer.masksToBounds = false
         self.viewClosure.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)
+    }
+    
+    @IBAction func menu(_ sender: UIButton) {
+        NavigationHelper.helper.openSidePanel(open: true)
     }
 }
 
@@ -87,12 +93,28 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                             return 180.0
                         }
                     } else {
-                        return 45.0
+                        return 50.0
                     }
                 } else if indexPath.row == 3 {
-                    return isIssueExterior ? 180 : 45.0
+                    if isIssueExterior {
+                        if arrImgExteriorIssue.count > 0 {
+                            return 245.0
+                        } else {
+                            return 180.0
+                        }
+                    } else {
+                        return 50.0
+                    }
                 } else {
-                    return isIssueInterior ? 180 : 45.0
+                    if isIssueInterior {
+                        if arrImgInteriorIssue.count > 0 {
+                            return 245.0
+                        } else {
+                            return 180.0
+                        }
+                    } else {
+                        return 50.0
+                    }
                 }
             }
         } else {
@@ -273,8 +295,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 return whiteBottomCell
             } else if indexPath.row == 2 {
                 let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ElectricalIssueCell", for: indexPath) as! ElectricalIssueCell
-                issueCell.datasource = "" as AnyObject
-                issueIndex = indexPath.row
+                issueCell.datasource = "Electrical" as AnyObject
                 issueCell.didSendYes = { check in
                     self.isIssueElectrical = check
                     self.tblPreCheck.reloadData()
@@ -290,20 +311,34 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 return issueCell
             } else if indexPath.row == 3 {
                 let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ExteriorIssueCell", for: indexPath) as! ExteriorIssueCell
-                issueCell.datasource = "" as AnyObject
-                issueIndex = indexPath.row
+                issueCell.datasource = "Exterior" as AnyObject
                 issueCell.didSendYes = { check in
                     self.isIssueExterior = check
                     self.tblPreCheck.reloadData()
                 }
+                issueCell.arrImg = self.arrImgExteriorIssue
+                issueCell.didcaptureCamera = { capture in
+                    CameraHandler.shared.showActionSheet(vc: self)
+                    CameraHandler.shared.imagePickedBlock = { (image) in
+                        self.arrImgExteriorIssue.append(image)
+                        self.tblPreCheck.reloadData()
+                    }
+                }
                 return issueCell
             } else {
                 let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "InteriorIssueCell", for: indexPath) as! InteriorIssueCell
-                issueCell.datasource = "" as AnyObject
-                issueIndex = indexPath.row
+                issueCell.datasource = "Interior" as AnyObject
                 issueCell.didSendYes = { check in
                     self.isIssueInterior = check
                     self.tblPreCheck.reloadData()
+                }
+                issueCell.arrImg = self.arrImgInteriorIssue
+                issueCell.didcaptureCamera = { capture in
+                    CameraHandler.shared.showActionSheet(vc: self)
+                    CameraHandler.shared.imagePickedBlock = { (image) in
+                        self.arrImgInteriorIssue.append(image)
+                        self.tblPreCheck.reloadData()
+                    }
                 }
                 return issueCell
             }
@@ -627,10 +662,7 @@ class HeaderCell: BaseTableViewCell {
 // MARK: ElectricalIssuesCell
 class ElectricalIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextViewDelegate {
     @IBOutlet weak var lblContent: UILabel!
-    @IBOutlet weak var imgYes: UIImageView!
-    @IBOutlet weak var imgNo: UIImageView!
-    @IBOutlet weak var btnYes: UIButton!
-    @IBOutlet weak var btnNo: UIButton!
+    @IBOutlet weak var switchIssue: UISwitch!
     @IBOutlet weak var txtView: UITextView!
     @IBOutlet weak var btnClip: UIButton!
     @IBOutlet weak var btnCamera: UIButton!
@@ -642,13 +674,26 @@ class ElectricalIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollec
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
+                self.lblContent.text = datasource as? String
                 txtView.textColor = .fontColor
                 parentTxtView.layer.cornerRadius = 10.0
                 collImg.reloadData()
-                btnYes.addTarget(self, action: #selector(yes), for: .touchUpInside)
-                btnNo.addTarget(self, action: #selector(no), for: .touchUpInside)
                 btnCamera.addTarget(self, action: #selector(cameraCapture), for: .touchUpInside)
+                switchIssue.addTarget(self, action: #selector(switchValueDidChange(_:)), for: .valueChanged)
+
             }
+        }
+    }
+    
+    @objc func switchValueDidChange(_ sender: UISwitch) {
+        if sender.isSelected {
+            sender.isSelected = false
+            sender.thumbTintColor = UIColor.white
+            self.didSendYes!(false)
+        } else {
+            sender.isSelected = true
+            sender.thumbTintColor = UIColor.blueColor
+            self.didSendYes!(true)
         }
     }
     
@@ -656,28 +701,27 @@ class ElectricalIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollec
         self.didcaptureCamera!(true)
     }
     
-    @objc func yes(_ sender: UIButton) {
-        imgYes.image = UIImage(named: "check")
-        imgNo.image = UIImage(named: "uncheck")
-        self.didSendYes!(true)
-    }
-    
-    @objc func no(_ sender: UIButton) {
-        imgYes.image = UIImage(named: "uncheck")
-        imgNo.image = UIImage(named: "check")
-        self.didSendYes!(false)
-    }
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return arrImg.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let collImgCell = self.collImg.dequeueReusableCell(withReuseIdentifier: "CollImgCell", for: indexPath) as! CollImgCell
-        collImgCell.datasource = "" as AnyObject
-        collImgCell.imgView.image = arrImg[indexPath.item]
-        collImgCell.imgView.contentMode = .scaleAspectFit
-        return collImgCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollImgCell", for: indexPath)
+        let imageview: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+        imageview.image = arrImg[indexPath.item]
+        imageview.contentMode = .scaleAspectFill
+        cell.contentView.layer.cornerRadius = 5.0
+        cell.contentView.layer.masksToBounds = true
+        cell.contentView.addSubview(imageview)
+        let btnDel: UIButton = UIButton(frame: CGRect(x: 36, y: 0, width: 24, height: 24))
+        btnDel.setImage(UIImage(named: "trash"), for: .normal)
+        btnDel.addTarget(self, action: #selector(delImg), for: .touchUpInside)
+        cell.contentView.addSubview(btnDel)
+        return cell
+    }
+    
+    @objc func delImg(_ sender: UIButton) {
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -710,48 +754,65 @@ class ElectricalIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollec
 // MARK: ExteriorIssuesCell
 class ExteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextViewDelegate {
     @IBOutlet weak var lblContent: UILabel!
-    @IBOutlet weak var imgYes: UIImageView!
-    @IBOutlet weak var imgNo: UIImageView!
-    @IBOutlet weak var btnYes: UIButton!
-    @IBOutlet weak var btnNo: UIButton!
+    @IBOutlet weak var switchIssue: UISwitch!
     @IBOutlet weak var txtView: UITextView!
     @IBOutlet weak var btnClip: UIButton!
     @IBOutlet weak var btnCamera: UIButton!
     @IBOutlet weak var collImg: UICollectionView!
     @IBOutlet weak var parentTxtView: UIView!
     var didSendYes:((Bool) -> ())!
+    var didcaptureCamera:((Bool) -> ())!
+    var arrImg: [UIImage] = []
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
+                self.lblContent.text = datasource as? String
                 txtView.textColor = .fontColor
                 parentTxtView.layer.cornerRadius = 10.0
-                btnYes.addTarget(self, action: #selector(yes), for: .touchUpInside)
-                btnNo.addTarget(self, action: #selector(no), for: .touchUpInside)
                 collImg.reloadData()
+                btnCamera.addTarget(self, action: #selector(cameraCapture), for: .touchUpInside)
+                switchIssue.addTarget(self, action: #selector(switchValueDidChange(_:)), for: .valueChanged)
             }
         }
     }
     
-    @objc func yes(_ sender: UIButton) {
-        imgYes.image = UIImage(named: "check")
-        imgNo.image = UIImage(named: "uncheck")
-        self.didSendYes!(true)
+    @objc func switchValueDidChange(_ sender: UISwitch) {
+        if sender.isSelected {
+            sender.isSelected = false
+            sender.thumbTintColor = UIColor.white
+            self.didSendYes!(false)
+        } else {
+            sender.isSelected = true
+            sender.thumbTintColor = UIColor.blueColor
+            self.didSendYes!(true)
+        }
     }
     
-    @objc func no(_ sender: UIButton) {
-        imgYes.image = UIImage(named: "uncheck")
-        imgNo.image = UIImage(named: "check")
-        self.didSendYes!(false)
+    @objc func cameraCapture(_ sender: UIButton) {
+        self.didcaptureCamera!(true)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return arrImg.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let collImgCell = self.collImg.dequeueReusableCell(withReuseIdentifier: "CollImgCell", for: indexPath) as! CollImgCell
-        collImgCell.datasource = "" as AnyObject
-        return collImgCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollImgCell", for: indexPath)
+        let imageview: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+        imageview.image = arrImg[indexPath.item]
+        imageview.contentMode = .scaleAspectFill
+        cell.contentView.layer.cornerRadius = 5.0
+        cell.contentView.layer.masksToBounds = true
+        cell.contentView.addSubview(imageview)
+        let btnDel: UIButton = UIButton(frame: CGRect(x: 36, y: 0, width: 24, height: 24))
+        btnDel.setImage(UIImage(named: "trash"), for: .normal)
+        btnDel.addTarget(self, action: #selector(delImg), for: .touchUpInside)
+        cell.contentView.addSubview(btnDel)
+        return cell
+    }
+    
+    @objc func delImg(_ sender: UIButton) {
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -784,48 +845,65 @@ class ExteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollecti
 // MARK: InteriorIssuesCell
 class InteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextViewDelegate {
     @IBOutlet weak var lblContent: UILabel!
-    @IBOutlet weak var imgYes: UIImageView!
-    @IBOutlet weak var imgNo: UIImageView!
-    @IBOutlet weak var btnYes: UIButton!
-    @IBOutlet weak var btnNo: UIButton!
+    @IBOutlet weak var switchIssue: UISwitch!
     @IBOutlet weak var txtView: UITextView!
     @IBOutlet weak var btnClip: UIButton!
     @IBOutlet weak var btnCamera: UIButton!
     @IBOutlet weak var collImg: UICollectionView!
     @IBOutlet weak var parentTxtView: UIView!
     var didSendYes:((Bool) -> ())!
+    var didcaptureCamera:((Bool) -> ())!
+    var arrImg: [UIImage] = []
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
+                self.lblContent.text = datasource as? String
                 txtView.textColor = .fontColor
                 parentTxtView.layer.cornerRadius = 10.0
                 collImg.reloadData()
-                btnYes.addTarget(self, action: #selector(yes), for: .touchUpInside)
-                btnNo.addTarget(self, action: #selector(no), for: .touchUpInside)
+                btnCamera.addTarget(self, action: #selector(cameraCapture), for: .touchUpInside)
+                switchIssue.addTarget(self, action: #selector(switchValueDidChange(_:)), for: .valueChanged)
             }
         }
     }
     
-    @objc func yes(_ sender: UIButton) {
-        imgYes.image = UIImage(named: "check")
-        imgNo.image = UIImage(named: "uncheck")
-        self.didSendYes!(true)
+    @objc func switchValueDidChange(_ sender: UISwitch) {
+        if sender.isSelected {
+            sender.isSelected = false
+            sender.thumbTintColor = UIColor.white
+            self.didSendYes!(false)
+        } else {
+            sender.isSelected = true
+            sender.thumbTintColor = UIColor.blueColor
+            self.didSendYes!(true)
+        }
     }
     
-    @objc func no(_ sender: UIButton) {
-        imgYes.image = UIImage(named: "uncheck")
-        imgNo.image = UIImage(named: "check")
-        self.didSendYes!(false)
+    @objc func cameraCapture(_ sender: UIButton) {
+        self.didcaptureCamera!(true)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return arrImg.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let collImgCell = self.collImg.dequeueReusableCell(withReuseIdentifier: "CollImgCell", for: indexPath) as! CollImgCell
-        collImgCell.datasource = "" as AnyObject
-        return collImgCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollImgCell", for: indexPath)
+        let imageview: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+        imageview.image = arrImg[indexPath.item]
+        imageview.contentMode = .scaleAspectFill
+        cell.contentView.layer.cornerRadius = 5.0
+        cell.contentView.layer.masksToBounds = true
+        cell.contentView.addSubview(imageview)
+        let btnDel: UIButton = UIButton(frame: CGRect(x: 36, y: 0, width: 24, height: 24))
+        btnDel.setImage(UIImage(named: "trash"), for: .normal)
+        btnDel.addTarget(self, action: #selector(delImg), for: .touchUpInside)
+        cell.contentView.addSubview(btnDel)
+        return cell
+    }
+    
+    @objc func delImg(_ sender: UIButton) {
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
