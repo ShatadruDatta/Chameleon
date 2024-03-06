@@ -221,6 +221,7 @@ class WorkListCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVie
     @objc func startNow() {
         let jobSheetVC = mainStoryboard.instantiateViewController(withIdentifier: "JobSheetController") as! JobSheetController
         jobSheetVC.jobId = jobId
+        jobSheetVC.nc_bnc_number = ncNumber
         NavigationHelper.helper.contentNavController!.pushViewController(jobSheetVC, animated: true)
     }
     

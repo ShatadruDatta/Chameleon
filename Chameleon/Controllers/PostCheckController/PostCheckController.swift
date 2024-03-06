@@ -9,6 +9,7 @@ import UIKit
 
 class PostCheckController: BaseViewController {
 
+    @IBOutlet weak var lblNcNumber: UILabel!
     @IBOutlet weak var tblPostCheck: UITableView!
     @IBOutlet weak var viewPreCheck: UIView!
     @IBOutlet weak var viewPostCheck: UIView!
@@ -20,6 +21,10 @@ class PostCheckController: BaseViewController {
     var arrImg: [UIImage] = []
     var isReset: Bool = false
     var isSave: Bool = false
+    
+    var checkController: Bool = false
+    
+    var nc_bnc_number: String!
     
     var isIssueElectrical: Bool = false
     var issueIndexElectrical: Int = -1
@@ -50,7 +55,31 @@ class PostCheckController: BaseViewController {
         arrBufferParts.append((id: self.arrBufferPartsId, partsName: "RP123456", serialNo: "ABC7463", consumed: "Yes", partsImg: UIImage()))
         self.arrPartsReturnId += 1
         arrPartsToReturn.append((id: self.arrPartsReturnId, partsName: "", serialNo: "", returnedBy: "", partsImg: UIImage()))
+        
+        self.lblNcNumber.text = self.nc_bnc_number
         // Do any additional setup after loading the view.
+    }
+    
+    @IBAction func closure(_ sender: UIButton) {
+        let closureVC = mainStoryboard.instantiateViewController(withIdentifier: "ClosureController") as! ClosureController
+        closureVC.nc_bnc_number = self.nc_bnc_number
+        NavigationHelper.helper.contentNavController!.pushViewController(closureVC, animated: true)
+    }
+    
+    @IBAction func precheck(_ sender: UIButton) {
+        let allViewController: [UIViewController] =  NavigationHelper.helper.contentNavController!.viewControllers as [UIViewController]
+        for aviewcontroller: UIViewController in allViewController {
+            if aviewcontroller.isKind(of: PrecheckController.classForCoder()) {
+                NavigationHelper.helper.contentNavController!.popToViewController(aviewcontroller, animated: true)
+                self.checkController = true
+                break
+            }
+        }
+        if self.checkController == false {
+            let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
+            NavigationHelper.helper.contentNavController!.pushViewController(precheckVC, animated: true)
+        }
+        self.checkController = false
     }
     
     @IBAction func menu(_ sender: UIButton) {

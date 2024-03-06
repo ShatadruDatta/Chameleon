@@ -9,6 +9,8 @@ import UIKit
 
 class ClosureController: BaseTableViewController {
 
+    var nc_bnc_number: String!
+    var checkController: Bool = false
     @IBOutlet weak var viewPreCheck: UIView!
     @IBOutlet weak var viewPostCheck: UIView!
     @IBOutlet weak var viewClosure: UIView!
@@ -133,6 +135,38 @@ class ClosureController: BaseTableViewController {
         btnReset.layer.cornerRadius = 22.5
         btnReset.layer.borderColor = UIColor.blueColor.cgColor
         btnSave.layer.cornerRadius = 22.5
+    }
+    
+    @IBAction func precheck(_ sender: UIButton) {
+        let allViewController: [UIViewController] =  NavigationHelper.helper.contentNavController!.viewControllers as [UIViewController]
+        for aviewcontroller: UIViewController in allViewController {
+            if aviewcontroller.isKind(of: PrecheckController.classForCoder()) {
+                NavigationHelper.helper.contentNavController!.popToViewController(aviewcontroller, animated: true)
+                self.checkController = true
+                break
+            }
+        }
+        if self.checkController == false {
+            let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
+            NavigationHelper.helper.contentNavController!.pushViewController(precheckVC, animated: true)
+        }
+        self.checkController = false
+    }
+    
+    @IBAction func postcheck(_ sender: UIButton) {
+        let allViewController: [UIViewController] =  NavigationHelper.helper.contentNavController!.viewControllers as [UIViewController]
+        for aviewcontroller: UIViewController in allViewController {
+            if aviewcontroller.isKind(of: PostCheckController.classForCoder()) {
+                NavigationHelper.helper.contentNavController!.popToViewController(aviewcontroller, animated: true)
+                self.checkController = true
+                break
+            }
+        }
+        if self.checkController == false {
+            let postcheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckController") as! PostCheckController
+            NavigationHelper.helper.contentNavController!.pushViewController(postcheckVC, animated: true)
+        }
+        self.checkController = false
     }
     
     @objc func menu(_ sender: UIButton) {

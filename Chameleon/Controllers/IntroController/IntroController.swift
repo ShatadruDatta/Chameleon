@@ -10,8 +10,7 @@ import UIKit
 class ProductParts: ObservableObject {
     @Published var prodModels: ProductModels?
     static var shared = ProductParts.init()
-    private init() { //Just to hide the method
-    }
+    private init() { }
 }
 
 

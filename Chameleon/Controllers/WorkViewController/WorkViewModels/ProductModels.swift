@@ -14,9 +14,9 @@ struct ProductModels: Codable {
 
 // MARK: - Result
 struct ResultModels: Codable {
-    let defaultCode: DefaultCode
+    let defaultCode: String?
     let id: Int
-    let name: String
+    let name: String?
 
     enum CodingKeys: String, CodingKey {
         case defaultCode = "default_code"

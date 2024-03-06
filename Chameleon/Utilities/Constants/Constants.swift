@@ -30,62 +30,8 @@ let accessParam = "accesskey="
 
 let apiKey = "U1fR9vsaXV16QUVdpDAlt9GEZErnGdbm9u1LHsg8"
 
-let Feed = "social/users/"
-
-
-//MARK: AES256 Key & iv
-let iv = "1234567891123456"
-let key = "wt1U5MACWJFTXGenFoZoiLwQGrLgdbHA"
-let aes256 = AES(key: key, iv: iv)
-
-var GoPNumber: String!
-
-//MARK: ArrayInsuredMembers
-var arrInsuredMembers: [(ID: String, Name: String, Relationship: String, DOB: String, InsuredFrom: String, InsuredTo: String)] = []
-
-//MARK: ArrayDealList
-var arrDealList: [(id: String, status: String, user_details_id: String, rating: String, business_name: String, address: String, city: String, state: String, zip: String, logo: String, phone: String, callName: String, dealID: String, dealTitle: String, dealDetails: String, dealImage: String, originalPrice: String, offerPrice: String, discount: String, availableDays: String, distance: Double, reviews: Int, latitude: Double, longitude: Double, mile: Double)] = []
-
-var arrClubList: [(id: String, status: String, user_details_id: String, Rating: String, business_name: String, address: String, city: String, state: String, zip: String, logo: String, callName: String, reviews: String, latitude: Double, longitude: Double, mile: Double, mon: String, tue: String, wed: String, thu: String, fri: String, sat: String, sun: String, currWeek: String)] = []
-
-var arrDeals: [(DealID: String, DealTitle: String, DealDetails: String, DealImage: String, OriginalPrice: String, OfferPrice: String, Discount: String)] = []
-
-var arrFeed: [(lat: String, lon: String, reviews: Int, rating: String, feed_id: String, name: String, description: String, images: String, feed_date: String, user_id: String, fb_link: String, business_name: String, business_logo: String, isDetailDesc: Bool, descWithoutSpace: String, pixels: String, height: CGFloat)] = []
-
-var arrLocalFeed: [(lat: String, lon: String, rating: String, feed_id: String, name: String, description: String, images: String, feed_date: String, user_id: String, fb_link: String, business_name: String, business_logo: String, isDetailDesc: Bool, descWithoutSpace: String, pixels: String, height: CGFloat)] = []
-
-//MARK: UserArray
-var arrUser = [String]()
-
-//MARK: CountryList
-var arrCountry: [(id: String, name: String)] = []
-
-//MARK: GOPCountryList
-var arrGOPCountry: [(id: String, name: String)] = []
-
-//MARK: DoctorSpeciality
-var arrDoctorSpeciality: [(id: String, name: String)] = []
-
-//MARK: Currency
-var arrCurrency: [(id: String, name: String)] = []
-
-//MARK: ClaimBeneficiaries
-var arrClaimBeneficiary: [(id: String, name: String)] = []
-
-//MARK: Diagnosis
-var arrDiagnosis: [(id: String, name: String)] = []
-
-//MARK: DoctorDetails
-var arrDoctorDetails: [(id: String, name: String)] = []
-
-//MARK: HospitalOrPharmacyName
-var arrHospital: [(id: String, name: String)] = []
-
-//MARK: DoctorName
-var arrDoctorName: [(id: String, name: String)] = []
-
-//MARK: MedicalProcedure
-var arrMedicalProcedure: [(id: String, name: String)] = []
+//MARK: ArrayPartList
+var arrPartsSerial: [(ncNo: String, serialPart1: String, serialPart2: String, prodName: String, prodId: Int, quantity: Int)] = []
 
 // MARK: Storyboard
 let mainStoryboard: UIStoryboard = UIStoryboard(name: UIDevice.current.userInterfaceIdiom == .phone ? "Main" : "Main", bundle: nil)

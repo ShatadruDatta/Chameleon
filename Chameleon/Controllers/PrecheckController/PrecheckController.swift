@@ -10,6 +10,7 @@ import Photos
 
 class PrecheckController: BaseViewController {
 
+    @IBOutlet weak var lblNcNumber: UILabel!
     @IBOutlet weak var tblPreCheck: UITableView!
     @IBOutlet weak var viewPreCheck: UIView!
     @IBOutlet weak var viewPostCheck: UIView!
@@ -22,11 +23,13 @@ class PrecheckController: BaseViewController {
     var issueIndex: Int = -1
     var service = ""
     var miles = ""
+    var nc_bnc_number: String!
     var isIssueElectrical: Bool = false
     var isIssueExterior: Bool = false
     var isIssueInterior: Bool = false
     var serviceArray = ["Electrician", "Exteriors", "Interiour", "Outside", "Inside"]
     var milesArray = ["Miles", "Kilometer"]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tblPreCheck.reloadData()
@@ -42,6 +45,14 @@ class PrecheckController: BaseViewController {
         
         self.viewClosure.layer.masksToBounds = false
         self.viewClosure.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)
+        
+        self.lblNcNumber.text = self.nc_bnc_number
+    }
+    
+    @IBAction func postcheck(_ sender: UIButton) {
+        let postcheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckController") as! PostCheckController
+        postcheckVC.nc_bnc_number = self.nc_bnc_number
+        NavigationHelper.helper.contentNavController!.pushViewController(postcheckVC, animated: true)
     }
     
     @IBAction func menu(_ sender: UIButton) {

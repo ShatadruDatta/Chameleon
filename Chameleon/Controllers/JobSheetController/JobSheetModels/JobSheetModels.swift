@@ -47,16 +47,14 @@ struct JobSheetModels: Codable {
 
 // MARK: - PartList
 struct PartList: Codable {
-    let id: Int
-    let productID: Customer
-    let serial1: Bool
-    let quantity: Int
-    let serial2: Bool
+    let id: Int?
+    let productID: Customer?
+    let quantity: Int?
 
     enum CodingKeys: String, CodingKey {
         case id
         case productID = "product_id"
-        case serial1, quantity, serial2
+        case quantity
     }
 }
 
@@ -97,15 +95,15 @@ enum ContactPerson: Codable {
 
 // MARK: - Address
 struct Address: Codable {
-    let postcode, contactName, clientContactName, street3: String?
-    let email, street2, contactNumber, street: String?
+    let postcode, contactName, clientContactName: String?
+    let email, contactNumber, street: String?
     let customerContactName: String?
 
     enum CodingKeys: String, CodingKey {
         case postcode
         case contactName = "contact_name"
         case clientContactName = "client_contact_name"
-        case street3, email, street2
+        case email
         case contactNumber = "contact_number"
         case street
         case customerContactName = "customer_contact_name"
@@ -114,13 +112,10 @@ struct Address: Codable {
 
 // MARK: - InstallationVehicleDetails
 struct InstallationVehicleDetails: Codable {
-    let yom, colour, vin, fuelType: String
-    let reg, vehicle: String
+    let reg, vehicle, vehicle_make, vehicle_model: String?
 
     enum CodingKeys: String, CodingKey {
-        case yom, colour, vin
-        case fuelType = "fuel_type"
-        case reg, vehicle
+        case reg, vehicle, vehicle_make, vehicle_model
     }
 }
 

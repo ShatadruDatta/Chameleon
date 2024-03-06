@@ -7,9 +7,11 @@
 
 import UIKit
 import MapKit
+import SwiftyJSON
 
 class JobSheetController: BaseViewController {
 
+    @IBOutlet weak var lblNcNumber: UILabel!
     @IBOutlet weak var tblPrecheck: UITableView!
     @IBOutlet weak var viewPreCheck: UIView!
     @IBOutlet weak var viewPostCheck: UIView!
@@ -17,9 +19,23 @@ class JobSheetController: BaseViewController {
     @IBOutlet weak var activity: UIActivityIndicatorView!
     @Published var jobSheetDataModel: JobSheetModels?
     var jobId: Int!
+    var nc_bnc_number: String!
+    var street2DeliveryAdd: String = ""
+    var street3DeliveryAdd: String = ""
+    var street2InstallationAdd: String = ""
+    var street3InstallationAdd: String = ""
+    var ins_vehicle_det_color: String = ""
+    var ins_vehicle_det_fuelType: String = ""
+    var ins_vehicle_det_reg: String = ""
+    var ins_vehicle_det_vehicle: String = ""
+    var ins_vehicle_det_vehicle_make: String = ""
+    var ins_vehicle_det_vehicle_model: String = ""
+    var ins_vehicle_det_vin: String = ""
+    var ins_vehicle_det_yom: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.lblNcNumber.text = nc_bnc_number
         self.tblPrecheck.isHidden = true
         tblPrecheck.estimatedRowHeight = 100.0
         tblPrecheck.rowHeight = UITableView.automaticDimension
@@ -45,7 +61,8 @@ class JobSheetController: BaseViewController {
     }
     
     @IBAction func precheck(_ sender: UIButton) {
-        let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckController") as! PostCheckController
+        let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
+        precheckVC.nc_bnc_number = self.nc_bnc_number
         NavigationHelper.helper.contentNavController!.pushViewController(precheckVC, animated: true)
     }
     
@@ -63,6 +80,24 @@ class JobSheetController: BaseViewController {
                 let decoder = JSONDecoder()
                 let data = try decoder.decode(JobSheetModels.self, from: data)
                 jobSheetDataModel = data
+                self.street2DeliveryAdd = jsonVal["delivery_address"]["street2"].stringValue
+                self.street3DeliveryAdd = jsonVal["delivery_address"]["street3"].stringValue
+                self.street2InstallationAdd = jsonVal["installation_address"]["street2"].stringValue
+                self.street3InstallationAdd = jsonVal["installation_address"]["street3"].stringValue
+                self.ins_vehicle_det_reg = jsonVal["installation_vehicle_details"]["reg"].stringValue
+                self.ins_vehicle_det_color = jsonVal["installation_vehicle_details"]["colour"].stringValue
+                self.ins_vehicle_det_fuelType = jsonVal["installation_vehicle_details"]["fuel_type"].stringValue
+                self.ins_vehicle_det_vehicle = jsonVal["installation_vehicle_details"]["vehicle"].stringValue
+                self.ins_vehicle_det_vehicle_make = jsonVal["installation_vehicle_details"]["vehicle_make"].stringValue
+                self.ins_vehicle_det_vehicle_model = jsonVal["installation_vehicle_details"]["vehicle_model"].stringValue
+                self.ins_vehicle_det_vin = jsonVal["installation_vehicle_details"]["vin"].stringValue
+                self.ins_vehicle_det_yom = jsonVal["installation_vehicle_details"]["yom"].stringValue
+                if jsonVal["part_list"].count > 0 {
+                    arrPartsSerial.removeAll()
+                    for val in jsonVal["part_list"].arrayValue {
+                        arrPartsSerial.append((ncNo: jsonVal["nc_bnc_number"].stringValue, serialPart1: val["serial1"].stringValue, serialPart2: val["serial2"].stringValue, prodName: val["product_id"]["name"].stringValue, prodId: val["product_id"]["id"].intValue, quantity: val["quantity"].intValue))
+                    }
+                }
                 self.tblPrecheck.isHidden = false
                 self.tblPrecheck.reloadData()
             } catch {
@@ -140,9 +175,9 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
 
      func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
          switch section {
-         case 0:
-             return 4
-         case 1,3,4:
+         case 1:
+             return 2
+         case 0,3,4:
              return 1
          case 2:
              return self.jobSheetDataModel?.partList?.count ?? 0
@@ -153,56 +188,37 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
 
      func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
          if indexPath.section == 0 {
+             let custCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "CustomerJobSheetCell", for: indexPath) as! CustomerJobSheetCell
+             custCell.datasource = "" as AnyObject
+             custCell.lblCust.text = self.jobSheetDataModel?.customer.name
+             custCell.lblCustClient.text = self.jobSheetDataModel?.customerClient.name
+             custCell.lblRef.text = self.jobSheetDataModel?.clientOrderRef
+             custCell.lblDate.text = self.jobSheetDataModel?.appointment.components(separatedBy: " ")[0]
+             custCell.lblService.text = self.jobSheetDataModel?.service.name
+             custCell.lblFee.text = "£\(self.jobSheetDataModel?.service.engineerFee ?? 0)"
+             return custCell
+         } else if indexPath.section == 1 {
              switch indexPath.row {
              case 0:
-                 let custCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "CustomerCell", for: indexPath) as! CustomerCell
-                 custCell.datasource = "" as AnyObject
-                 custCell.lblCust.text = "Customer:"
-                 custCell.lblDetail.text = self.jobSheetDataModel?.customer.name
-                 custCell.lblCust2.text = "Client:"
-                 custCell.lblDetail2.text = self.jobSheetDataModel?.customerClient.name
-                 custCell.viewBG.backgroundColor = UIColor.init(hexString: "EFF3FC")
-                 custCell.viewBG2.backgroundColor = UIColor.init(hexString: "F5EFF8")
-                 return custCell
-             case 1:
-                 let custCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "CustomerCell", for: indexPath) as! CustomerCell
-                 custCell.datasource = "" as AnyObject
-                 custCell.lblCust.text = "Ref:"
-                 custCell.lblDetail.text = self.jobSheetDataModel?.clientOrderRef
-                 custCell.lblCust2.text = "Con No:"
-                 custCell.lblDetail2.text = "NA"
-                 custCell.viewBG.backgroundColor = UIColor.init(hexString: "F1F8F3")
-                 custCell.viewBG2.backgroundColor = UIColor.init(hexString: "F7F2EB")
-                 return custCell
-             case 2:
-                 let custCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "CustomerCell", for: indexPath) as! CustomerCell
-                 custCell.datasource = "" as AnyObject
-                 custCell.lblCust.text = "Install Date:"
-                 custCell.lblDetail.text = self.jobSheetDataModel?.appointment.components(separatedBy: " ")[0]
-                 custCell.lblCust2.text = "Install Time:"
-                 custCell.lblDetail2.text = self.jobSheetDataModel?.appointment.components(separatedBy: " ")[1]
-                 custCell.viewBG.backgroundColor = UIColor.init(hexString: "F5EFF8")
-                 custCell.viewBG2.backgroundColor = UIColor.init(hexString: "F1F8F3")
-                 return custCell
+                 let conDetCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "ContactDetailsCell", for: indexPath) as! ContactDetailsCell
+                 conDetCell.datasource = "" as AnyObject
+                 conDetCell.lblContactName.text = self.jobSheetDataModel?.installationAddress.contactName
+                 conDetCell.lblContactNo.text = self.jobSheetDataModel?.installationAddress.contactNumber
+                 conDetCell.lblContactMail.text = self.jobSheetDataModel?.installationAddress.email
+                 conDetCell.lblInstallation.text = (self.jobSheetDataModel?.installationAddress.street ?? "")
+                 + self.street2InstallationAdd + self.street3InstallationAdd
+                 conDetCell.lblDeliveryAddress.text = (self.jobSheetDataModel?.deliveryAddress.street ?? "")
+                 + self.street2DeliveryAdd + self.street3DeliveryAdd
+                 return conDetCell
              default:
-                 let serviceCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "ServiceCell", for: indexPath) as! ServiceCell
-                 serviceCell.datasource = "" as AnyObject
-                 serviceCell.lblDetail.text = self.jobSheetDataModel?.service.name
-                 serviceCell.lblFee.text = "£" + String(self.jobSheetDataModel?.service.engineerFee ?? 0)
-                 return serviceCell
+                 let conCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "ConCell", for: indexPath) as! ConCell
+                 conCell.datasource = "" as AnyObject
+                 conCell.lblConNo.text = "NA"
+                 return conCell
              }
-         } else if indexPath.section == 1 {
-             let conDetCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "ContactDetailsCell", for: indexPath) as! ContactDetailsCell
-             conDetCell.datasource = "" as AnyObject
-             conDetCell.lblContactName.text = self.jobSheetDataModel?.installationAddress.contactName
-             conDetCell.lblContactNo.text = self.jobSheetDataModel?.installationAddress.contactNumber
-             conDetCell.lblContactMail.text = self.jobSheetDataModel?.installationAddress.email
-             conDetCell.lblInstallation.text = (self.jobSheetDataModel?.installationAddress.street ?? "") + (self.jobSheetDataModel?.installationAddress.street2 ?? "") + (self.jobSheetDataModel?.installationAddress.street3 ?? "")
-             conDetCell.lblDeliveryAddress.text = (self.jobSheetDataModel?.deliveryAddress.street ?? "") + (self.jobSheetDataModel?.deliveryAddress.street2 ?? "") + (self.jobSheetDataModel?.deliveryAddress.street3 ?? "")
-             return conDetCell
          } else if indexPath.section == 2 {
              let partsCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "PartsCell", for: indexPath) as! PartsCell
-             partsCell.datasource = "\(self.jobSheetDataModel?.partList?[indexPath.row].productID.name ?? "")\n Serial Number : NA" as AnyObject
+             partsCell.datasource = "\(self.jobSheetDataModel?.partList?[indexPath.row].productID?.name ?? "")\n Serial Number : NA" as AnyObject
              if indexPath.row % 2 == 0 {
                  partsCell.viewBG.backgroundColor = UIColor.init(hexString: "F0EEF5")
              } else {
@@ -214,22 +230,22 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
              installCell.datasource = "" as AnyObject
              // Installation Details
              installCell.lblDetail.text = "Details Vehicle: \(self.jobSheetDataModel?.installationVehicleDetails.vehicle ?? "")"
-             installCell.lblReg.text = self.jobSheetDataModel?.installationVehicleDetails.reg
-             installCell.lblYOM.text = "NA"
-             installCell.lblColour.text = "NA"
-             installCell.lblVIN.text = self.jobSheetDataModel?.installationVehicleDetails.vin
-             installCell.lblFuel.text = "NA"
+             installCell.lblReg.text = self.ins_vehicle_det_reg
+             installCell.lblYOM.text = self.ins_vehicle_det_yom
+             installCell.lblColour.text = self.ins_vehicle_det_color
+             installCell.lblVIN.text = self.ins_vehicle_det_vin
+             installCell.lblFuel.text = self.ins_vehicle_det_fuelType
              return installCell
          } else if indexPath.section == 4 {
              let installCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "InstallationCell", for: indexPath) as! InstallationCell
              installCell.datasource = "" as AnyObject
              // Deinstallation Details
              installCell.lblDetail.text = "Details Vehicle: \(self.jobSheetDataModel?.installationVehicleDetails.vehicle ?? "")"
-             installCell.lblReg.text = self.jobSheetDataModel?.installationVehicleDetails.reg
-             installCell.lblYOM.text = "NA"
-             installCell.lblColour.text = "NA"
-             installCell.lblVIN.text = self.jobSheetDataModel?.installationVehicleDetails.vin
-             installCell.lblFuel.text = "NA"
+             installCell.lblReg.text = self.ins_vehicle_det_reg
+             installCell.lblYOM.text = self.ins_vehicle_det_yom
+             installCell.lblColour.text = self.ins_vehicle_det_color
+             installCell.lblVIN.text = self.ins_vehicle_det_vin
+             installCell.lblFuel.text = self.ins_vehicle_det_fuelType
              return installCell
          } else {
              let noteCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "PartsCell", for: indexPath) as! PartsCell
@@ -241,19 +257,48 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
-            if indexPath.row == 3 {
-                return 110.0
-            } else {
-                return UITableView.automaticDimension
-            }
+            return 312.0
         }
         if indexPath.section == 1 {
-            return 350.0
+            switch indexPath.row {
+            case 0:
+                return UITableView.automaticDimension
+            default:
+                return 75.0
+            }
         }
         if indexPath.section == 3 || indexPath.section == 4 {
             return 115.0
         } else {
             return UITableView.automaticDimension
+        }
+    }
+}
+
+// MARK: CustomerJobSheetCell
+class CustomerJobSheetCell: BaseTableViewCell {
+    @IBOutlet weak var viewBG: UIView!
+    @IBOutlet weak var lblTime: UILabel!
+    @IBOutlet weak var lblCust: UILabel!
+    @IBOutlet weak var lblCustClient: UILabel!
+    @IBOutlet weak var lblRef: UILabel!
+    @IBOutlet weak var lblDate: UILabel!
+    @IBOutlet weak var lblService: UILabel!
+    @IBOutlet weak var lblFee: UILabel!
+    @IBOutlet weak var clientIcon: UIImageView!
+    @IBOutlet weak var refIcon: UIImageView!
+    @IBOutlet weak var dateIcon: UIImageView!
+    @IBOutlet weak var serviceIcon: UIImageView!
+    override var datasource: AnyObject? {
+        didSet {
+            if datasource != nil {
+                viewBG.layer.cornerRadius = 10.0
+                clientIcon.setImageColor(color: UIColor.init(hexString: "#5D89F7"))
+                refIcon.setImageColor(color: UIColor.init(hexString: "#5D89F7"))
+                refIcon.setImageColor(color: UIColor.init(hexString: "#5D89F7"))
+                dateIcon.setImageColor(color: UIColor.init(hexString: "#5D89F7"))
+                serviceIcon.setImageColor(color: UIColor.init(hexString: "#5D89F7"))
+            }
         }
     }
 }
@@ -363,6 +408,22 @@ class InstallationCell: BaseTableViewCell {
         didSet {
             if datasource != nil {
                 viewBG.layer.cornerRadius = 10.0
+            }
+        }
+    }
+}
+
+
+// MARK: ConCell
+class ConCell: BaseTableViewCell {
+    @IBOutlet weak var lblConNo: UILabel!
+    @IBOutlet weak var btnCon: UIButton!
+    @IBOutlet weak var viewBG: UIView!
+    override var datasource: AnyObject? {
+        didSet {
+            if datasource != nil {
+                viewBG.layer.cornerRadius = 10.0
+                btnCon.layer.cornerRadius = 20.0
             }
         }
     }

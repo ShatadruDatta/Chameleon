@@ -782,24 +782,6 @@ extension UIViewController {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let OKAction = UIAlertAction(title: "Ok", style: .default) {
             (action: UIAlertAction) in
-            SET_OBJ_FOR_KEY(obj: "0", key: "IS_LOGIN")
-            
-            REMOVE_OBJ_FOR_KEY(key: "firstName")
-            REMOVE_OBJ_FOR_KEY(key: "lastName")
-            REMOVE_OBJ_FOR_KEY(key: "fullName")
-            REMOVE_OBJ_FOR_KEY(key: "dob")
-            REMOVE_OBJ_FOR_KEY(key: "policyName")
-            REMOVE_OBJ_FOR_KEY(key: "policyNo")
-            REMOVE_OBJ_FOR_KEY(key: "countryOfExpatriationName")
-            REMOVE_OBJ_FOR_KEY(key: "clientId")
-            REMOVE_OBJ_FOR_KEY(key: "token")
-            REMOVE_OBJ_FOR_KEY(key: "insuredFrom")
-            REMOVE_OBJ_FOR_KEY(key: "insuredTo")
-            REMOVE_OBJ_FOR_KEY(key: "coverageZoneName")
-            REMOVE_OBJ_FOR_KEY(key: "corporateClientName")
-            REMOVE_OBJ_FOR_KEY(key: "mainInsuredOrBeneficiary")
-            REMOVE_OBJ_FOR_KEY(key: "assistanceCompanyName")
-            arrInsuredMembers.removeAll()
             NavigationHelper.helper.logoutFromApp()
         }
         alertController.addAction(OKAction)
