@@ -1107,4 +1107,9 @@ extension UITableView {
         self.contentInset = edgeInset
         self.scrollIndicatorInsets = edgeInset
     }
+    
+    func reloadData(completion:@escaping ()->()) {
+        UIView.animate(withDuration: 0, animations: reloadData)
+            { _ in completion() }
+    }
 }

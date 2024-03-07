@@ -242,8 +242,8 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     imgCell.imgCamera2.isHidden = false
                     imgCell.btnDel2.isHidden = true
                 }
-                imgCell.lblImg1.text = "Dash\n(powered on)"
-                imgCell.lblImg2.text = "Reg/VIN"
+                imgCell.lblImg1.text = "Dash\n(powered on)*"
+                imgCell.lblImg2.text = "Reg/VIN*"
                 imgCell.didFirstImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
@@ -290,8 +290,8 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     imgCell.imgCamera2.isHidden = false
                     imgCell.btnDel2.isHidden = true
                 }
-                imgCell.lblImg1.text = "Front"
-                imgCell.lblImg2.text = "Rear"
+                imgCell.lblImg1.text = "Front*"
+                imgCell.lblImg2.text = "Rear*"
                 imgCell.didFirstImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
@@ -340,8 +340,8 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     imgCell.imgCamera2.isHidden = false
                     imgCell.btnDel2.isHidden = true
                 }
-                imgCell.lblImg1.text = "Passenger Side"
-                imgCell.lblImg2.text = "Driver Side"
+                imgCell.lblImg1.text = "Passenger Side*"
+                imgCell.lblImg2.text = "Driver Side*"
                 imgCell.didFirstImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
@@ -399,7 +399,11 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 return whiteBottomCell
             } else if indexPath.row == 2 {
                 let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ElectricalIssueCell", for: indexPath) as! ElectricalIssueCell
-                issueCell.datasource = "Electrical" as AnyObject
+                issueCell.datasource = "Electrical*" as AnyObject
+                if isReset {
+                    issueCell.txtView.text = "Text Message"
+                    issueCell.txtView.textColor = UIColor.fontColor
+                }
                 issueCell.didSendYes = { check in
                     PreCheckData.isElectricalIssue = check
                     self.tblPreCheck.reloadData()
@@ -422,7 +426,11 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 return issueCell
             } else if indexPath.row == 3 {
                 let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ExteriorIssueCell", for: indexPath) as! ExteriorIssueCell
-                issueCell.datasource = "Exterior" as AnyObject
+                issueCell.datasource = "Exterior*" as AnyObject
+                if isReset {
+                    issueCell.txtView.text = "Text Message"
+                    issueCell.txtView.textColor = UIColor.fontColor
+                }
                 issueCell.didSendYes = { check in
                     PreCheckData.isExteriorIssue = check
                     self.tblPreCheck.reloadData()
@@ -445,7 +453,11 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 return issueCell
             } else {
                 let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "InteriorIssueCell", for: indexPath) as! InteriorIssueCell
-                issueCell.datasource = "Interior" as AnyObject
+                issueCell.datasource = "Interior*" as AnyObject
+                if isReset {
+                    issueCell.txtView.text = "Text Message"
+                    issueCell.txtView.textColor = UIColor.fontColor
+                }
                 issueCell.didSendYes = { check in
                     PreCheckData.isInteriorIssue = check
                     self.tblPreCheck.reloadData()
@@ -477,11 +489,20 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
             } else if indexPath.row == 1 {
                 let custSignCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "CustSignCell", for: indexPath) as! CustSignCell
                 custSignCell.datasource = "" as AnyObject
+                if isReset {
+                    custSignCell.showSignature = false
+                    custSignCell.imgSign.isHidden = true
+                    custSignCell.signatureView.isHidden = false
+                    custSignCell.txtName.text = ""
+                }
                 custSignCell.didExpand = { chk  in
                     if chk {
-                        SignatureViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!) { imgSign, lines in
+                        SignatureViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!) { imgSign, lines, view in
                             PreCheckData.customerSignature = imgSign
-                            //self.tblPreCheck.reloadData()
+                            custSignCell.showSignature = true
+                            custSignCell.imgSign.image = imgSign
+                            custSignCell.imgSign.contentMode = .scaleAspectFit
+                            self.tblPreCheck.reloadData()
                         } didFinish: { txt in }}}
                 custSignCell.didEndWriteText = { val in
                     PreCheckData.customerName = val
@@ -495,38 +516,12 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 }
                 saveCell.didReset = { reset in
                     self.isReset = reset
+                    self.tblPreCheck.reloadData()
                     self.resetData()
                 }
                 return saveCell
             }
         }
-    }
-}
-
-// MARK: ResetData
-extension PrecheckController {
-    @objc func resetData() {
-        PreCheckData.odometer = ""
-        PreCheckData.dash_img = UIImage()
-        PreCheckData.reg_vin_img = UIImage()
-        PreCheckData.front_img = UIImage()
-        PreCheckData.rear_img = UIImage()
-        PreCheckData.passengerSide_img = UIImage()
-        PreCheckData.driverSide_img = UIImage()
-        PreCheckData.electricalIssueTxt = ""
-        PreCheckData.arrImgElectricalIssue = []
-        PreCheckData.exteriorIssueTxt = ""
-        PreCheckData.arrImgExteriorIssue = []
-        PreCheckData.interiorIssueTxt = ""
-        PreCheckData.arrImgInteriorIssue = []
-        PreCheckData.customerSignature = UIImage()
-        PreCheckData.customerName = ""
-        self.isReset = false
-        self.tblPreCheck.reloadData()
-    }
-    
-    @objc func saveData() {
-        
     }
 }
 
@@ -1160,14 +1155,23 @@ class CollImgCell: BaseCollectionViewCell {
 // MARK: CustSignCell
 class CustSignCell: BaseTableViewCell, UITextFieldDelegate, UITextViewDelegate {
     @IBOutlet weak var signatureView: SignatureView!
+    @IBOutlet weak var imgSign: UIImageView!
     @IBOutlet weak var txtName: CustomTextField!
     @IBOutlet weak var btnExpand: UIButton!
     @IBOutlet weak var viewBG: UIView!
     var didExpand:((Bool) -> ())!
     var didEndWriteText:((String) -> ())!
+    var showSignature: Bool = false
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
+                if showSignature {
+                    imgSign.isHidden = false
+                    signatureView.isHidden = true
+                } else {
+                    imgSign.isHidden = true
+                    signatureView.isHidden = false
+                }
                 viewBG.layer.cornerRadius = 10.0
                 txtName.layer.cornerRadius = 25.0
                 setupViews()
@@ -1183,6 +1187,9 @@ class CustSignCell: BaseTableViewCell, UITextFieldDelegate, UITextViewDelegate {
     }
     
     func setupViews() {
+        imgSign.layer.borderWidth = 0.5
+        imgSign.layer.borderColor = UIColor.black.cgColor
+        imgSign.layer.cornerRadius = 10.0
         signatureView.layer.borderWidth = 0.5
         signatureView.layer.borderColor = UIColor.black.cgColor
         signatureView.layer.cornerRadius = 10
@@ -1223,5 +1230,34 @@ class SaveCell: BaseTableViewCell {
     
     @objc func resetData(_ sender: UIButton) {
         self.didReset!(true)
+    }
+}
+
+
+// MARK: ResetData
+extension PrecheckController {
+    @objc func resetData() {
+        PreCheckData.odometer = ""
+        PreCheckData.dash_img = UIImage()
+        PreCheckData.reg_vin_img = UIImage()
+        PreCheckData.front_img = UIImage()
+        PreCheckData.rear_img = UIImage()
+        PreCheckData.passengerSide_img = UIImage()
+        PreCheckData.driverSide_img = UIImage()
+        PreCheckData.electricalIssueTxt = ""
+        PreCheckData.arrImgElectricalIssue = []
+        PreCheckData.exteriorIssueTxt = ""
+        PreCheckData.arrImgExteriorIssue = []
+        PreCheckData.interiorIssueTxt = ""
+        PreCheckData.arrImgInteriorIssue = []
+        PreCheckData.customerSignature = UIImage()
+        PreCheckData.customerName = ""
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.isReset = false
+        }
+    }
+    
+    @objc func saveData() {
+        
     }
 }

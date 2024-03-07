@@ -15,7 +15,7 @@ class SignatureViewController: BaseViewController {
     @IBOutlet weak var btnDone: UIButton!
     @IBOutlet weak var btnCancel: UIButton!
     var didRemove:((_ txt: String) -> ())?
-    var didSubmitVal:((_ imageSign: UIImage, _ lines: [Line]) -> ())?
+    var didSubmitVal:((_ imageSign: UIImage, _ lines: [Line], _ signView: UIView) -> ())?
    
    override func viewDidLoad() {
        super.viewDidLoad()
@@ -51,7 +51,7 @@ class SignatureViewController: BaseViewController {
     
     @IBAction func done(_ sender: UIButton) {
         if signatureView.lines.count > 0 {
-            self.didSubmitValue(imageSign: self.imageWithView(view: signatureView), lines: signatureView.lines)
+            self.didSubmitValue(imageSign: self.imageWithView(view: signatureView), lines: signatureView.lines, signView: signatureView)
         } else {
             self.presentAlertWithTitle(title: APP_TITLE, message: "Please sign the document properly!")
         }
@@ -71,7 +71,7 @@ class SignatureViewController: BaseViewController {
     }
     
  
-    internal class func showAddOrClearPopUp(sourceViewController: UIViewController, didSubmit: @escaping ((_ imageSign: UIImage, _ lines: [Line]) -> ()), didFinish: @escaping ((_ txt: String) -> ())) {
+    internal class func showAddOrClearPopUp(sourceViewController: UIViewController, didSubmit: @escaping ((_ imageSign: UIImage, _ lines: [Line], _ signView: UIView) -> ()), didFinish: @escaping ((_ txt: String) -> ())) {
         
         let commentPopVC = mainStoryboard.instantiateViewController(withIdentifier: "SignatureViewController") as! SignatureViewController
         commentPopVC.didSubmitVal = didSubmit
@@ -115,9 +115,9 @@ class SignatureViewController: BaseViewController {
         }
     }
     
-    func didSubmitValue(imageSign: UIImage, lines: [Line]) {
+    func didSubmitValue(imageSign: UIImage, lines: [Line], signView: UIView) {
         if didSubmitVal != nil {
-            didSubmitVal!(imageSign, lines)
+            didSubmitVal!(imageSign, lines, signView)
         }
         
         UIView.animate(withDuration: 0.25, animations: {
