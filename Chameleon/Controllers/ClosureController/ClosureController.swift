@@ -9,7 +9,6 @@ import UIKit
 
 class ClosureController: BaseTableViewController {
 
-    var nc_bnc_number: String!
     var checkController: Bool = false
     @IBOutlet weak var viewPreCheck: UIView!
     @IBOutlet weak var viewPostCheck: UIView!

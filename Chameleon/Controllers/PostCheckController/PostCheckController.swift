@@ -24,8 +24,6 @@ class PostCheckController: BaseViewController {
     
     var checkController: Bool = false
     
-    var nc_bnc_number: String!
-    
     var isIssueElectrical: Bool = false
     var issueIndexElectrical: Int = -1
     var arrImgElectricalIssue: [UIImage] = []
@@ -56,13 +54,12 @@ class PostCheckController: BaseViewController {
         self.arrPartsReturnId += 1
         arrPartsToReturn.append((id: self.arrPartsReturnId, partsName: "", serialNo: "", returnedBy: "", partsImg: UIImage()))
         
-        self.lblNcNumber.text = self.nc_bnc_number
+        self.lblNcNumber.text = JobSheetData.nc_bnc_number
         // Do any additional setup after loading the view.
     }
     
     @IBAction func closure(_ sender: UIButton) {
         let closureVC = mainStoryboard.instantiateViewController(withIdentifier: "ClosureController") as! ClosureController
-        closureVC.nc_bnc_number = self.nc_bnc_number
         NavigationHelper.helper.contentNavController!.pushViewController(closureVC, animated: true)
     }
     

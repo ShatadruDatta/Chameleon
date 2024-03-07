@@ -38,7 +38,7 @@ class SignatureView: UIView {
         setNeedsDisplay()
     }
 
-    fileprivate var lines = [Line]()
+    public var lines = [Line]()
 
     override func draw(_ rect: CGRect) {
         super.draw(rect)

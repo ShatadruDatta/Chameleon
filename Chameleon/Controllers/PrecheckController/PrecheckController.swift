@@ -8,6 +8,31 @@
 import UIKit
 import Photos
 
+struct PreCheckData {
+    static var miles = "Miles"
+    static var make = ""
+    static var model = ""
+    static var reg = ""
+    static var odometer = ""
+    static var dash_img = UIImage()
+    static var reg_vin_img = UIImage()
+    static var front_img = UIImage()
+    static var rear_img = UIImage()
+    static var passengerSide_img = UIImage()
+    static var driverSide_img = UIImage()
+    static var isElectricalIssue = false
+    static var electricalIssueTxt = ""
+    static var arrImgElectricalIssue: [UIImage] = []
+    static var isExteriorIssue = false
+    static var exteriorIssueTxt = ""
+    static var arrImgExteriorIssue: [UIImage] = []
+    static var isInteriorIssue = false
+    static var interiorIssueTxt = ""
+    static var arrImgInteriorIssue: [UIImage] = []
+    static var customerSignature = UIImage()
+    static var customerName = ""
+}
+
 class PrecheckController: BaseViewController {
 
     @IBOutlet weak var lblNcNumber: UILabel!
@@ -15,19 +40,10 @@ class PrecheckController: BaseViewController {
     @IBOutlet weak var viewPreCheck: UIView!
     @IBOutlet weak var viewPostCheck: UIView!
     @IBOutlet weak var viewClosure: UIView!
-    var arrImgElectricalIssue: [UIImage] = []
-    var arrImgExteriorIssue: [UIImage] = []
-    var arrImgInteriorIssue: [UIImage] = []
     var isReset: Bool = false
     var isSave: Bool = false
     var issueIndex: Int = -1
-    var service = ""
-    var miles = ""
-    var nc_bnc_number: String!
-    var isIssueElectrical: Bool = false
-    var isIssueExterior: Bool = false
-    var isIssueInterior: Bool = false
-    var serviceArray = ["Electrician", "Exteriors", "Interiour", "Outside", "Inside"]
+    
     var milesArray = ["Miles", "Kilometer"]
     
     override func viewDidLoad() {
@@ -46,17 +62,49 @@ class PrecheckController: BaseViewController {
         self.viewClosure.layer.masksToBounds = false
         self.viewClosure.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)
         
-        self.lblNcNumber.text = self.nc_bnc_number
+        self.lblNcNumber.text = JobSheetData.nc_bnc_number
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(PrecheckController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PrecheckController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        if JobSheetData.service.first == "D" {
+            PreCheckData.model = JobSheetData.deins_vehicle_det_vehicle_model
+            PreCheckData.make = JobSheetData.deins_vehicle_det_vehicle_make
+            PreCheckData.reg = JobSheetData.deins_vehicle_det_reg
+        } else {
+            PreCheckData.model = JobSheetData.ins_vehicle_det_vehicle_model
+            PreCheckData.make = JobSheetData.ins_vehicle_det_vehicle_make
+            PreCheckData.reg = JobSheetData.deins_vehicle_det_reg
+        }
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self)
     }
     
     @IBAction func postcheck(_ sender: UIButton) {
         let postcheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckController") as! PostCheckController
-        postcheckVC.nc_bnc_number = self.nc_bnc_number
         NavigationHelper.helper.contentNavController!.pushViewController(postcheckVC, animated: true)
     }
     
     @IBAction func menu(_ sender: UIButton) {
         NavigationHelper.helper.openSidePanel(open: true)
+    }
+    
+    @objc func keyboardWillShow(notification: Notification) {
+        if let keyboardHeight = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height {
+            print("Notification: Keyboard will show")
+            tblPreCheck.setBottomInset(to: keyboardHeight)
+        }
+    }
+
+    @objc func keyboardWillHide(notification: Notification) {
+        print("Notification: Keyboard will hide")
+        tblPreCheck.setBottomInset(to: 0.0)
     }
 }
 
@@ -97,8 +145,8 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 return 20.0
             } else {
                 if indexPath.row == 2 {
-                    if isIssueElectrical {
-                        if arrImgElectricalIssue.count > 0 {
+                    if PreCheckData.isElectricalIssue {
+                        if PreCheckData.arrImgElectricalIssue.count > 0 {
                             return 245.0
                         } else {
                             return 180.0
@@ -107,8 +155,8 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                         return 50.0
                     }
                 } else if indexPath.row == 3 {
-                    if isIssueExterior {
-                        if arrImgExteriorIssue.count > 0 {
+                    if PreCheckData.isExteriorIssue {
+                        if PreCheckData.arrImgExteriorIssue.count > 0 {
                             return 245.0
                         } else {
                             return 180.0
@@ -117,8 +165,8 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                         return 50.0
                     }
                 } else {
-                    if isIssueInterior {
-                        if arrImgInteriorIssue.count > 0 {
+                    if PreCheckData.isInteriorIssue {
+                        if PreCheckData.arrImgInteriorIssue.count > 0 {
                             return 245.0
                         } else {
                             return 180.0
@@ -145,45 +193,61 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
             case 0:
                 let serviceCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ServicePrecheckCell", for: indexPath) as! ServicePrecheckCell
                 serviceCell.datasource = "" as AnyObject
-                serviceCell.txtService.text = service
-                serviceCell.didSendSignal = { chk  in
-                    PickerViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, arrPickerVal: self.serviceArray) { val in
-                        self.service = val
-                        self.tblPreCheck.reloadData()
-                    } didFinish: { txt in
-                        
-                    }
-                }
+                serviceCell.txtService.text = JobSheetData.service
+                serviceCell.txtService.isEnabled = false
                 return serviceCell
             case 1:
                 let modelCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ModelCell", for: indexPath) as! ModelCell
                 modelCell.datasource = "" as AnyObject
+                modelCell.txtModel.text = PreCheckData.model
+                modelCell.didEndWriteTextModel = { val in
+                    PreCheckData.model = val
+                }
+                modelCell.txtMake.text = PreCheckData.make
+                modelCell.didEndWriteTextModel = { val in
+                    PreCheckData.make = val
+                }
                 return modelCell
             case 2:
                 let regCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "RegPrecheckCell", for: indexPath) as! RegPrecheckCell
                 regCell.datasource = "" as AnyObject
+                regCell.txtReg.text = PreCheckData.reg
+                regCell.didEndWriteText = { val in
+                    PreCheckData.reg = val
+                }
                 return regCell
             case 3:
                 let odometerCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "OdometerCell", for: indexPath) as! OdometerCell
                 odometerCell.datasource = "" as AnyObject
-                odometerCell.txtMiles.text = self.miles
+                odometerCell.txtMiles.text = PreCheckData.miles
+                odometerCell.txtOdometer.text = PreCheckData.odometer
                 odometerCell.didSendSignal = { chk  in
                     PickerViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, arrPickerVal: self.milesArray) { val in
-                        self.miles = val
-                        self.tblPreCheck.reloadData()
-                    } didFinish: { txt in
-                        
-                    }
+                        PreCheckData.miles = val
+                        self.tblPreCheck.reloadData() } didFinish: { txt in }}
+                odometerCell.didEndWriteText = { val in
+                    PreCheckData.odometer = val
                 }
                 return odometerCell
             case 4:
                 let imgCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "DashImageCaptureCell", for: indexPath) as! DashImageCaptureCell
                 imgCell.datasource = "" as AnyObject
+                if isReset {
+                    imgCell.imgView1.image = UIImage(named: "ImgCapBg")
+                    imgCell.lblAddImage1.isHidden = false
+                    imgCell.imgCamera1.isHidden = false
+                    imgCell.btnDel1.isHidden = true
+                    imgCell.imgView2.image = UIImage(named: "ImgCapBg")
+                    imgCell.lblAddImage2.isHidden = false
+                    imgCell.imgCamera2.isHidden = false
+                    imgCell.btnDel2.isHidden = true
+                }
                 imgCell.lblImg1.text = "Dash\n(powered on)"
                 imgCell.lblImg2.text = "Reg/VIN"
                 imgCell.didFirstImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
+                        PreCheckData.dash_img = image
                         imgCell.imgView1.image = image
                         imgCell.lblAddImage1.isHidden = true
                         imgCell.imgCamera1.isHidden = true
@@ -199,6 +263,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 imgCell.didSecondImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
+                        PreCheckData.reg_vin_img = image
                         imgCell.imgView2.image = image
                         imgCell.lblAddImage2.isHidden = true
                         imgCell.imgCamera2.isHidden = true
@@ -215,11 +280,22 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
             case 5:
                 let imgCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "FrontImageCaptureCell", for: indexPath) as! FrontImageCaptureCell
                 imgCell.datasource = "" as AnyObject
+                if isReset {
+                    imgCell.imgView1.image = UIImage(named: "ImgCapBg")
+                    imgCell.lblAddImage1.isHidden = false
+                    imgCell.imgCamera1.isHidden = false
+                    imgCell.btnDel1.isHidden = true
+                    imgCell.imgView2.image = UIImage(named: "ImgCapBg")
+                    imgCell.lblAddImage2.isHidden = false
+                    imgCell.imgCamera2.isHidden = false
+                    imgCell.btnDel2.isHidden = true
+                }
                 imgCell.lblImg1.text = "Front"
                 imgCell.lblImg2.text = "Rear"
                 imgCell.didFirstImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
+                        PreCheckData.front_img = image
                         imgCell.imgView1.image = image
                         imgCell.lblAddImage1.isHidden = true
                         imgCell.imgCamera1.isHidden = true
@@ -227,6 +303,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     }
                 }
                 imgCell.delImage1 = { check in
+                    PreCheckData.front_img = UIImage()
                     imgCell.imgView1.image = UIImage(named: "ImgCapBg")
                     imgCell.lblAddImage1.isHidden = false
                     imgCell.imgCamera1.isHidden = false
@@ -235,6 +312,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 imgCell.didSecondImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
+                        PreCheckData.rear_img = image
                         imgCell.imgView2.image = image
                         imgCell.lblAddImage2.isHidden = true
                         imgCell.imgCamera2.isHidden = true
@@ -242,6 +320,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     }
                 }
                 imgCell.delImage2 = { check in
+                    PreCheckData.rear_img = UIImage()
                     imgCell.imgView2.image = UIImage(named: "ImgCapBg")
                     imgCell.lblAddImage2.isHidden = false
                     imgCell.imgCamera2.isHidden = false
@@ -251,11 +330,22 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
             case 6:
                 let imgCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "PassengerImageCaptureCell", for: indexPath) as! PassengerImageCaptureCell
                 imgCell.datasource = "" as AnyObject
+                if isReset {
+                    imgCell.imgView1.image = UIImage(named: "ImgCapBg")
+                    imgCell.lblAddImage1.isHidden = false
+                    imgCell.imgCamera1.isHidden = false
+                    imgCell.btnDel1.isHidden = true
+                    imgCell.imgView2.image = UIImage(named: "ImgCapBg")
+                    imgCell.lblAddImage2.isHidden = false
+                    imgCell.imgCamera2.isHidden = false
+                    imgCell.btnDel2.isHidden = true
+                }
                 imgCell.lblImg1.text = "Passenger Side"
                 imgCell.lblImg2.text = "Driver Side"
                 imgCell.didFirstImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
+                        PreCheckData.passengerSide_img = image
                         imgCell.imgView1.image = image
                         imgCell.lblAddImage1.isHidden = true
                         imgCell.imgCamera1.isHidden = true
@@ -263,6 +353,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     }
                 }
                 imgCell.delImage1 = { check in
+                    PreCheckData.passengerSide_img = UIImage()
                     imgCell.imgView1.image = UIImage(named: "ImgCapBg")
                     imgCell.lblAddImage1.isHidden = false
                     imgCell.imgCamera1.isHidden = false
@@ -271,6 +362,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 imgCell.didSecondImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
+                        PreCheckData.driverSide_img = image
                         imgCell.imgView2.image = image
                         imgCell.lblAddImage2.isHidden = true
                         imgCell.imgCamera2.isHidden = true
@@ -278,6 +370,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     }
                 }
                 imgCell.delImage2 = { check in
+                    PreCheckData.driverSide_img = UIImage()
                     imgCell.imgView2.image = UIImage(named: "ImgCapBg")
                     imgCell.lblAddImage2.isHidden = false
                     imgCell.imgCamera2.isHidden = false
@@ -308,48 +401,69 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ElectricalIssueCell", for: indexPath) as! ElectricalIssueCell
                 issueCell.datasource = "Electrical" as AnyObject
                 issueCell.didSendYes = { check in
-                    self.isIssueElectrical = check
+                    PreCheckData.isElectricalIssue = check
                     self.tblPreCheck.reloadData()
                 }
-                issueCell.arrImg = self.arrImgElectricalIssue
+                issueCell.arrImg = PreCheckData.arrImgElectricalIssue
+                issueCell.didUpdateText = { val in
+                    PreCheckData.electricalIssueTxt = val
+                }
                 issueCell.didcaptureCamera = { capture in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
-                        self.arrImgElectricalIssue.append(image)
+                        PreCheckData.arrImgElectricalIssue.append(image)
                         self.tblPreCheck.reloadData()
                     }
+                }
+                issueCell.didDelImage = { index in
+                    PreCheckData.arrImgElectricalIssue.remove(at: index)
+                    self.tblPreCheck.reloadData()
                 }
                 return issueCell
             } else if indexPath.row == 3 {
                 let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "ExteriorIssueCell", for: indexPath) as! ExteriorIssueCell
                 issueCell.datasource = "Exterior" as AnyObject
                 issueCell.didSendYes = { check in
-                    self.isIssueExterior = check
+                    PreCheckData.isExteriorIssue = check
                     self.tblPreCheck.reloadData()
                 }
-                issueCell.arrImg = self.arrImgExteriorIssue
+                issueCell.arrImg = PreCheckData.arrImgExteriorIssue
+                issueCell.didUpdateText = { val in
+                    PreCheckData.exteriorIssueTxt = val
+                }
                 issueCell.didcaptureCamera = { capture in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
-                        self.arrImgExteriorIssue.append(image)
+                        PreCheckData.arrImgExteriorIssue.append(image)
                         self.tblPreCheck.reloadData()
                     }
+                }
+                issueCell.didDelImage = { index in
+                    PreCheckData.arrImgExteriorIssue.remove(at: index)
+                    self.tblPreCheck.reloadData()
                 }
                 return issueCell
             } else {
                 let issueCell = self.tblPreCheck.dequeueReusableCell(withIdentifier: "InteriorIssueCell", for: indexPath) as! InteriorIssueCell
                 issueCell.datasource = "Interior" as AnyObject
                 issueCell.didSendYes = { check in
-                    self.isIssueInterior = check
+                    PreCheckData.isInteriorIssue = check
                     self.tblPreCheck.reloadData()
                 }
-                issueCell.arrImg = self.arrImgInteriorIssue
+                issueCell.arrImg = PreCheckData.arrImgInteriorIssue
+                issueCell.didUpdateText = { val in
+                    PreCheckData.interiorIssueTxt = val
+                }
                 issueCell.didcaptureCamera = { capture in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
-                        self.arrImgInteriorIssue.append(image)
+                        PreCheckData.arrImgInteriorIssue.append(image)
                         self.tblPreCheck.reloadData()
                     }
+                }
+                issueCell.didDelImage = { index in
+                    PreCheckData.arrImgInteriorIssue.remove(at: index)
+                    self.tblPreCheck.reloadData()
                 }
                 return issueCell
             }
@@ -365,12 +479,12 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 custSignCell.datasource = "" as AnyObject
                 custSignCell.didExpand = { chk  in
                     if chk {
-                        SignatureViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!) { val in
-                
-                        } didFinish: { txt in
-                
-                        }
-                    }
+                        SignatureViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!) { imgSign, lines in
+                            PreCheckData.customerSignature = imgSign
+                            //self.tblPreCheck.reloadData()
+                        } didFinish: { txt in }}}
+                custSignCell.didEndWriteText = { val in
+                    PreCheckData.customerName = val
                 }
                 return custSignCell
             } else {
@@ -381,7 +495,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 }
                 saveCell.didReset = { reset in
                     self.isReset = reset
-                    self.tblPreCheck.reloadData()
+                    self.resetData()
                 }
                 return saveCell
             }
@@ -389,6 +503,32 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+// MARK: ResetData
+extension PrecheckController {
+    @objc func resetData() {
+        PreCheckData.odometer = ""
+        PreCheckData.dash_img = UIImage()
+        PreCheckData.reg_vin_img = UIImage()
+        PreCheckData.front_img = UIImage()
+        PreCheckData.rear_img = UIImage()
+        PreCheckData.passengerSide_img = UIImage()
+        PreCheckData.driverSide_img = UIImage()
+        PreCheckData.electricalIssueTxt = ""
+        PreCheckData.arrImgElectricalIssue = []
+        PreCheckData.exteriorIssueTxt = ""
+        PreCheckData.arrImgExteriorIssue = []
+        PreCheckData.interiorIssueTxt = ""
+        PreCheckData.arrImgInteriorIssue = []
+        PreCheckData.customerSignature = UIImage()
+        PreCheckData.customerName = ""
+        self.isReset = false
+        self.tblPreCheck.reloadData()
+    }
+    
+    @objc func saveData() {
+        
+    }
+}
 
 // MARK: ServicePrecheckCell
 class ServicePrecheckCell: BaseTableViewCell, UITextFieldDelegate {
@@ -418,6 +558,8 @@ class ServicePrecheckCell: BaseTableViewCell, UITextFieldDelegate {
 class ModelCell: BaseTableViewCell, UITextFieldDelegate {
     @IBOutlet weak var txtModel: CustomTextField!
     @IBOutlet weak var txtMake: CustomTextField!
+    var didEndWriteTextModel:((String) -> ())!
+    var didEndWriteTextMake:((String) -> ())!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
@@ -432,6 +574,19 @@ class ModelCell: BaseTableViewCell, UITextFieldDelegate {
         textField.resignFirstResponder()
         return true
     }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == txtModel {
+            let textFieldText: NSString = (txtModel.text ?? "") as NSString
+                let txtAfterUpdate = textFieldText.replacingCharacters(in: range, with: string)
+            self.didEndWriteTextModel!(txtAfterUpdate)
+        } else {
+            let textFieldText: NSString = (txtMake.text ?? "") as NSString
+                let txtAfterUpdate = textFieldText.replacingCharacters(in: range, with: string)
+            self.didEndWriteTextMake!(txtAfterUpdate)
+        }
+        return true
+    }
 }
 
 // MARK: OdometerCell
@@ -440,6 +595,7 @@ class OdometerCell: BaseTableViewCell, UITextFieldDelegate {
     @IBOutlet weak var txtSelect: CustomTextField!
     @IBOutlet weak var txtMiles: CustomTextField!
     var didSendSignal:((Bool) -> ())!
+    var didEndWriteText:((String) -> ())!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
@@ -466,12 +622,21 @@ class OdometerCell: BaseTableViewCell, UITextFieldDelegate {
         return true
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let textFieldText: NSString = (txtOdometer.text ?? "") as NSString
+            let txtAfterUpdate = textFieldText.replacingCharacters(in: range, with: string)
+        self.didEndWriteText!(txtAfterUpdate)
+        return true
+    }
+    
+    
 }
 
 
 // MARK: RegCell
 class RegPrecheckCell: BaseTableViewCell, UITextFieldDelegate {
     @IBOutlet weak var txtReg: CustomTextField!
+    var didEndWriteText:((String) -> ())!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
@@ -482,6 +647,13 @@ class RegPrecheckCell: BaseTableViewCell, UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let textFieldText: NSString = (txtReg.text ?? "") as NSString
+            let txtAfterUpdate = textFieldText.replacingCharacters(in: range, with: string)
+        self.didEndWriteText!(txtAfterUpdate)
         return true
     }
 }
@@ -691,6 +863,8 @@ class ElectricalIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollec
     var didSendYes:((Bool) -> ())!
     var didcaptureCamera:((Bool) -> ())!
     var arrImg: [UIImage] = []
+    var didDelImage:((Int) -> ())!
+    var didUpdateText:((String) -> ())!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
@@ -735,13 +909,14 @@ class ElectricalIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollec
         cell.contentView.addSubview(imageview)
         let btnDel: UIButton = UIButton(frame: CGRect(x: 36, y: 0, width: 24, height: 24))
         btnDel.setImage(UIImage(named: "trash"), for: .normal)
+        btnDel.tag = indexPath.item
         btnDel.addTarget(self, action: #selector(delImg), for: .touchUpInside)
         cell.contentView.addSubview(btnDel)
         return cell
     }
     
     @objc func delImg(_ sender: UIButton) {
-        
+       self.didDelImage!(sender.tag)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -752,6 +927,9 @@ class ElectricalIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollec
         if text == "\n" {
             textView.resignFirstResponder()
             return false
+        } else {
+            let newText = (textView.text as NSString).replacingCharacters(in: range, with: text)
+            self.didUpdateText!(newText)
         }
         return true
     }
@@ -780,9 +958,11 @@ class ExteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollecti
     @IBOutlet weak var btnCamera: UIButton!
     @IBOutlet weak var collImg: UICollectionView!
     @IBOutlet weak var parentTxtView: UIView!
+    var didDelImage:((Int) -> ())!
     var didSendYes:((Bool) -> ())!
     var didcaptureCamera:((Bool) -> ())!
     var arrImg: [UIImage] = []
+    var didUpdateText:((String) -> ())!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
@@ -826,13 +1006,14 @@ class ExteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollecti
         cell.contentView.addSubview(imageview)
         let btnDel: UIButton = UIButton(frame: CGRect(x: 36, y: 0, width: 24, height: 24))
         btnDel.setImage(UIImage(named: "trash"), for: .normal)
+        btnDel.tag = indexPath.item
         btnDel.addTarget(self, action: #selector(delImg), for: .touchUpInside)
         cell.contentView.addSubview(btnDel)
         return cell
     }
     
     @objc func delImg(_ sender: UIButton) {
-        
+        self.didDelImage!(sender.tag)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -843,6 +1024,9 @@ class ExteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollecti
         if text == "\n" {
             textView.resignFirstResponder()
             return false
+        } else {
+            let newText = (textView.text as NSString).replacingCharacters(in: range, with: text)
+            self.didUpdateText!(newText)
         }
         return true
     }
@@ -871,9 +1055,11 @@ class InteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollecti
     @IBOutlet weak var btnCamera: UIButton!
     @IBOutlet weak var collImg: UICollectionView!
     @IBOutlet weak var parentTxtView: UIView!
+    var didDelImage:((Int) -> ())!
     var didSendYes:((Bool) -> ())!
     var didcaptureCamera:((Bool) -> ())!
     var arrImg: [UIImage] = []
+    var didUpdateText:((String) -> ())!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
@@ -917,13 +1103,14 @@ class InteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollecti
         cell.contentView.addSubview(imageview)
         let btnDel: UIButton = UIButton(frame: CGRect(x: 36, y: 0, width: 24, height: 24))
         btnDel.setImage(UIImage(named: "trash"), for: .normal)
+        btnDel.tag = indexPath.item
         btnDel.addTarget(self, action: #selector(delImg), for: .touchUpInside)
         cell.contentView.addSubview(btnDel)
         return cell
     }
     
     @objc func delImg(_ sender: UIButton) {
-        
+        self.didDelImage!(sender.tag)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -934,6 +1121,9 @@ class InteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollecti
         if text == "\n" {
             textView.resignFirstResponder()
             return false
+        } else {
+            let newText = (textView.text as NSString).replacingCharacters(in: range, with: text)
+            self.didUpdateText!(newText)
         }
         return true
     }
@@ -974,12 +1164,12 @@ class CustSignCell: BaseTableViewCell, UITextFieldDelegate, UITextViewDelegate {
     @IBOutlet weak var btnExpand: UIButton!
     @IBOutlet weak var viewBG: UIView!
     var didExpand:((Bool) -> ())!
+    var didEndWriteText:((String) -> ())!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
                 viewBG.layer.cornerRadius = 10.0
                 txtName.layer.cornerRadius = 25.0
-                signatureView.layer.cornerRadius = 10.0
                 setupViews()
                 signatureView.setStrokeColor(color: .black)
                 btnExpand.addTarget(self, action: #selector(expand), for: .touchUpInside)
@@ -1002,6 +1192,13 @@ class CustSignCell: BaseTableViewCell, UITextFieldDelegate, UITextViewDelegate {
         textField.resignFirstResponder()
         return true
     }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let textFieldText: NSString = (textField.text ?? "") as NSString
+            let txtAfterUpdate = textFieldText.replacingCharacters(in: range, with: string)
+        self.didEndWriteText!(txtAfterUpdate)
+        return true
+    }
 }
 
 
@@ -1021,7 +1218,6 @@ class SaveCell: BaseTableViewCell {
     }
     
     @objc func save(_ sender: UIButton) {
-        print("Save")
         self.didSave!(true)
     }
     

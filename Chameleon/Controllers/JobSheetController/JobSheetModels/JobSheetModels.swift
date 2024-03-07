@@ -17,7 +17,6 @@ struct JobSheetModels: Codable {
         let customerClient: Customer
         let appointment: String
         let partList: [PartList]?
-        let installationVehicleDetails: InstallationVehicleDetails
         let productInstallID: Customer
         let deliveryAddress: Address
         let engineerID: Customer
@@ -34,7 +33,6 @@ struct JobSheetModels: Codable {
             case customerClient = "customer_client"
             case appointment
             case partList = "part_list"
-            case installationVehicleDetails = "installation_vehicle_details"
             case productInstallID = "product_install_id"
             case deliveryAddress = "delivery_address"
             case engineerID = "engineer_id"
@@ -107,15 +105,6 @@ struct Address: Codable {
         case contactNumber = "contact_number"
         case street
         case customerContactName = "customer_contact_name"
-    }
-}
-
-// MARK: - InstallationVehicleDetails
-struct InstallationVehicleDetails: Codable {
-    let reg, vehicle, vehicle_make, vehicle_model: String?
-
-    enum CodingKeys: String, CodingKey {
-        case reg, vehicle, vehicle_make, vehicle_model
     }
 }
 

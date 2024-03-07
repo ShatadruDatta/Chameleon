@@ -9,6 +9,28 @@ import UIKit
 import MapKit
 import SwiftyJSON
 
+struct JobSheetData {
+    static var nc_bnc_number: String = ""
+    static var service: String = ""
+    static var ins_vehicle_det_color: String = ""
+    static var ins_vehicle_det_fuelType: String = ""
+    static var ins_vehicle_det_reg: String = ""
+    static var ins_vehicle_det_vehicle: String = ""
+    static var ins_vehicle_det_vehicle_make: String = ""
+    static var ins_vehicle_det_vehicle_model: String = ""
+    static var ins_vehicle_det_vin: String = ""
+    static var ins_vehicle_det_yom: String = ""
+    static var deins_vehicle_det_color: String = ""
+    static var deins_vehicle_det_fuelType: String = ""
+    static var deins_vehicle_det_reg: String = ""
+    static var deins_vehicle_det_vehicle: String = ""
+    static var deins_vehicle_det_vehicle_make: String = ""
+    static var deins_vehicle_det_vehicle_model: String = ""
+    static var deins_vehicle_det_vin: String = ""
+    static var deins_vehicle_det_yom: String = ""
+}
+
+
 class JobSheetController: BaseViewController {
 
     @IBOutlet weak var lblNcNumber: UILabel!
@@ -19,23 +41,14 @@ class JobSheetController: BaseViewController {
     @IBOutlet weak var activity: UIActivityIndicatorView!
     @Published var jobSheetDataModel: JobSheetModels?
     var jobId: Int!
-    var nc_bnc_number: String!
     var street2DeliveryAdd: String = ""
     var street3DeliveryAdd: String = ""
     var street2InstallationAdd: String = ""
     var street3InstallationAdd: String = ""
-    var ins_vehicle_det_color: String = ""
-    var ins_vehicle_det_fuelType: String = ""
-    var ins_vehicle_det_reg: String = ""
-    var ins_vehicle_det_vehicle: String = ""
-    var ins_vehicle_det_vehicle_make: String = ""
-    var ins_vehicle_det_vehicle_model: String = ""
-    var ins_vehicle_det_vin: String = ""
-    var ins_vehicle_det_yom: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.lblNcNumber.text = nc_bnc_number
+        self.lblNcNumber.text = JobSheetData.nc_bnc_number
         self.tblPrecheck.isHidden = true
         tblPrecheck.estimatedRowHeight = 100.0
         tblPrecheck.rowHeight = UITableView.automaticDimension
@@ -62,7 +75,6 @@ class JobSheetController: BaseViewController {
     
     @IBAction func precheck(_ sender: UIButton) {
         let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
-        precheckVC.nc_bnc_number = self.nc_bnc_number
         NavigationHelper.helper.contentNavController!.pushViewController(precheckVC, animated: true)
     }
     
@@ -84,14 +96,23 @@ class JobSheetController: BaseViewController {
                 self.street3DeliveryAdd = jsonVal["delivery_address"]["street3"].stringValue
                 self.street2InstallationAdd = jsonVal["installation_address"]["street2"].stringValue
                 self.street3InstallationAdd = jsonVal["installation_address"]["street3"].stringValue
-                self.ins_vehicle_det_reg = jsonVal["installation_vehicle_details"]["reg"].stringValue
-                self.ins_vehicle_det_color = jsonVal["installation_vehicle_details"]["colour"].stringValue
-                self.ins_vehicle_det_fuelType = jsonVal["installation_vehicle_details"]["fuel_type"].stringValue
-                self.ins_vehicle_det_vehicle = jsonVal["installation_vehicle_details"]["vehicle"].stringValue
-                self.ins_vehicle_det_vehicle_make = jsonVal["installation_vehicle_details"]["vehicle_make"].stringValue
-                self.ins_vehicle_det_vehicle_model = jsonVal["installation_vehicle_details"]["vehicle_model"].stringValue
-                self.ins_vehicle_det_vin = jsonVal["installation_vehicle_details"]["vin"].stringValue
-                self.ins_vehicle_det_yom = jsonVal["installation_vehicle_details"]["yom"].stringValue
+                JobSheetData.service = jsonVal["service"]["service"].stringValue
+                JobSheetData.ins_vehicle_det_reg = jsonVal["installation_vehicle_details"]["reg"].stringValue
+                JobSheetData.ins_vehicle_det_color = jsonVal["installation_vehicle_details"]["colour"].stringValue
+                JobSheetData.ins_vehicle_det_fuelType = jsonVal["installation_vehicle_details"]["fuel_type"].stringValue
+                JobSheetData.ins_vehicle_det_vehicle = jsonVal["installation_vehicle_details"]["vehicle"].stringValue
+                JobSheetData.ins_vehicle_det_vehicle_make = jsonVal["installation_vehicle_details"]["vehicle_make"].stringValue
+                JobSheetData.ins_vehicle_det_vehicle_model = jsonVal["installation_vehicle_details"]["vehicle_model"].stringValue
+                JobSheetData.ins_vehicle_det_vin = jsonVal["installation_vehicle_details"]["vin"].stringValue
+                JobSheetData.ins_vehicle_det_yom = jsonVal["installation_vehicle_details"]["yom"].stringValue
+                JobSheetData.deins_vehicle_det_reg = jsonVal["de_installation_vehicle_details"]["reg"].stringValue
+                JobSheetData.deins_vehicle_det_color = jsonVal["de_installation_vehicle_details"]["colour"].stringValue
+                JobSheetData.deins_vehicle_det_fuelType = jsonVal["de_installation_vehicle_details"]["fuel_type"].stringValue
+                JobSheetData.deins_vehicle_det_vehicle = jsonVal["de_installation_vehicle_details"]["vehicle"].stringValue
+                JobSheetData.deins_vehicle_det_vehicle_make = jsonVal["de_installation_vehicle_details"]["vehicle_make"].stringValue
+                JobSheetData.deins_vehicle_det_vehicle_model = jsonVal["de_installation_vehicle_details"]["vehicle_model"].stringValue
+                JobSheetData.deins_vehicle_det_vin = jsonVal["installation_vehicle_details"]["vin"].stringValue
+                JobSheetData.deins_vehicle_det_yom = jsonVal["installation_vehicle_details"]["yom"].stringValue
                 if jsonVal["part_list"].count > 0 {
                     arrPartsSerial.removeAll()
                     for val in jsonVal["part_list"].arrayValue {
@@ -229,23 +250,23 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
              let installCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "InstallationCell", for: indexPath) as! InstallationCell
              installCell.datasource = "" as AnyObject
              // Installation Details
-             installCell.lblDetail.text = "Details Vehicle: \(self.jobSheetDataModel?.installationVehicleDetails.vehicle ?? "")"
-             installCell.lblReg.text = self.ins_vehicle_det_reg
-             installCell.lblYOM.text = self.ins_vehicle_det_yom
-             installCell.lblColour.text = self.ins_vehicle_det_color
-             installCell.lblVIN.text = self.ins_vehicle_det_vin
-             installCell.lblFuel.text = self.ins_vehicle_det_fuelType
+             installCell.lblDetail.text = "Details Vehicle: \(JobSheetData.ins_vehicle_det_vehicle)"
+             installCell.lblReg.text = JobSheetData.ins_vehicle_det_reg
+             installCell.lblYOM.text = JobSheetData.ins_vehicle_det_yom
+             installCell.lblColour.text = JobSheetData.ins_vehicle_det_color
+             installCell.lblVIN.text = JobSheetData.ins_vehicle_det_vin
+             installCell.lblFuel.text = JobSheetData.ins_vehicle_det_fuelType
              return installCell
          } else if indexPath.section == 4 {
              let installCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "InstallationCell", for: indexPath) as! InstallationCell
              installCell.datasource = "" as AnyObject
              // Deinstallation Details
-             installCell.lblDetail.text = "Details Vehicle: \(self.jobSheetDataModel?.installationVehicleDetails.vehicle ?? "")"
-             installCell.lblReg.text = self.ins_vehicle_det_reg
-             installCell.lblYOM.text = self.ins_vehicle_det_yom
-             installCell.lblColour.text = self.ins_vehicle_det_color
-             installCell.lblVIN.text = self.ins_vehicle_det_vin
-             installCell.lblFuel.text = self.ins_vehicle_det_fuelType
+             installCell.lblDetail.text = "Details Vehicle: \(JobSheetData.deins_vehicle_det_vehicle)"
+             installCell.lblReg.text = JobSheetData.deins_vehicle_det_reg
+             installCell.lblYOM.text = JobSheetData.deins_vehicle_det_yom
+             installCell.lblColour.text = JobSheetData.deins_vehicle_det_color
+             installCell.lblVIN.text = JobSheetData.deins_vehicle_det_vin
+             installCell.lblFuel.text = JobSheetData.deins_vehicle_det_fuelType
              return installCell
          } else {
              let noteCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "PartsCell", for: indexPath) as! PartsCell
