@@ -120,7 +120,7 @@ extension PickerViewController {
         return 1
     }
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return arrPickerVal[row]
+        return arrPickerVal[row].components(separatedBy: "/")[0]
     }
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
 

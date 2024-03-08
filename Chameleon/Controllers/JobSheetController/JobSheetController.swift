@@ -45,6 +45,7 @@ class JobSheetController: BaseViewController {
     var street3DeliveryAdd: String = ""
     var street2InstallationAdd: String = ""
     var street3InstallationAdd: String = ""
+    var partsCount = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -116,7 +117,8 @@ class JobSheetController: BaseViewController {
                 if jsonVal["part_list"].count > 0 {
                     arrPartsSerial.removeAll()
                     for val in jsonVal["part_list"].arrayValue {
-                        arrPartsSerial.append((ncNo: jsonVal["nc_bnc_number"].stringValue, serialPart1: val["serial1"].stringValue, serialPart2: val["serial2"].stringValue, prodName: val["product_id"]["name"].stringValue, prodId: val["product_id"]["id"].intValue, quantity: val["quantity"].intValue))
+                        self.partsCount += 1
+                        arrPartsSerial.append((id: self.partsCount, ncNo: jsonVal["nc_bnc_number"].stringValue, serialPart1: val["serial1"].stringValue, serialPart2: val["serial2"].stringValue, prodName: val["product_id"]["name"].stringValue, prodId: val["product_id"]["id"].intValue, quantity: val["quantity"].intValue, returnedBy: "", used: true, imgUnit: UIImage(named: "ImgCapBg") ?? UIImage(), isImgUnit: false, imgPerm: UIImage(named: "ImgCapBg") ?? UIImage(), isImgPerm: false, imgEarth: UIImage(named: "ImgCapBg") ?? UIImage(), isImgEarth: false, imgIgn: UIImage(named: "ImgCapBg") ?? UIImage(), isImgIgn: false, imgSerial: UIImage(named: "ImgCapBg") ?? UIImage(), isImgSerial: false, imgLoom: UIImage(named: "ImgCapBg") ?? UIImage(), isImgLoom: false, comments: ""))
                     }
                 }
                 self.tblPrecheck.isHidden = false
@@ -201,7 +203,7 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
          case 0,3,4:
              return 1
          case 2:
-             return self.jobSheetDataModel?.partList?.count ?? 0
+             return arrPartsSerial.count
          default:
              return 1
          }
@@ -239,7 +241,7 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
              }
          } else if indexPath.section == 2 {
              let partsCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "PartsCell", for: indexPath) as! PartsCell
-             partsCell.datasource = "\(self.jobSheetDataModel?.partList?[indexPath.row].productID?.name ?? "")\n Serial Number : NA" as AnyObject
+             partsCell.datasource = "\(arrPartsSerial[indexPath.row].prodName)\n Serial Number : \(arrPartsSerial[indexPath.row].serialPart1)" as AnyObject
              if indexPath.row % 2 == 0 {
                  partsCell.viewBG.backgroundColor = UIColor.init(hexString: "F0EEF5")
              } else {

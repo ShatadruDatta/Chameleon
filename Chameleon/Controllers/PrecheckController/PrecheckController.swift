@@ -15,26 +15,36 @@ struct PreCheckData {
     static var reg = ""
     static var odometer = ""
     static var dash_img = UIImage()
+    static var dash_img_base64 = ""
     static var reg_vin_img = UIImage()
+    static var reg_vin_img_base64 = ""
     static var front_img = UIImage()
+    static var front_img_base64 = ""
     static var rear_img = UIImage()
+    static var rear_img_base64 = ""
     static var passengerSide_img = UIImage()
+    static var passengerSide_img_base64 = ""
     static var driverSide_img = UIImage()
+    static var driverSide_img_base64 = ""
     static var isElectricalIssue = false
     static var electricalIssueTxt = ""
     static var arrImgElectricalIssue: [UIImage] = []
+    static var arrImgElectricalIssueBase64: [String] = []
     static var isExteriorIssue = false
     static var exteriorIssueTxt = ""
     static var arrImgExteriorIssue: [UIImage] = []
+    static var arrImageExteriorIssueBase64: [String] = []
     static var isInteriorIssue = false
     static var interiorIssueTxt = ""
     static var arrImgInteriorIssue: [UIImage] = []
+    static var arrImgInteriorIssueBase64: [String] = []
     static var customerSignature = UIImage()
+    static var customerSignature_base64 = ""
     static var customerName = ""
 }
 
 class PrecheckController: BaseViewController {
-
+    @IBOutlet weak var activity: UIActivityIndicatorView!
     @IBOutlet weak var lblNcNumber: UILabel!
     @IBOutlet weak var tblPreCheck: UITableView!
     @IBOutlet weak var viewPreCheck: UIView!
@@ -204,7 +214,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     PreCheckData.model = val
                 }
                 modelCell.txtMake.text = PreCheckData.make
-                modelCell.didEndWriteTextModel = { val in
+                modelCell.didEndWriteTextMake = { val in
                     PreCheckData.make = val
                 }
                 return modelCell
@@ -248,6 +258,10 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
                         PreCheckData.dash_img = image
+                        DispatchQueue.background(background: {
+                            PreCheckData.dash_img_base64 = image.toBase64() ?? ""
+                        }, completion:{
+                        })
                         imgCell.imgView1.image = image
                         imgCell.lblAddImage1.isHidden = true
                         imgCell.imgCamera1.isHidden = true
@@ -264,6 +278,10 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
                         PreCheckData.reg_vin_img = image
+                        DispatchQueue.background(background: {
+                            PreCheckData.reg_vin_img_base64 = image.toBase64() ?? ""
+                        }, completion:{
+                        })
                         imgCell.imgView2.image = image
                         imgCell.lblAddImage2.isHidden = true
                         imgCell.imgCamera2.isHidden = true
@@ -296,6 +314,10 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
                         PreCheckData.front_img = image
+                        DispatchQueue.background(background: {
+                            PreCheckData.front_img_base64 = image.toBase64() ?? ""
+                        }, completion:{
+                        })
                         imgCell.imgView1.image = image
                         imgCell.lblAddImage1.isHidden = true
                         imgCell.imgCamera1.isHidden = true
@@ -313,6 +335,10 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
                         PreCheckData.rear_img = image
+                        DispatchQueue.background(background: {
+                            PreCheckData.rear_img_base64 = image.toBase64() ?? ""
+                        }, completion:{
+                        })
                         imgCell.imgView2.image = image
                         imgCell.lblAddImage2.isHidden = true
                         imgCell.imgCamera2.isHidden = true
@@ -346,6 +372,10 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
                         PreCheckData.passengerSide_img = image
+                        DispatchQueue.background(background: {
+                            PreCheckData.passengerSide_img_base64 = image.toBase64() ?? ""
+                        }, completion:{
+                        })
                         imgCell.imgView1.image = image
                         imgCell.lblAddImage1.isHidden = true
                         imgCell.imgCamera1.isHidden = true
@@ -363,6 +393,10 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
                         PreCheckData.driverSide_img = image
+                        DispatchQueue.background(background: {
+                            PreCheckData.driverSide_img_base64 = image.toBase64() ?? ""
+                        }, completion:{
+                        })
                         imgCell.imgView2.image = image
                         imgCell.lblAddImage2.isHidden = true
                         imgCell.imgCamera2.isHidden = true
@@ -499,6 +533,10 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                     if chk {
                         SignatureViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!) { imgSign, lines, view in
                             PreCheckData.customerSignature = imgSign
+                            DispatchQueue.background(background: {
+                                PreCheckData.customerSignature_base64 = imgSign.toBase64() ?? ""
+                            }, completion:{
+                            })
                             custSignCell.showSignature = true
                             custSignCell.imgSign.image = imgSign
                             custSignCell.imgSign.contentMode = .scaleAspectFit
@@ -513,6 +551,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 saveCell.datasource = "" as AnyObject
                 saveCell.didSave = { save in
                     self.isSave = save
+                    self.saveData()
                 }
                 saveCell.didReset = { reset in
                     self.isReset = reset
@@ -864,12 +903,10 @@ class ElectricalIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollec
         didSet {
             if datasource != nil {
                 self.lblContent.text = datasource as? String
-                txtView.textColor = .fontColor
                 parentTxtView.layer.cornerRadius = 10.0
                 collImg.reloadData()
                 btnCamera.addTarget(self, action: #selector(cameraCapture), for: .touchUpInside)
                 switchIssue.addTarget(self, action: #selector(switchValueDidChange(_:)), for: .valueChanged)
-
             }
         }
     }
@@ -962,7 +999,6 @@ class ExteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollecti
         didSet {
             if datasource != nil {
                 self.lblContent.text = datasource as? String
-                txtView.textColor = .fontColor
                 parentTxtView.layer.cornerRadius = 10.0
                 collImg.reloadData()
                 btnCamera.addTarget(self, action: #selector(cameraCapture), for: .touchUpInside)
@@ -1059,7 +1095,6 @@ class InteriorIssueCell: BaseTableViewCell, UICollectionViewDelegate, UICollecti
         didSet {
             if datasource != nil {
                 self.lblContent.text = datasource as? String
-                txtView.textColor = .fontColor
                 parentTxtView.layer.cornerRadius = 10.0
                 collImg.reloadData()
                 btnCamera.addTarget(self, action: #selector(cameraCapture), for: .touchUpInside)
@@ -1239,17 +1274,26 @@ extension PrecheckController {
     @objc func resetData() {
         PreCheckData.odometer = ""
         PreCheckData.dash_img = UIImage()
+        PreCheckData.dash_img_base64 = ""
         PreCheckData.reg_vin_img = UIImage()
+        PreCheckData.rear_img_base64 = ""
         PreCheckData.front_img = UIImage()
+        PreCheckData.front_img_base64 = ""
         PreCheckData.rear_img = UIImage()
+        PreCheckData.rear_img_base64 = ""
         PreCheckData.passengerSide_img = UIImage()
+        PreCheckData.passengerSide_img_base64 = ""
         PreCheckData.driverSide_img = UIImage()
+        PreCheckData.driverSide_img_base64 = ""
         PreCheckData.electricalIssueTxt = ""
-        PreCheckData.arrImgElectricalIssue = []
+        PreCheckData.arrImgElectricalIssue.removeAll()
+        PreCheckData.arrImgElectricalIssueBase64.removeAll()
         PreCheckData.exteriorIssueTxt = ""
-        PreCheckData.arrImgExteriorIssue = []
+        PreCheckData.arrImgExteriorIssue.removeAll()
+        PreCheckData.arrImageExteriorIssueBase64.removeAll()
         PreCheckData.interiorIssueTxt = ""
-        PreCheckData.arrImgInteriorIssue = []
+        PreCheckData.arrImgInteriorIssue.removeAll()
+        PreCheckData.arrImgInteriorIssueBase64.removeAll()
         PreCheckData.customerSignature = UIImage()
         PreCheckData.customerName = ""
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -1258,6 +1302,124 @@ extension PrecheckController {
     }
     
     @objc func saveData() {
+        if PreCheckData.make != "" {
+            if PreCheckData.model != "" {
+                if PreCheckData.reg != "" {
+                    if PreCheckData.odometer != "" {
+                        if PreCheckData.dash_img_base64 != "" {
+                            if PreCheckData.reg_vin_img_base64 != "" {
+                                if PreCheckData.front_img_base64 != "" {
+                                    if PreCheckData.rear_img_base64 != "" {
+                                        if PreCheckData.passengerSide_img_base64 != "" {
+                                            if PreCheckData.driverSide_img_base64 != "" {
+                                                if PreCheckData.isElectricalIssue {
+                                                    if PreCheckData.electricalIssueTxt != "" {
+                                                        if PreCheckData.isExteriorIssue {
+                                                            if PreCheckData.exteriorIssueTxt != "" {
+                                                                if PreCheckData.isInteriorIssue {
+                                                                    if PreCheckData.interiorIssueTxt != "" {
+                                                                        self.save2()
+                                                                    } else {
+                                                                        self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter comments on interior issue!")
+                                                                    }
+                                                                } else {
+                                                                    self.save2()
+                                                                }
+                                                            } else {
+                                                                self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter comments on exterior issue!")
+                                                            }
+                                                        } else {
+                                                            self.save2()
+                                                        }
+                                                    } else {
+                                                        self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter comments on electrical issue!")
+                                                    }
+                                                } else {
+                                                    self.save2()
+                                                }
+                                            } else {
+                                                self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter driver side image!")
+                                            }
+                                        } else {
+                                            self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter passenger side image!")
+                                        }
+                                    } else {
+                                        self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter rear image!")
+                                    }
+                                } else {
+                                    self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter front image!")
+                                }
+                            } else {
+                                self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter reg/vin image!")
+                            }
+                        } else {
+                            self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter dash image!")
+                        }
+                    } else {
+                        self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter odometer!")
+                    }
+                } else {
+                    self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter registration!")
+                }
+            } else {
+                self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter vehicle model!")
+            }
+        } else {
+            self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter vehicle make!")
+        }
+    }
+    
+    @objc func save2() {
+        self.activity.startAnimating()
+        if PreCheckData.customerSignature_base64 != "" {
+            if PreCheckData.customerName != "" {
+                self.createBase64StringForIssues(electrical: PreCheckData.arrImgElectricalIssue, exterior: PreCheckData.arrImgExteriorIssue, interior: PreCheckData.arrImgInteriorIssue)
+            } else {
+                self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter customer name!")
+            }
+        } else {
+            self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter customer signature!")
+        }
+    }
+    
+    @objc func createBase64StringForIssues(electrical: [UIImage], exterior: [UIImage], interior: [UIImage]) {
+        if electrical.count > 0 {
+            PreCheckData.arrImgElectricalIssueBase64.removeAll()
+            for image in electrical {
+                DispatchQueue.background(background: {
+                    PreCheckData.arrImgElectricalIssueBase64.append(image.toBase64() ?? "")
+                }, completion:{
+                    
+                })
+            }
+        }
         
+        if exterior.count > 0 {
+            PreCheckData.arrImageExteriorIssueBase64.removeAll()
+            for image in exterior {
+                DispatchQueue.background(background: {
+                    PreCheckData.arrImageExteriorIssueBase64.append(image.toBase64() ?? "")
+                }, completion:{
+                    
+                })
+            }
+        }
+        
+        if interior.count > 0 {
+            PreCheckData.arrImgInteriorIssueBase64.removeAll()
+            for image in exterior {
+                DispatchQueue.background(background: {
+                    PreCheckData.arrImgInteriorIssueBase64.append(image.toBase64() ?? "")
+                }, completion:{
+                    
+                })
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.activity.stopAnimating()
+            let postcheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckController") as! PostCheckController
+            NavigationHelper.helper.contentNavController!.pushViewController(postcheckVC, animated: true)
+        }
     }
 }

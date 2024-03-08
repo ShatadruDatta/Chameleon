@@ -1,9 +1,9 @@
 //
 //  AppDelegate.swift
-//  expaTPA
+//  Chameleon
 //
-//  Created by Shatadru Datta on 11/03/20.
-//  Copyright © 2020 Procentris. All rights reserved.
+//  Created by Shatadru Datta on 20/02/24.
+//  Copyright © 2024 Chameleon. All rights reserved.
 //
 
 
@@ -126,6 +126,12 @@ extension String
         return htmlToAttributedString?.string ?? ""
     }
     
+    func convertBase64StringToImage (imageBase64String:String) -> UIImage {
+        let imageData = Data.init(base64Encoded: imageBase64String, options: .init(rawValue: 0))
+        guard let image = UIImage(data: imageData!) else { return UIImage() }
+        return image
+    }
+    
 }
 
 
@@ -163,7 +169,7 @@ extension UITextField {
 extension Array where Element: Comparable {
     
     mutating func removeObject(object: Element) {
-        if let index = self.index(of: object) {
+        if let index = self.firstIndex(of: object) {
             self.remove(at: index)
         }
     }
@@ -177,33 +183,17 @@ extension Array where Element: Comparable {
 }
 
 extension Array {
-    
-    //	func containsObject(type: AnyClass) -> (isPresent: Bool, index: Int?) {
-    //		for (index, item) in self.enumerated() {
-    //			if (item as AnyObject) is type {
-    //				return (true, index)
-    //			}
-    //		}
-    //		return (false, nil)
-    //	}
-    
-    mutating func rearrange(from: Int, to: Int)
-    {
+    mutating func rearrange(from: Int, to: Int) {
         insert(remove(at: from), at: to)
     }
-    
-    func containsStr<T>(obj: T) -> Bool where T : Equatable
-    {
+    func containsStr<T>(obj: T) -> Bool where T : Equatable {
         return self.filter({$0 as? T == obj}).count > 0
     }
 }
 
 
-extension Dictionary
-{
-    
-    func allKeys() -> [String]
-    {
+extension Dictionary {
+    func allKeys() -> [String] {
         guard self.keys.first is String else {
             debugPrint("This function will not return other hashable types. (Only strings)")
             return []
@@ -217,8 +207,7 @@ extension Dictionary
          return temp }*/
     }
     
-    func nonNullKeys() -> [String]
-    {
+    func nonNullKeys() -> [String] {
         var dict = self
         let allKe = allKeys()
         
@@ -227,23 +216,18 @@ extension Dictionary
         
         let keysToRemove = Array(dict.keys).filter { dict[$0] is NSNull }
         
-        for strKey in allKe
-        {
-            if !keysToRemove.containsStr(obj: strKey)
-            {
+        for strKey in allKe {
+            if !keysToRemove.containsStr(obj: strKey) {
                 finalKeys.append(strKey)
             }
         }
-        
         return finalKeys
     }
     
-    func keyExists(_ key: String?) -> Bool
-    {
+    func keyExists(_ key: String?) -> Bool {
         let anArray = nonNullKeys()//allKeys()
         
-        if anArray.containsStr(obj: key)
-        {
+        if anArray.containsStr(obj: key) {
             return true
         }
         //        for i in 0..<anArray.count
@@ -255,24 +239,18 @@ extension Dictionary
         return false
     }
     
-    func getValForKey(strkey: String?) -> Any?
-    {
-        if keyExists(strkey)
-        {
+    func getValForKey(strkey: String?) -> Any? {
+        if keyExists(strkey) {
             let dict = self as! Dictionary<String, Any>
-            
-            if let val = dict[strkey!]
-            {
+            if let val = dict[strkey!] {
                 return val
             }
-            //            return dict[strkey!]
         }
         
         return nil
     }
     
-    func getStringForKey(_ key: String?) -> String?
-    {
+    func getStringForKey(_ key: String?) -> String? {
         let strVal = getValForKey(strkey: key)
         if strVal == nil {
             return ""
@@ -280,16 +258,12 @@ extension Dictionary
         return "\(strVal ?? "")"
     }
     
-    func getJsonString() -> String
-    {
+    func getJsonString() -> String {
         let jsonData: Data? = try? JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
         let error: Error? = nil
-        
-        if jsonData != nil && error == nil
-        {
+        if jsonData != nil && error == nil {
             var strTempCommand = ""
-            if let aData = jsonData
-            {
+            if let aData = jsonData {
                 strTempCommand = String(data: aData, encoding: .utf8)!
                 return strTempCommand
             }
@@ -298,21 +272,15 @@ extension Dictionary
         return ""
     }
     
-    func removeNullValueKeys() -> Dictionary
-    {
+    func removeNullValueKeys() -> Dictionary {
         var dict = self
-        
         let keysToRemove = Array(dict.keys).filter { dict[$0] is NSNull }
-        for key in keysToRemove
-        {
+        for key in keysToRemove {
             dict.removeValue(forKey: key)
         }
-        
         return dict
     }
 }
-
-
 
 
 extension UIButton {
@@ -697,6 +665,11 @@ extension UIImage {
             print("-- Error: \(error)")
             return nil
         }
+    }
+    
+    func toBase64() -> String? {
+        guard let imageData = self.pngData() else { return nil }
+        return imageData.base64EncodedString(options: .lineLength64Characters)
     }
 }
 

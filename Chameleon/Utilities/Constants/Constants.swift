@@ -31,7 +31,7 @@ let accessParam = "accesskey="
 let apiKey = "U1fR9vsaXV16QUVdpDAlt9GEZErnGdbm9u1LHsg8"
 
 //MARK: ArrayPartList
-var arrPartsSerial: [(ncNo: String, serialPart1: String, serialPart2: String, prodName: String, prodId: Int, quantity: Int)] = []
+var arrPartsSerial: [(id: Int, ncNo: String, serialPart1: String, serialPart2: String, prodName: String, prodId: Int, quantity: Int, returnedBy: String, used: Bool, imgUnit: UIImage, isImgUnit: Bool, imgPerm: UIImage, isImgPerm: Bool, imgEarth: UIImage, isImgEarth: Bool, imgIgn: UIImage, isImgIgn: Bool, imgSerial: UIImage, isImgSerial: Bool, imgLoom: UIImage, isImgLoom: Bool, comments: String)] = []
 
 // MARK: Storyboard
 let mainStoryboard: UIStoryboard = UIStoryboard(name: UIDevice.current.userInterfaceIdiom == .phone ? "Main" : "Main", bundle: nil)
