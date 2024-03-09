@@ -39,7 +39,7 @@ class AFWrapper: NSObject {
         return nil;
     }
     
-    class func requestPOSTURL(_ strURL : String, params : [String : AnyObject]?, headers : [String : String]?, success:@escaping (JSON) -> Void, failure:@escaping (Error) -> Void){
+    class func requestPOSTURL(_ strURL : String, params : [String : Any]?, headers : [String : String]?, success:@escaping (JSON, Data) -> Void, failure:@escaping (Error) -> Void){
         
         if Reachability.isConnectedToNetwork() {
             Alamofire.request(strURL, method: .post, parameters: params, encoding:  URLEncoding.default, headers: headers).responseJSON { (responseObject) -> Void in
@@ -48,7 +48,7 @@ class AFWrapper: NSObject {
                 
                 if responseObject.result.isSuccess {
                     let resJson = JSON(responseObject.result.value!)
-                    success(resJson)
+                    success(resJson, responseObject.data!)
                 }
                 if responseObject.result.isFailure {
                     let error : Error = responseObject.result.error!

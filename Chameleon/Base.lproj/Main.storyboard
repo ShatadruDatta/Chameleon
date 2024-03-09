@@ -6228,10 +6228,20 @@
                                     <constraint firstItem="3JL-bM-fvX" firstAttribute="leading" secondItem="Hdl-FJ-Pxa" secondAttribute="leading" constant="15" id="yKP-yJ-UdJ"/>
                                 </constraints>
                             </view>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="OsH-Jb-cpg">
+                                <rect key="frame" x="197" y="358" width="20" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="20" id="8aM-Vz-1Bt"/>
+                                    <constraint firstAttribute="height" constant="20" id="NMB-MF-aUR"/>
+                                </constraints>
+                                <color key="color" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ukD-aR-Ujc"/>
                         <color key="backgroundColor" red="0.97254901959999995" green="0.97647058819999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="OsH-Jb-cpg" firstAttribute="centerY" secondItem="h8W-8L-eut" secondAttribute="centerY" id="5jR-OV-u98"/>
+                            <constraint firstItem="OsH-Jb-cpg" firstAttribute="centerX" secondItem="h8W-8L-eut" secondAttribute="centerX" id="8nY-7i-mqv"/>
                             <constraint firstItem="Hdl-FJ-Pxa" firstAttribute="top" secondItem="ukD-aR-Ujc" secondAttribute="top" constant="-20" id="PFS-oZ-EZr"/>
                             <constraint firstItem="Hdl-FJ-Pxa" firstAttribute="leading" secondItem="ukD-aR-Ujc" secondAttribute="leading" id="TIo-z4-K3q"/>
                             <constraint firstItem="Hdl-FJ-Pxa" firstAttribute="trailing" secondItem="ukD-aR-Ujc" secondAttribute="trailing" id="mpN-BO-PT3"/>
@@ -6239,6 +6249,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activity" destination="OsH-Jb-cpg" id="zxw-9B-MZG"/>
                         <outlet property="lblNcNumber" destination="GTD-dQ-SA4" id="6IM-OU-1z0"/>
                         <outlet property="tblPostCheck" destination="cOA-Ml-NVD" id="49u-kO-7Af"/>
                         <outlet property="viewClosure" destination="bnX-DQ-bE9" id="gfo-rR-Lso"/>

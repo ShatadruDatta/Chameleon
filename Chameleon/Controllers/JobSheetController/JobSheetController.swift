@@ -10,6 +10,7 @@ import MapKit
 import SwiftyJSON
 
 struct JobSheetData {
+    static var jobId: Int = 0
     static var nc_bnc_number: String = ""
     static var service: String = ""
     static var ins_vehicle_det_color: String = ""
@@ -40,7 +41,6 @@ class JobSheetController: BaseViewController {
     @IBOutlet weak var viewClosure: UIView!
     @IBOutlet weak var activity: UIActivityIndicatorView!
     @Published var jobSheetDataModel: JobSheetModels?
-    var jobId: Int!
     var street2DeliveryAdd: String = ""
     var street3DeliveryAdd: String = ""
     var street2InstallationAdd: String = ""
@@ -83,7 +83,7 @@ class JobSheetController: BaseViewController {
     //  MARK: JobSheetAPI
     @objc func jobSheet() {
         self.activity.startAnimating()
-        let baseurl = "\(baseurl)/v1/joborder/\(jobId ?? 0)"
+        let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)"
         print(baseurl)
         let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
         AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data in

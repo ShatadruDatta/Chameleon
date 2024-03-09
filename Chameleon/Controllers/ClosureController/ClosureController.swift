@@ -9,6 +9,7 @@ import UIKit
 
 class ClosureController: BaseTableViewController {
 
+    @IBOutlet weak var activity: UIActivityIndicatorView!
     var checkController: Bool = false
     @IBOutlet weak var viewPreCheck: UIView!
     @IBOutlet weak var viewPostCheck: UIView!
@@ -50,17 +51,29 @@ class ClosureController: BaseTableViewController {
     
     //CheckBox
     @IBOutlet weak var imgFMS: UIImageView!
+    var isFms: Bool = false
     @IBOutlet weak var imgDigitalTacho: UIImageView!
+    var isDigitalTacho: Bool = false
     @IBOutlet weak var imgPrivacySwitch: UIImageView!
+    var isPrivacySwitch: Bool = false
     @IBOutlet weak var imgPTO: UIImageView!
+    var isPTO: Bool = false
     @IBOutlet weak var imgLightbar: UIImageView!
+    var isLightBar: Bool = false
     @IBOutlet weak var imgBP: UIImageView!
+    var isBP: Bool = false
     @IBOutlet weak var imgDriverID: UIImageView!
+    var isDriverId: Bool = false
     @IBOutlet weak var imgCanBus: UIImageView!
+    var isCanBus: Bool = false
     @IBOutlet weak var imgCamera: UIImageView!
+    var isCamera: Bool = false
     @IBOutlet weak var imgProNavDev: UIImageView!
+    var isProvNavDev: Bool = false
     @IBOutlet weak var imgODB: UIImageView!
+    var isODB: Bool = false
     @IBOutlet weak var viewBlueTooth: UIView!
+    var isBlueTooth: Bool = false
     
     // CheckBox - TextField SerialNo
     @IBOutlet weak var txtCameraSerialNo: UITextField!
@@ -196,7 +209,7 @@ class ClosureController: BaseTableViewController {
         btnHam.addTarget(self, action: #selector(menu), for: .touchUpInside)
         let label = UILabel()
         label.frame = CGRect.init(x: 83, y: 0, width: headerView.frame.width-98, height: 67)
-        label.text = "NC1234567"
+        label.text = JobSheetData.nc_bnc_number
         label.textColor = UIColor.blueColor
         label.textAlignment = .center
         label.font = UIFont.Poppins(.semibold, size: 17.0)
@@ -250,6 +263,7 @@ extension ClosureController {
             sender.isSelected = true
             imgFMS.image = UIImage(named: "check")
         }
+        isFms = sender.isSelected
     }
     
     @IBAction func digitalTacho(_ sender: UIButton) {
@@ -260,6 +274,7 @@ extension ClosureController {
             sender.isSelected = true
             imgDigitalTacho.image = UIImage(named: "check")
         }
+        isDigitalTacho = sender.isSelected
     }
     
     @IBAction func privacySwitch(_ sender: UIButton) {
@@ -270,6 +285,7 @@ extension ClosureController {
             sender.isSelected = true
             imgPrivacySwitch.image = UIImage(named: "check")
         }
+        isPrivacySwitch = sender.isSelected
     }
     
     @IBAction func pto(_ sender: UIButton) {
@@ -280,6 +296,7 @@ extension ClosureController {
             sender.isSelected = true
             imgPTO.image = UIImage(named: "check")
         }
+        isPTO = sender.isSelected
     }
     
     @IBAction func lightbar(_ sender: UIButton) {
@@ -290,6 +307,7 @@ extension ClosureController {
             sender.isSelected = true
             imgLightbar.image = UIImage(named: "check")
         }
+        isLightBar = sender.isSelected
     }
     
     @IBAction func bp(_ sender: UIButton) {
@@ -300,6 +318,7 @@ extension ClosureController {
             sender.isSelected = true
             imgBP.image = UIImage(named: "check")
         }
+        isBP = sender.isSelected
     }
     
     @IBAction func driverID(_ sender: UIButton) {
@@ -310,6 +329,7 @@ extension ClosureController {
             sender.isSelected = true
             imgDriverID.image = UIImage(named: "check")
         }
+        isDriverId = sender.isSelected
     }
     
     @IBAction func canBus(_ sender: UIButton) {
@@ -320,6 +340,7 @@ extension ClosureController {
             sender.isSelected = true
             imgCanBus.image = UIImage(named: "check")
         }
+        isCanBus = sender.isSelected
     }
     
     @IBAction func camera(_ sender: UIButton) {
@@ -330,6 +351,7 @@ extension ClosureController {
             sender.isSelected = true
             imgCamera.image = UIImage(named: "check")
         }
+        isCamera = sender.isSelected
     }
     
     @IBAction func proNavDev(_ sender: UIButton) {
@@ -340,6 +362,7 @@ extension ClosureController {
             sender.isSelected = true
             imgProNavDev.image = UIImage(named: "check")
         }
+        isProvNavDev = sender.isSelected
     }
     
     @IBAction func odb(_ sender: UIButton) {
@@ -350,13 +373,55 @@ extension ClosureController {
             sender.isSelected = true
             imgODB.image = UIImage(named: "check")
         }
+        isODB = sender.isSelected
     }
     
     // MARK: Reset
     @IBAction func reset(_ sender: UIButton) {
+        txtJobNo.text = ""
+        txtSerialNo.text = ""
+        txtSimNo.text = ""
+        txtMobNo.text = ""
+        txtIMEINo.text = ""
+        txtCommNo.text = ""
+        txtGNo.text = ""
+        txtSupplyColor.text = ""
+        txtSupplyCircuit.text = ""
+        txtIGNCircuit.text = ""
+        txtVLU.text = ""
+        txtGSM.text = ""
+        txtGPS.text = ""
+        txtVHF.text = ""
+        txtCameraSerialNo.text = ""
+        txtProNavDevSerialNo.text = ""
+        txtODBSerialNo.text = ""
+        txtBluetoothSerialNo.text = ""
+        txtViewClosingNotes.text = ""
     }
     
     // MARK: Save
     @IBAction func save(_ sender: UIButton) {
+        self.closureAPI()
+    }
+    
+    //  MARK: ClosureAPI
+    @objc func closureAPI() {
+        //self.activity.startAnimating()
+        let baseurl = "\(baseurl)/v1/joborder/117092/closure"
+        print(baseurl)
+        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+        let parameters = ["pre_check": ["vehicle": ["make": PreCheckData.make, "model": PreCheckData.model, "reg": PreCheckData.reg, "odometer": PreCheckData.odometer, "odometer_unit": PreCheckData.miles, "reg_or_vin": PreCheckData.reg_vin_img_base64, "dash_board": PreCheckData.dash_img_base64, "front_side": PreCheckData.front_img_base64, "rear_side": PreCheckData.rear_img_base64, "passenger_side": PreCheckData.passengerSide_img_base64, "driver_side": PreCheckData.driverSide_img_base64], "issues": ["electrical": ["reasons": PreCheckData.electricalIssueTxt, "images": PreCheckData.arrImgElectricalIssueBase64], "exterior": ["reasons": PreCheckData.exteriorIssueTxt, "images": PreCheckData.arrImageExteriorIssueBase64], "interior": ["reasons": PreCheckData.interiorIssueTxt, "images": PreCheckData.arrImgInteriorIssueBase64]], "customer_sign": PreCheckData.customerSignature_base64]]
+        AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { [self] jsonVal, data in
+            print(jsonVal)
+//            self.activity.stopAnimating()
+//            do {
+//                
+//            } catch {
+//                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+//            }
+        } failure: { error in
+            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error.localizedDescription)
+            //self.activity.stopAnimating()
+        }
     }
 }

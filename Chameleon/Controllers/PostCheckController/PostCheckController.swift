@@ -21,12 +21,15 @@ struct PostCheckData {
     static var isElectricalIssue = false
     static var electricalIssueTxt = ""
     static var arrImgElectricalIssue: [UIImage] = []
+    static var arrImgElectricalIssueBase64: [String] = []
     static var isExteriorIssue = false
     static var exteriorIssueTxt = ""
     static var arrImgExteriorIssue: [UIImage] = []
+    static var arrImageExteriorIssueBase64: [String] = []
     static var isInteriorIssue = false
     static var interiorIssueTxt = ""
     static var arrImgInteriorIssue: [UIImage] = []
+    static var arrImgInteriorIssueBase64: [String] = []
     static var declaration = ""
     static var engineerSignature = UIImage()
     static var engineerSignature_base64 = ""
@@ -38,10 +41,13 @@ struct PostCheckData {
     static var customerPosition = ""
     static var emailAddress = ""
     static var isSendCopy = false
+    static var bufferParts_base64: [(id: Int, partsName: String, serialNo: String, consumed: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
+    static var partsReturn_base64: [(id: Int, partsName: String, serialNo: String, returnedBy: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
+    static var sentParts_base64: [(id: Int, partsName: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
 }
 
 class PostCheckController: BaseViewController {
-
+    @IBOutlet weak var activity: UIActivityIndicatorView!
     var isReset: Bool = false
     var isSave: Bool = false
     @IBOutlet weak var lblNcNumber: UILabel!
@@ -564,7 +570,7 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                 }
                 partsRowCell.didSendSignal = { chk, index in
                     let postPartVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckPartController") as! PostCheckPartController
-                    postPartVC.index = index
+                    postPartVC.index = index - 2
                     postPartVC.unitPosition = PostCheckData.arrPartsToReturn[index - 2].imgUnit
                     postPartVC.isUnitPositionImg = PostCheckData.arrPartsToReturn[index - 2].isImgUnit
                     postPartVC.permConn = PostCheckData.arrPartsToReturn[index - 2].imgPerm
@@ -792,6 +798,7 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
             saveCell.datasource = "" as AnyObject
             saveCell.didSave = { save in
                 self.isSave = save
+                self.saveData()
             }
             saveCell.didReset = { reset in
                 self.isReset = reset
@@ -802,8 +809,10 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                 PostCheckData.interiorIssueTxt = ""
                 PostCheckData.arrImgInteriorIssue.removeAll()
                 PostCheckData.arrBufferParts.removeAll()
+                PostCheckData.bufferParts_base64.removeAll()
                 self.arrBufferPartsId = 0
                 PostCheckData.arrPartsToReturn.removeAll()
+                PostCheckData.partsReturn_base64.removeAll()
                 self.arrPartsReturnId = 0
                 self.tblPostCheck.reloadData()
                 self.resetData()
@@ -1214,6 +1223,143 @@ extension PostCheckController {
     }
     
     @objc func saveData() {
+        if PostCheckData.front_img_base64 != "" {
+            if PostCheckData.rear_img_base64 != "" {
+                if PostCheckData.passengerSide_img_base64 != "" {
+                    if PostCheckData.driverSide_img_base64 != "" {
+                        if PostCheckData.isElectricalIssue {
+                            if PostCheckData.electricalIssueTxt != "" {
+                                if PostCheckData.isExteriorIssue {
+                                    if PostCheckData.exteriorIssueTxt != "" {
+                                        if PostCheckData.isInteriorIssue {
+                                            if PostCheckData.interiorIssueTxt != "" {
+                                                self.save2()
+                                            } else {
+                                                self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter comments on interior issue!")
+                                            }
+                                        } else {
+                                            self.save2()
+                                        }
+                                    } else {
+                                        self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter comments on exterior issue!")
+                                    }
+                                } else {
+                                    self.save2()
+                                }
+                            } else {
+                                self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter comments on electrical issue!")
+                            }
+                        } else {
+                            self.save2()
+                        }
+
+                    } else {
+                        self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter driver side image!")
+                    }
+                } else {
+                    self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter passenger side image!")
+                }
+            } else {
+                self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter rear image!")
+            }
+        } else {
+            self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter front image!")
+        }
+    }
+    
+    @objc func save2() {
+        if PostCheckData.engineerSignature_base64 != "" {
+            if PostCheckData.engineerName != "" {
+                if PostCheckData.engineerCode != "" {
+                    if PostCheckData.customerSignature_base64 != "" {
+                        if PostCheckData.customerName != "" {
+                            self.createBase64StringForIssues(electrical: PostCheckData.arrImgElectricalIssue, exterior: PostCheckData.arrImgExteriorIssue, interior: PostCheckData.arrImgInteriorIssue)
+                        } else {
+                            self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter customer name!")
+                        }
+                    } else {
+                        self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter customer signature!")
+                    }
+                } else {
+                    self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter engineer code!")
+                }
+            } else {
+                self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter engineer name!")
+            }
+        } else {
+            self.presentAlertWithTitle(title: APP_TITLE, message: "Please enter engineer signature!")
+        }
+    }
+    
+    @objc func createBase64StringForIssues(electrical: [UIImage], exterior: [UIImage], interior: [UIImage]) {
+        self.activity.startAnimating()
+        if electrical.count > 0 {
+            PostCheckData.arrImgElectricalIssueBase64.removeAll()
+            for image in electrical {
+                DispatchQueue.background(background: {
+                    PostCheckData.arrImgElectricalIssueBase64.append(image.toBase64() ?? "")
+                }, completion:{
+                    
+                })
+            }
+        }
         
+        if exterior.count > 0 {
+            PostCheckData.arrImageExteriorIssueBase64.removeAll()
+            for image in exterior {
+                DispatchQueue.background(background: {
+                    PostCheckData.arrImageExteriorIssueBase64.append(image.toBase64() ?? "")
+                }, completion:{
+                    
+                })
+            }
+        }
+        
+        if interior.count > 0 {
+            PostCheckData.arrImgInteriorIssueBase64.removeAll()
+            for image in exterior {
+                DispatchQueue.background(background: {
+                    PostCheckData.arrImgInteriorIssueBase64.append(image.toBase64() ?? "")
+                }, completion:{
+                    
+                })
+            }
+        }
+        
+        if PostCheckData.arrBufferParts.count > 0 {
+            for val in PostCheckData.arrBufferParts {
+                DispatchQueue.background(background: {
+                    PostCheckData.bufferParts_base64.append((id: val.id, partsName: val.partsName, serialNo: val.serialNo, consumed: val.consumed, imgUnitBase64: (val.isImgUnit ? val.imgUnit.toBase64() ?? "" : ""), imgPermBase64: (val.isImgPerm ? val.imgPerm.toBase64() ?? "" : ""), imgEarthBase64: (val.isImgEarth ? val.imgEarth.toBase64() ?? "" : ""), imgIgnBase64: (val.isImgIgn ? val.imgIgn.toBase64() ?? "" : ""), imgSerialBase64: (val.isImgSerial ? val.imgSerial.toBase64() ?? "" : ""), imgLoomBase64: (val.isImgLoom ? val.imgLoom.toBase64() ?? "" : "")))
+                }, completion:{
+                    
+                })
+            }
+        }
+        
+        if PostCheckData.partsReturn_base64.count > 0 {
+            for val in PostCheckData.arrPartsToReturn {
+                DispatchQueue.background(background: {
+                    PostCheckData.partsReturn_base64.append((id: val.id, partsName: val.partsName, serialNo: val.serialNo, returnedBy: val.returnedBy, imgUnitBase64: (val.isImgUnit ? val.imgUnit.toBase64() ?? "" : ""), imgPermBase64: (val.isImgPerm ? val.imgPerm.toBase64() ?? "" : ""), imgEarthBase64: (val.isImgEarth ? val.imgEarth.toBase64() ?? "" : ""), imgIgnBase64: (val.isImgIgn ? val.imgIgn.toBase64() ?? "" : ""), imgSerialBase64: (val.isImgSerial ? val.imgSerial.toBase64() ?? "" : ""), imgLoomBase64: (val.isImgLoom ? val.imgLoom.toBase64() ?? "" : "")))
+                }, completion:{
+                    
+                })
+            }
+        }
+        
+        if arrPartsSerial.count > 0 {
+            for val in arrPartsSerial {
+                DispatchQueue.background(background: {
+                    PostCheckData.sentParts_base64.append((id: val.id, partsName: val.prodName, imgUnitBase64: (val.isImgUnit ? val.imgUnit.toBase64() ?? "" : ""), imgPermBase64: (val.isImgPerm ? val.imgPerm.toBase64() ?? "" : ""), imgEarthBase64: (val.isImgEarth ? val.imgEarth.toBase64() ?? "" : ""), imgIgnBase64: (val.isImgIgn ? val.imgIgn.toBase64() ?? "" : ""), imgSerialBase64: (val.isImgSerial ? val.imgSerial.toBase64() ?? "" : ""), imgLoomBase64: (val.isImgLoom ? val.imgLoom.toBase64() ?? "" : "")))
+                }, completion:{
+                    
+                })
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+            self.activity.stopAnimating()
+            let closureVC = mainStoryboard.instantiateViewController(withIdentifier: "ClosureController") as! ClosureController
+            NavigationHelper.helper.contentNavController!.pushViewController(closureVC, animated: true)
+        }
     }
 }
