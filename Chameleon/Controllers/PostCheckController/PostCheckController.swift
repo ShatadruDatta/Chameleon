@@ -43,7 +43,7 @@ struct PostCheckData {
     static var isSendCopy = false
     static var bufferParts_base64: [(id: Int, partsName: String, serialNo: String, consumed: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
     static var partsReturn_base64: [(id: Int, partsName: String, serialNo: String, returnedBy: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
-    static var sentParts_base64: [(id: Int, partsName: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
+    static var sentParts_base64: [(id: Int, partsName: String, serial1: String, serial2: String, returnedBy: String, used: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
 }
 
 class PostCheckController: BaseViewController {
@@ -1349,7 +1349,7 @@ extension PostCheckController {
         if arrPartsSerial.count > 0 {
             for val in arrPartsSerial {
                 DispatchQueue.background(background: {
-                    PostCheckData.sentParts_base64.append((id: val.id, partsName: val.prodName, imgUnitBase64: (val.isImgUnit ? val.imgUnit.toBase64() ?? "" : ""), imgPermBase64: (val.isImgPerm ? val.imgPerm.toBase64() ?? "" : ""), imgEarthBase64: (val.isImgEarth ? val.imgEarth.toBase64() ?? "" : ""), imgIgnBase64: (val.isImgIgn ? val.imgIgn.toBase64() ?? "" : ""), imgSerialBase64: (val.isImgSerial ? val.imgSerial.toBase64() ?? "" : ""), imgLoomBase64: (val.isImgLoom ? val.imgLoom.toBase64() ?? "" : "")))
+                    PostCheckData.sentParts_base64.append((id: val.id, partsName: val.prodName, serial1: val.serialPart1, serial2: val.serialPart2, returnedBy: val.returnedBy, used: val.used ? "yes" : "no", imgUnitBase64: (val.isImgUnit ? val.imgUnit.toBase64() ?? "" : ""), imgPermBase64: (val.isImgPerm ? val.imgPerm.toBase64() ?? "" : ""), imgEarthBase64: (val.isImgEarth ? val.imgEarth.toBase64() ?? "" : ""), imgIgnBase64: (val.isImgIgn ? val.imgIgn.toBase64() ?? "" : ""), imgSerialBase64: (val.isImgSerial ? val.imgSerial.toBase64() ?? "" : ""), imgLoomBase64: (val.isImgLoom ? val.imgLoom.toBase64() ?? "" : "")))
                 }, completion:{
                     
                 })
