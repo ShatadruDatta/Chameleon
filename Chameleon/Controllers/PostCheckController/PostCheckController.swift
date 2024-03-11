@@ -377,10 +377,10 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
             default:
                 let partsCell = self.tblPostCheck.dequeueReusableCell(withIdentifier: "SentPartsCell", for: indexPath) as! SentPartsCell
                 partsCell.datasource = "" as AnyObject
+                partsCell.index = indexPath.row
                 partsCell.arrPartsSerial = arrPartsSerial
                 partsCell.didCaptureCamera = { check, partsIndex in
                     let postPartVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckPartController") as! PostCheckPartController
-                    postPartVC.index = partsIndex
                     postPartVC.unitPosition = arrPartsSerial[partsIndex - 1].imgUnit
                     postPartVC.isUnitPositionImg = arrPartsSerial[partsIndex - 1].isImgUnit
                     postPartVC.permConn = arrPartsSerial[partsIndex - 1].imgPerm
@@ -829,6 +829,7 @@ class SentPartsCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVi
     var didCaptureCamera:((Bool, Int) -> ())!
     var selectedParts: Int = 0
     var didSegmentindex:((Int, Int) -> ())!
+    var index: Int = 0
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
@@ -845,6 +846,7 @@ class SentPartsCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let partsCell = self.collParts.dequeueReusableCell(withReuseIdentifier: "SentPartsCollectionCell", for: indexPath) as! SentPartsCollectionCell
         partsCell.datasource = "" as AnyObject
+        partsCell.partsIndex = index
         partsCell.lblPart.text = "Part: \(arrPartsSerial[indexPath.item].prodName)"
         partsCell.lblSerial.text = "Serial: \(arrPartsSerial[indexPath.item].serialPart1)"
         partsCell.lblReturnedBy.text = "Returned By: \(arrPartsSerial[indexPath.item].returnedBy)"

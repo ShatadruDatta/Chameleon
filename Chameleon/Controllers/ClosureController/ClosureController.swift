@@ -447,7 +447,7 @@ extension ClosureController {
     
     //  MARK: ClosureAPI
     @objc func closureAPI() {
-        let baseurl = "\(baseurl)/v1/joborder/117092/closure"
+        let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure"
         print(baseurl)
         let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
         // PreCheckParamater Create
