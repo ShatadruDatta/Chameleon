@@ -20,6 +20,8 @@ class WorkViewController: BaseViewController {
     @Published var arrBookingInformation: [(roomBookedName: String, createdAt: String, id: Int, datasheetId: Int, roomConfirmationNumber: String, hotelZip: String, hotelState: String, sessionId: Int, hotelName: String, hotelPhone: String, hotelId: Int, roomCost: Int, hotelCity: String, createdBy: String, hotelAddress: String)] = []
     var currentIndex = 0
     var workStatus = "today"
+    var isSearch: Bool = false
+    var tableFilterData: [Result] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -118,7 +120,11 @@ extension WorkViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.workDataModel?.result.count ?? 0
+        if isSearch {
+            return tableFilterData.count
+        } else {
+            return self.workDataModel?.result.count ?? 0
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -129,16 +135,29 @@ extension WorkViewController: UITableViewDelegate, UITableViewDataSource {
         if currentIndex == 0 {
             let workListCell = self.tblViewWorklist.dequeueReusableCell(withIdentifier: "WorkListCell", for: indexPath) as! WorkListCell
             workListCell.datasource = "" as AnyObject
-            workListCell.lblDesc.text = "\(self.workDataModel?.result[indexPath.row].serviceID.name ?? "") \(self.workDataModel?.result[indexPath.row].productInstallID.name ?? "")"
-            let time = self.workDataModel?.result[indexPath.row].appointment.components(separatedBy: " ")
-            let dateAsString = time?[1].timeConversion12(time24: time?[1] ?? "")
-            workListCell.time.text = dateAsString ?? ""
-            workListCell.personName.text = self.workDataModel?.result[indexPath.row].contactName ?? ""
-            workListCell.ncNumber = self.workDataModel?.result[indexPath.row].ncBNCNumber
-            workListCell.contactNo = self.workDataModel?.result[indexPath.row].contactNumber
-            workListCell.carRegNo = self.workDataModel?.result[indexPath.row].carRegNo
-            workListCell.zipCode = self.workDataModel?.result[indexPath.row].installationAddress.postcode
-            workListCell.jobId = self.workDataModel?.result[indexPath.row].id
+            if isSearch {
+                workListCell.lblDesc.text = "\(tableFilterData[indexPath.row].serviceID.name) \(tableFilterData[indexPath.row].productInstallID.name)"
+                let time = tableFilterData[indexPath.row].appointment.components(separatedBy: " ")
+                let dateAsString = time[1].timeConversion12(time24: time[1])
+                workListCell.time.text = dateAsString
+                workListCell.personName.text = tableFilterData[indexPath.row].contactName
+                workListCell.ncNumber = tableFilterData[indexPath.row].ncBNCNumber
+                workListCell.contactNo = tableFilterData[indexPath.row].contactNumber
+                workListCell.carRegNo = tableFilterData[indexPath.row].carRegNo
+                workListCell.zipCode = tableFilterData[indexPath.row].installationAddress.postcode
+                workListCell.jobId = tableFilterData[indexPath.row].id
+            } else {
+                workListCell.lblDesc.text = "\(self.workDataModel?.result[indexPath.row].serviceID.name ?? "") \(self.workDataModel?.result[indexPath.row].productInstallID.name ?? "")"
+                let time = self.workDataModel?.result[indexPath.row].appointment.components(separatedBy: " ")
+                let dateAsString = time?[1].timeConversion12(time24: time?[1] ?? "")
+                workListCell.time.text = dateAsString ?? ""
+                workListCell.personName.text = self.workDataModel?.result[indexPath.row].contactName ?? ""
+                workListCell.ncNumber = self.workDataModel?.result[indexPath.row].ncBNCNumber
+                workListCell.contactNo = self.workDataModel?.result[indexPath.row].contactNumber
+                workListCell.carRegNo = self.workDataModel?.result[indexPath.row].carRegNo
+                workListCell.zipCode = self.workDataModel?.result[indexPath.row].installationAddress.postcode
+                workListCell.jobId = self.workDataModel?.result[indexPath.row].id
+            }
             workListCell.selectionStyle = .none
             return workListCell
         } else if currentIndex == 1 {
@@ -436,5 +455,35 @@ extension DispatchQueue {
                 })
             }
         }
+    }
+}
+
+
+// MARK: TextFieldDelegate
+extension WorkViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        var searchText  = textField.text! + string
+        if string  == "" {
+            searchText = (searchText as String).substring(to: searchText.index(before: searchText.endIndex))
+        }
+        if searchText == "" {
+            isSearch = false
+            tblViewWorklist.reloadData()
+        } else {
+            getSearchArrayContains(searchText)
+        }
+        return true
+    }
+
+    func getSearchArrayContains(_ text : String) {
+        tableFilterData = self.workDataModel?.result.filter({($0.contactName.lowercased().contains(text.lowercased())) || ($0.ncBNCNumber.lowercased().contains(text.lowercased())) || ($0.carRegNo.lowercased().contains(text.lowercased())) || ($0.installationAddress.postcode.lowercased().contains(text.lowercased())) || ($0.contactNumber.lowercased().contains(text.lowercased()))}) ?? []
+        isSearch = true
+        tblViewWorklist.reloadData()
     }
 }

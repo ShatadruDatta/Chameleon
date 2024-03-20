@@ -11,6 +11,9 @@ import SwiftyJSON
 
 struct JobSheetData {
     static var jobId: Int = 0
+    static var ref_no: String = ""
+    static var date: String = ""
+    static var time: String = ""
     static var nc_bnc_number: String = ""
     static var service: String = ""
     static var ins_vehicle_det_color: String = ""
@@ -30,7 +33,6 @@ struct JobSheetData {
     static var deins_vehicle_det_vin: String = ""
     static var deins_vehicle_det_yom: String = ""
 }
-
 
 class JobSheetController: BaseViewController {
 
@@ -97,6 +99,23 @@ class JobSheetController: BaseViewController {
                 self.street3DeliveryAdd = jsonVal["delivery_address"]["street3"].stringValue
                 self.street2InstallationAdd = jsonVal["installation_address"]["street2"].stringValue
                 self.street3InstallationAdd = jsonVal["installation_address"]["street3"].stringValue
+                let appointment = jsonVal["appointment"].stringValue.components(separatedBy: " ")
+                if appointment.count == 2 {
+                    let dateFormatterGet = DateFormatter()
+                    dateFormatterGet.dateFormat = "yyyy-MM-dd"
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "dd MMM, yyyy"
+                    let date: Date? = dateFormatterGet.date(from: appointment[0])
+                    JobSheetData.date = dateFormatter.string(from: date ?? Date())
+                    
+                    let dateFormatterGetTime = DateFormatter()
+                    dateFormatterGetTime.dateFormat = "HH:mm:ss"
+                    let dateFormatterSetTime = DateFormatter()
+                    dateFormatterSetTime.dateFormat = "hh:mm a"
+                    let time: Date? = dateFormatterGetTime.date(from: appointment[1])
+                    JobSheetData.time = dateFormatterSetTime.string(from: time ?? Date())
+                }
+                JobSheetData.ref_no = jsonVal["client_order_ref"].stringValue
                 JobSheetData.service = jsonVal["service"]["service"].stringValue
                 JobSheetData.ins_vehicle_det_reg = jsonVal["installation_vehicle_details"]["reg"].stringValue
                 JobSheetData.ins_vehicle_det_color = jsonVal["installation_vehicle_details"]["colour"].stringValue
@@ -216,7 +235,8 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
              custCell.lblCust.text = self.jobSheetDataModel?.customer.name
              custCell.lblCustClient.text = self.jobSheetDataModel?.customerClient.name
              custCell.lblRef.text = self.jobSheetDataModel?.clientOrderRef
-             custCell.lblDate.text = self.jobSheetDataModel?.appointment.components(separatedBy: " ")[0]
+             custCell.lblDate.text = JobSheetData.date
+             custCell.lblTime.text = JobSheetData.time
              custCell.lblService.text = self.jobSheetDataModel?.service.name
              custCell.lblFee.text = "£\(self.jobSheetDataModel?.service.engineerFee ?? 0)"
              return custCell

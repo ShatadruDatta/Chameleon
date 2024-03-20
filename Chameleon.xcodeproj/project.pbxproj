@@ -67,6 +67,7 @@
 		5F8ED6362B91D9D300A4B504 /* PickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED6352B91D9D300A4B504 /* PickerViewController.swift */; };
 		5F8ED6F42B92741800A4B504 /* SignatureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED6F32B92741800A4B504 /* SignatureView.swift */; };
 		5F8ED6F72B93B99A00A4B504 /* WorkReportController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED6F62B93B99A00A4B504 /* WorkReportController.swift */; };
+		5F9278772BAAD706008CF462 /* LoadingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9278762BAAD706008CF462 /* LoadingController.swift */; };
 		5FB724652B95C0A50006BA98 /* PostCheckController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB724642B95C0A50006BA98 /* PostCheckController.swift */; };
 		5FB724672B9732CF0006BA98 /* PostCheckPartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB724662B9732CF0006BA98 /* PostCheckPartController.swift */; };
 		5FB724692B97540E0006BA98 /* SignatureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB724682B97540E0006BA98 /* SignatureViewController.swift */; };
@@ -161,6 +162,7 @@
 		5F8ED6352B91D9D300A4B504 /* PickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewController.swift; sourceTree = "<group>"; };
 		5F8ED6F32B92741800A4B504 /* SignatureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureView.swift; sourceTree = "<group>"; };
 		5F8ED6F62B93B99A00A4B504 /* WorkReportController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkReportController.swift; sourceTree = "<group>"; };
+		5F9278762BAAD706008CF462 /* LoadingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingController.swift; sourceTree = "<group>"; };
 		5FB724642B95C0A50006BA98 /* PostCheckController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCheckController.swift; sourceTree = "<group>"; };
 		5FB724662B9732CF0006BA98 /* PostCheckPartController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCheckPartController.swift; sourceTree = "<group>"; };
 		5FB724682B97540E0006BA98 /* SignatureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureViewController.swift; sourceTree = "<group>"; };
@@ -507,6 +509,7 @@
 			isa = PBXGroup;
 			children = (
 				5F6266EC2B6027120039A8FA /* ClosureController.swift */,
+				5F9278762BAAD706008CF462 /* LoadingController.swift */,
 			);
 			path = ClosureController;
 			sourceTree = "<group>";
@@ -896,6 +899,7 @@
 				5F0304CF2B3C5143000A012A /* AFWrapper.swift in Sources */,
 				5F0305862B3C5640000A012A /* HeaderViewController.swift in Sources */,
 				5F8ED62E2B8F60BE00A4B504 /* JobSheetModels.swift in Sources */,
+				5F9278772BAAD706008CF462 /* LoadingController.swift in Sources */,
 				5F03052F2B3C5550000A012A /* Constants.swift in Sources */,
 				5FB7246D2B97BC6D0006BA98 /* ProductController.swift in Sources */,
 				5F0305752B3C5550000A012A /* BaseCollectionViewController.swift in Sources */,

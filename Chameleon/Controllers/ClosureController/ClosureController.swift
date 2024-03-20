@@ -9,7 +9,7 @@ import UIKit
 
 class ClosureController: BaseTableViewController {
 
-    @IBOutlet weak var activity: UIActivityIndicatorView!
+    var imageUploadCounter = 0
     var checkController: Bool = false
     @IBOutlet weak var viewPreCheck: UIView!
     @IBOutlet weak var viewPostCheck: UIView!
@@ -411,33 +411,34 @@ extension ClosureController {
     }
     
     @objc func createSentPartsJsonParam() {
-        self.activity.startAnimating()
+        LoadingController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, text: "Job closure data submission starts!!!") { contextVal in } didFinish: { txt in }
+        //NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
         if PostCheckData.sentParts_base64.count > 0 {
             sentPartsParameterArray.removeAll()
             for val in PostCheckData.sentParts_base64 {
-                let parameters: [String : Any] = ["part": val.partsName, "serial": val.serial1, "used": val.used, "returned_by": val.returnedBy, "images": ["unit_position": val.imgUnitBase64, "perm_conn": val.imgPermBase64, "earth_conn": val.imgEarthBase64, "ign_conn": val.imgIgnBase64, "serial_imei": val.imgSerialBase64, "loom": val.imgLoomBase64]]
+                let parameters: [String : Any] = ["id": val.id, "part": val.partsName, "serial": val.serial1, "used": val.used, "returned_by": val.returnedBy]
                 sentPartsParameterArray.append(parameters)
             }
-            self.createBufferPartsJsonParam()
         }
+        self.createBufferPartsJsonParam()
     }
     
     @objc func createBufferPartsJsonParam() {
         if PostCheckData.bufferParts_base64.count > 0 {
             bufferPartsParameterArray.removeAll()
             for val in PostCheckData.bufferParts_base64 {
-                let parameters: [String: Any] = ["part": val.partsName, "serial": val.serialNo, "used": val.consumed, "images": ["unit_position": val.imgUnitBase64, "perm_conn": val.imgPermBase64, "earth_conn": val.imgEarthBase64, "ign_conn": val.imgIgnBase64, "serial_imei": val.imgSerialBase64, "loom": val.imgLoomBase64]]
+                let parameters: [String: Any] = ["id": val.id, "part": val.partsName, "serial": val.serialNo, "used": val.consumed]
                 bufferPartsParameterArray.append(parameters)
             }
-            self.createReturnPartsJsonParam()
         }
+        self.createReturnPartsJsonParam()
     }
     
     @objc func createReturnPartsJsonParam() {
         if PostCheckData.partsReturn_base64.count > 0 {
             returnPartsParameterArray.removeAll()
             for val in PostCheckData.partsReturn_base64 {
-                let paramaters: [String: Any] = ["part": val.partsName, "serial": val.serialNo, "returned_by": val.returnedBy, "images": ["unit_position": val.imgUnitBase64, "perm_conn": val.imgPermBase64, "earth_conn": val.imgEarthBase64, "ign_conn": val.imgIgnBase64, "serial_imei": val.imgSerialBase64, "loom": val.imgLoomBase64]]
+                let paramaters: [String: Any] = ["id": val.id, "part": val.partsName, "serial": val.serialNo, "returned_by": val.returnedBy]
                 returnPartsParameterArray.append(paramaters)
             }
         }
@@ -451,25 +452,78 @@ extension ClosureController {
         print(baseurl)
         let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
         // PreCheckParamater Create
-        let preCheckParamater: [String: Any] = ["vehicle": ["make": PreCheckData.make, "model": PreCheckData.model, "reg": PreCheckData.reg, "odometer": PreCheckData.odometer, "odometer_unit": PreCheckData.miles, "reg_or_vin": PreCheckData.reg_vin_img_base64, "dash_board": PreCheckData.dash_img_base64, "front_side": PreCheckData.front_img_base64, "rear_side": PreCheckData.rear_img_base64, "passenger_side": PreCheckData.passengerSide_img_base64, "driver_side": PreCheckData.driverSide_img_base64], "issues": ["electrical": ["reasons": PreCheckData.electricalIssueTxt, "images": PreCheckData.arrImgElectricalIssueBase64], "exterior": ["reasons": PreCheckData.exteriorIssueTxt, "images": PreCheckData.arrImageExteriorIssueBase64], "interior": ["reasons": PreCheckData.interiorIssueTxt, "images": PreCheckData.arrImgInteriorIssueBase64]], "customer_sign": PreCheckData.customerSignature_base64]
+        let preCheckParamater: [String: Any] = ["vehicle": ["make": PreCheckData.make, "model": PreCheckData.model, "reg": PreCheckData.reg, "odometer": PreCheckData.odometer, "odometer_unit": PreCheckData.miles, "reg_or_vin": ""], "issues": ["electrical": ["reasons": PreCheckData.electricalIssueTxt], "exterior": ["reasons": PreCheckData.exteriorIssueTxt], "interior": ["reasons": PreCheckData.interiorIssueTxt]]]
         // PostCheckParameter Create
-        let postCheckParameter: [String: Any] = ["vehicle": ["front": PostCheckData.front_img_base64, "rear": PostCheckData.rear_img_base64, "passenger_side": PostCheckData.passengerSide_img_base64, "driver_side": PostCheckData.driverSide_img_base64], "sent_parts": sentPartsParameterArray, "buffer_parts": bufferPartsParameterArray, "return_parts": returnPartsParameterArray, "issues": ["electrical": ["reasons": PostCheckData.electricalIssueTxt, "images": PostCheckData.arrImgElectricalIssueBase64], "exterior": ["reasons": PostCheckData.exteriorIssueTxt, "images": PostCheckData.arrImageExteriorIssueBase64], "interior": ["reasons": PostCheckData.interiorIssueTxt, "images": PostCheckData.arrImgInteriorIssueBase64]], "engineer_comments": PostCheckData.declaration, "engineer_sign": PostCheckData.engineerSignature_base64, "customer_sign": PostCheckData.customerSignature_base64, "copy_cusomter": ["email": PostCheckData.isSendCopy ? PostCheckData.emailAddress : ""]]
+        let postCheckParameter: [String: Any] = ["sent_parts": sentPartsParameterArray, "buffer_parts": bufferPartsParameterArray, "return_parts": returnPartsParameterArray, "issues": ["electrical": ["reasons": PostCheckData.electricalIssueTxt], "exterior": ["reasons": PostCheckData.exteriorIssueTxt], "interior": ["reasons": PostCheckData.interiorIssueTxt]], "engineer_comments": PostCheckData.declaration, "copy_cusomter": ["email": PostCheckData.isSendCopy ? PostCheckData.emailAddress : ""]]
         // ClosureParameter Create
         let closureParamater: [String: Any] = ["telematic": ["serial_no": self.txtSerialNo.text, "sim_no": self.txtSimNo.text, "mobile_no": self.txtMobNo.text, "imei_no": self.txtIMEINo.text, "commissioning_no": self.txtCommNo.text, "g_no": self.txtGNo.text, "supply_color": self.txtSupplyColor.text, "supply_circuit": self.txtSupplyCircuit.text, "ign_circuit": self.txtIGNCircuit.text, "vlu_unit_location": self.txtVLU.text, "GSM_Ant_Location": self.txtGSM.text, "GPS_Ant_Location": self.txtGPS.text, "VHF_Ant_Location": self.txtVHF.text], "fms": self.isFms, "digital_tacho": self.isDigitalTacho, "privacy_switch": self.isPrivacySwitch, "can_bus": self.isCanBus, "lightbar": self.isLightBar, "pto": self.isPTO, "camera": ["tested": self.isCamera, "serial_no": self.txtCameraSerialNo.text ?? ""], "Pro_Navigation_Device": ["tested": self.isProvNavDev, "serial_no": self.txtProNavDevSerialNo.text ?? ""], "odb": ["tested": self.isODB, "serial_no": self.txtODBSerialNo.text ?? ""]]
-        let parameters = ["pre_check": preCheckParamater, "post_check": postCheckParameter, "test_report": closureParamater, "engineer_closing_note": self.txtViewClosingNotes.text ?? ""] as [String : Any]
-        AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal, data in
+        let parameters = ["job_order_id": JobSheetData.jobId, "pre_check": preCheckParamater, "post_check": postCheckParameter, "test_report": closureParamater, "engineer_closing_note": self.txtViewClosingNotes.text ?? ""] as [String : Any]
+        AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
             print(jsonVal)
-            
-            SharedClass.sharedInstance.alert(view: self, title: "Successful", message: "Upload successfully done!")
-//            self.activity.stopAnimating()
-//            do {
-//                
-//            } catch {
-//                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
-//            }
+            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+            if jsonVal["row_id"].stringValue != "" {
+//                LoadingController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, text: "Image upload submission starts!!!") { contextVal in } didFinish: { txt in }
+            } else {
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["row_id"].stringValue)
+            }
         } failure: { error in
-            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error.localizedDescription)
-            //self.activity.stopAnimating()
+            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
+        }
+    }
+    
+    @objc func callImageUploadAPI(counter: Int) {
+        switch counter {
+        case 0:
+            if PreCheckData.dash_img_base64.count > 10 {
+                self.imageUploadPrecheckAPI(tag: "pre_check/vehicle/dash_board", base64: PreCheckData.dash_img_base64, identify: "PreCheck Dashboard")
+            }
+        case 1:
+            if PreCheckData.front_img_base64.count > 10 {
+                self.imageUploadPrecheckAPI(tag: "pre_check/vehicle/dash_board", base64: PreCheckData.front_img_base64, identify: "PreCheck Frontside")
+            }
+        case 2:
+            if PreCheckData.rear_img_base64.count > 10 {
+                self.imageUploadPrecheckAPI(tag: "pre_check/vehicle/rear_side", base64: PreCheckData.rear_img_base64, identify: "PreCheck Rearside")
+            }
+        case 3:
+            if PreCheckData.passengerSide_img_base64.count > 10 {
+                self.imageUploadPrecheckAPI(tag: "pre_check/vehicle/passenger_side", base64: PreCheckData.passengerSide_img_base64, identify: "PreCheck Passengerside")
+            }
+        case 4:
+            if PreCheckData.driverSide_img_base64.count > 10 {
+                self.imageUploadPrecheckAPI(tag: "pre_check/vehicle/driver_side", base64: PreCheckData.driverSide_img_base64, identify: "PreCheck Driverside")
+            }
+        default:
+            if PreCheckData.driverSide_img_base64.count > 10 {
+                self.imageUploadPrecheckAPI(tag: "pre_check/vehicle/driver_side", base64: PreCheckData.driverSide_img_base64, identify: "PreCheck Driverside")
+            }
+        }
+    }
+    
+    @objc func imageUploadPrecheckAPI(tag: String, base64: String, identify: String) {
+        let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure//image"
+        print(baseurl)
+        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+        let parameters = ["tag": tag, "image": base64] as [String : Any]
+        AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
+            print(jsonVal)
+            if jsonVal["row_id"].stringValue != "" {
+                if self.imageUploadCounter == 4 {
+                    
+                } else {
+                    self.imageUploadCounter += 1
+                    self.callImageUploadAPI(counter: self.imageUploadCounter)
+                }
+            } else {
+                self.imageUploadCounter = 0
+                NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["row_id"].stringValue)
+            }
+        } failure: { error in
+            self.imageUploadCounter = 0
+            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
         }
     }
 }

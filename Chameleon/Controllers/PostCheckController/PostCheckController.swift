@@ -41,9 +41,9 @@ struct PostCheckData {
     static var customerPosition = ""
     static var emailAddress = ""
     static var isSendCopy = false
-    static var bufferParts_base64: [(id: Int, partsName: String, serialNo: String, consumed: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
-    static var partsReturn_base64: [(id: Int, partsName: String, serialNo: String, returnedBy: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
-    static var sentParts_base64: [(id: Int, partsName: String, serial1: String, serial2: String, returnedBy: String, used: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
+    static var bufferParts_base64: [(id: String, partsName: String, serialNo: String, consumed: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
+    static var partsReturn_base64: [(id: String, partsName: String, serialNo: String, returnedBy: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
+    static var sentParts_base64: [(id: String, partsName: String, serial1: String, serial2: String, returnedBy: String, used: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
 }
 
 class PostCheckController: BaseViewController {
@@ -798,7 +798,9 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
             saveCell.datasource = "" as AnyObject
             saveCell.didSave = { save in
                 self.isSave = save
-                self.saveData()
+                let signInVC = mainStoryboard.instantiateViewController(withIdentifier: "WorkReportController") as! WorkReportController
+                NavigationHelper.helper.contentNavController!.pushViewController(signInVC, animated: true)
+                //self.saveData()
             }
             saveCell.didReset = { reset in
                 self.isReset = reset
@@ -1331,17 +1333,17 @@ extension PostCheckController {
         if PostCheckData.arrBufferParts.count > 0 {
             for val in PostCheckData.arrBufferParts {
                 DispatchQueue.background(background: {
-                    PostCheckData.bufferParts_base64.append((id: val.id, partsName: val.partsName, serialNo: val.serialNo, consumed: val.consumed, imgUnitBase64: (val.isImgUnit ? val.imgUnit.toBase64() ?? "" : ""), imgPermBase64: (val.isImgPerm ? val.imgPerm.toBase64() ?? "" : ""), imgEarthBase64: (val.isImgEarth ? val.imgEarth.toBase64() ?? "" : ""), imgIgnBase64: (val.isImgIgn ? val.imgIgn.toBase64() ?? "" : ""), imgSerialBase64: (val.isImgSerial ? val.imgSerial.toBase64() ?? "" : ""), imgLoomBase64: (val.isImgLoom ? val.imgLoom.toBase64() ?? "" : "")))
+                    PostCheckData.bufferParts_base64.append((id: UUID().uuidString, partsName: val.partsName, serialNo: val.serialNo, consumed: val.consumed, imgUnitBase64: (val.isImgUnit ? val.imgUnit.toBase64() ?? "" : ""), imgPermBase64: (val.isImgPerm ? val.imgPerm.toBase64() ?? "" : ""), imgEarthBase64: (val.isImgEarth ? val.imgEarth.toBase64() ?? "" : ""), imgIgnBase64: (val.isImgIgn ? val.imgIgn.toBase64() ?? "" : ""), imgSerialBase64: (val.isImgSerial ? val.imgSerial.toBase64() ?? "" : ""), imgLoomBase64: (val.isImgLoom ? val.imgLoom.toBase64() ?? "" : "")))
                 }, completion:{
                     
                 })
             }
         }
         
-        if PostCheckData.partsReturn_base64.count > 0 {
+        if PostCheckData.arrPartsToReturn.count > 0 {
             for val in PostCheckData.arrPartsToReturn {
                 DispatchQueue.background(background: {
-                    PostCheckData.partsReturn_base64.append((id: val.id, partsName: val.partsName, serialNo: val.serialNo, returnedBy: val.returnedBy, imgUnitBase64: (val.isImgUnit ? val.imgUnit.toBase64() ?? "" : ""), imgPermBase64: (val.isImgPerm ? val.imgPerm.toBase64() ?? "" : ""), imgEarthBase64: (val.isImgEarth ? val.imgEarth.toBase64() ?? "" : ""), imgIgnBase64: (val.isImgIgn ? val.imgIgn.toBase64() ?? "" : ""), imgSerialBase64: (val.isImgSerial ? val.imgSerial.toBase64() ?? "" : ""), imgLoomBase64: (val.isImgLoom ? val.imgLoom.toBase64() ?? "" : "")))
+                    PostCheckData.partsReturn_base64.append((id: UUID().uuidString, partsName: val.partsName, serialNo: val.serialNo, returnedBy: val.returnedBy, imgUnitBase64: (val.isImgUnit ? val.imgUnit.toBase64() ?? "" : ""), imgPermBase64: (val.isImgPerm ? val.imgPerm.toBase64() ?? "" : ""), imgEarthBase64: (val.isImgEarth ? val.imgEarth.toBase64() ?? "" : ""), imgIgnBase64: (val.isImgIgn ? val.imgIgn.toBase64() ?? "" : ""), imgSerialBase64: (val.isImgSerial ? val.imgSerial.toBase64() ?? "" : ""), imgLoomBase64: (val.isImgLoom ? val.imgLoom.toBase64() ?? "" : "")))
                 }, completion:{
                     
                 })
@@ -1351,14 +1353,14 @@ extension PostCheckController {
         if arrPartsSerial.count > 0 {
             for val in arrPartsSerial {
                 DispatchQueue.background(background: {
-                    PostCheckData.sentParts_base64.append((id: val.id, partsName: val.prodName, serial1: val.serialPart1, serial2: val.serialPart2, returnedBy: val.returnedBy, used: val.used ? "yes" : "no", imgUnitBase64: (val.isImgUnit ? val.imgUnit.toBase64() ?? "" : ""), imgPermBase64: (val.isImgPerm ? val.imgPerm.toBase64() ?? "" : ""), imgEarthBase64: (val.isImgEarth ? val.imgEarth.toBase64() ?? "" : ""), imgIgnBase64: (val.isImgIgn ? val.imgIgn.toBase64() ?? "" : ""), imgSerialBase64: (val.isImgSerial ? val.imgSerial.toBase64() ?? "" : ""), imgLoomBase64: (val.isImgLoom ? val.imgLoom.toBase64() ?? "" : "")))
+                    PostCheckData.sentParts_base64.append((id: UUID().uuidString, partsName: val.prodName, serial1: val.serialPart1, serial2: val.serialPart2, returnedBy: val.returnedBy, used: val.used ? "yes" : "no", imgUnitBase64: (val.isImgUnit ? val.imgUnit.toBase64() ?? "" : ""), imgPermBase64: (val.isImgPerm ? val.imgPerm.toBase64() ?? "" : ""), imgEarthBase64: (val.isImgEarth ? val.imgEarth.toBase64() ?? "" : ""), imgIgnBase64: (val.isImgIgn ? val.imgIgn.toBase64() ?? "" : ""), imgSerialBase64: (val.isImgSerial ? val.imgSerial.toBase64() ?? "" : ""), imgLoomBase64: (val.isImgLoom ? val.imgLoom.toBase64() ?? "" : "")))
                 }, completion:{
                     
                 })
             }
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
             self.activity.stopAnimating()
             let closureVC = mainStoryboard.instantiateViewController(withIdentifier: "ClosureController") as! ClosureController
             NavigationHelper.helper.contentNavController!.pushViewController(closureVC, animated: true)

@@ -96,6 +96,29 @@ class PrecheckController: BaseViewController {
         NotificationCenter.default.removeObserver(self)
     }
     
+    @objc func generalImageUpload() {
+        let imageData: Data? = PreCheckData.dash_img.jpegData(compressionQuality: 0.4)
+        let imageStr = imageData?.base64EncodedString(options: .lineLength64Characters) ?? ""
+        let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/urn:uuid:ac2197c5-e5f7-11ee-8eda-6df9c98c9d32/image"
+        print(baseurl)
+        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+        let parameters = ["tag": "pre_check/vehicle/dash_board", "image": imageStr] as [String : Any]
+        AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
+            print(jsonVal)
+            
+           // SharedClass.sharedInstance.alert(view: self, title: "Successful", message: "Upload successfully done!")
+//            self.activity.stopAnimating()
+//            do {
+//
+//            } catch {
+//                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+//            }
+        } failure: { error in
+            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
+            //self.activity.stopAnimating()
+        }
+    }
+    
     @IBAction func postcheck(_ sender: UIButton) {
         let postcheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckController") as! PostCheckController
         NavigationHelper.helper.contentNavController!.pushViewController(postcheckVC, animated: true)
@@ -551,6 +574,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                 saveCell.datasource = "" as AnyObject
                 saveCell.didSave = { save in
                     self.isSave = save
+                    //self.generalImageUpload()
                     self.saveData()
                 }
                 saveCell.didReset = { reset in
