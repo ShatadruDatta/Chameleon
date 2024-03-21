@@ -519,7 +519,8 @@ extension ClosureController {
         AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
             print(jsonVal)
             if jsonVal["row_id"].stringValue != "" {
-                if self.imageUploadCounter == 5 {
+                print(self.imageUploadCounter)
+                if self.imageUploadCounter == 6 {
                     self.imageUploadForPrecheckElectricalIssue(arrbase64: PreCheckData.arrImgElectricalIssueBase64)
                 } else {
                     self.imageUploadCounter += 1
@@ -560,10 +561,9 @@ extension ClosureController {
                             NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
                             SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
                         }
-                    }
+                    } 
                 }
             } else {
-                print("OVER API CALL FOR ELECTRICCAL")
                 self.imageUploadForPrecheckExteriorIssue(arrbase64: PreCheckData.arrImageExteriorIssueBase64)
             }
         } else {

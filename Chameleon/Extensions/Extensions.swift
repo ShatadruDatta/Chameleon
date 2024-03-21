@@ -669,7 +669,6 @@ extension UIImage {
     
     func toBase64() -> String? {
         guard let imageData = self.jpegData(compressionQuality: 0.4) else { return nil }
-        print(imageData.base64EncodedString(options: .lineLength64Characters))
         return imageData.base64EncodedString(options: .lineLength64Characters)
     }
 }
