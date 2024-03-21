@@ -7,6 +7,10 @@
 
 import UIKit
 
+struct Closure {
+    static var row_id = ""
+}
+
 class ClosureController: BaseTableViewController {
 
     var imageUploadCounter = 0
@@ -20,7 +24,7 @@ class ClosureController: BaseTableViewController {
     @IBOutlet weak var imgPreCheck: UIImageView!
     @IBOutlet weak var imgPostCheck: UIImageView!
     @IBOutlet weak var imgClosure: UIImageView!
-    
+    var arrSentParts: [(id: String, tag: String, base64: String)] = []
     //UIView
     @IBOutlet weak var viewJobNo: UIView!
     
@@ -462,9 +466,14 @@ extension ClosureController {
             print(jsonVal)
             NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
             if jsonVal["row_id"].stringValue != "" {
-//                LoadingController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, text: "Image upload submission starts!!!") { contextVal in } didFinish: { txt in }
+                NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                Closure.row_id = jsonVal["row_id"].stringValue
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    LoadingController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, text: "Job closure for image submission starts!!!") { contextVal in } didFinish: { txt in }
+                    self.callImageUploadAPI(counter: self.imageUploadCounter)
+                }
             } else {
-                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["row_id"].stringValue)
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
             }
         } failure: { error in
             NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
@@ -472,6 +481,7 @@ extension ClosureController {
         }
     }
     
+    //MARK: PRECHECK IMAGE UPLOAD STARTS
     @objc func callImageUploadAPI(counter: Int) {
         switch counter {
         case 0:
@@ -480,7 +490,7 @@ extension ClosureController {
             }
         case 1:
             if PreCheckData.front_img_base64.count > 10 {
-                self.imageUploadPrecheckAPI(tag: "pre_check/vehicle/dash_board", base64: PreCheckData.front_img_base64, identify: "PreCheck Frontside")
+                self.imageUploadPrecheckAPI(tag: "pre_check/vehicle/front_side", base64: PreCheckData.front_img_base64, identify: "PreCheck Frontside")
             }
         case 2:
             if PreCheckData.rear_img_base64.count > 10 {
@@ -495,22 +505,22 @@ extension ClosureController {
                 self.imageUploadPrecheckAPI(tag: "pre_check/vehicle/driver_side", base64: PreCheckData.driverSide_img_base64, identify: "PreCheck Driverside")
             }
         default:
-            if PreCheckData.driverSide_img_base64.count > 10 {
-                self.imageUploadPrecheckAPI(tag: "pre_check/vehicle/driver_side", base64: PreCheckData.driverSide_img_base64, identify: "PreCheck Driverside")
+            if PreCheckData.reg_vin_img_base64.count > 10 {
+                self.imageUploadPrecheckAPI(tag: "pre_check/vehicle/reg_or_vin", base64: PreCheckData.reg_vin_img_base64, identify: "PreCheck red_or_vin")
             }
         }
     }
     
     @objc func imageUploadPrecheckAPI(tag: String, base64: String, identify: String) {
-        let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure//image"
+        let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
         print(baseurl)
         let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
         let parameters = ["tag": tag, "image": base64] as [String : Any]
         AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
             print(jsonVal)
             if jsonVal["row_id"].stringValue != "" {
-                if self.imageUploadCounter == 4 {
-                    
+                if self.imageUploadCounter == 5 {
+                    self.imageUploadForPrecheckElectricalIssue(arrbase64: PreCheckData.arrImgElectricalIssueBase64)
                 } else {
                     self.imageUploadCounter += 1
                     self.callImageUploadAPI(counter: self.imageUploadCounter)
@@ -518,7 +528,397 @@ extension ClosureController {
             } else {
                 self.imageUploadCounter = 0
                 NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
-                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["row_id"].stringValue)
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+            }
+        } failure: { error in
+            self.imageUploadCounter = 0
+            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
+        }
+    }
+    
+    @objc func imageUploadForPrecheckElectricalIssue(arrbase64: [String]) {
+        var count = 0
+        if arrbase64.count > 0 {
+            if count != arrbase64.count - 1 {
+                for (index,val) in arrbase64.enumerated() {
+                    if index == count {
+                        let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
+                        print(baseurl)
+                        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                        let parameters = ["tag": "pre_check/issues/electrical/images", "image": val] as [String : Any]
+                        AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
+                            print(jsonVal)
+                            if jsonVal["row_id"].stringValue != "" {
+                                count += 1
+                            } else {
+                                NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+                            }
+                        } failure: { error in
+                            self.imageUploadCounter = 0
+                            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
+                        }
+                    }
+                }
+            } else {
+                print("OVER API CALL FOR ELECTRICCAL")
+                self.imageUploadForPrecheckExteriorIssue(arrbase64: PreCheckData.arrImageExteriorIssueBase64)
+            }
+        } else {
+            self.imageUploadForPrecheckExteriorIssue(arrbase64: PreCheckData.arrImageExteriorIssueBase64)
+        }
+    }
+    
+    @objc func imageUploadForPrecheckExteriorIssue(arrbase64: [String]) {
+        var count = 0
+        if arrbase64.count > 0 {
+            if count != arrbase64.count - 1 {
+                for val in arrbase64 {
+                    let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
+                    print(baseurl)
+                    let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                    let parameters = ["tag": "pre_check/issues/exterior/images", "image": val] as [String : Any]
+                    AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
+                        print(jsonVal)
+                        if jsonVal["row_id"].stringValue != "" {
+                            count += 1
+                        } else {
+                            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+                        }
+                    } failure: { error in
+                        self.imageUploadCounter = 0
+                        NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                        SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
+                    }
+                }
+            } else {
+                self.imageUploadForPrecheckInteriorIssue(arrbase64: PreCheckData.arrImgInteriorIssueBase64)
+            }
+        } else {
+            self.imageUploadForPrecheckInteriorIssue(arrbase64: PreCheckData.arrImgInteriorIssueBase64)
+        }
+    }
+    
+    @objc func imageUploadForPrecheckInteriorIssue(arrbase64: [String]) {
+        var count = 0
+        if arrbase64.count > 0 {
+            if count != arrbase64.count - 1 {
+                for val in arrbase64 {
+                    let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
+                    print(baseurl)
+                    let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                    let parameters = ["tag": "pre_check/issues/interior/images", "image": val] as [String : Any]
+                    AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
+                        print(jsonVal)
+                        if jsonVal["row_id"].stringValue != "" {
+                            count += 1
+                        } else {
+                            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+                        }
+                    } failure: { error in
+                        self.imageUploadCounter = 0
+                        NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                        SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
+                    }
+                }
+            } else {
+                self.imageUploadCounter = 0
+                self.callPostCheckImageUploadAPI(counter: self.imageUploadCounter)
+            }
+        } else {
+            self.imageUploadCounter = 0
+            self.callPostCheckImageUploadAPI(counter: self.imageUploadCounter)
+        }
+    }
+    
+    // MARK: POSTCHECK IMAGE UPLOAD STARTS
+    @objc func callPostCheckImageUploadAPI(counter: Int) {
+        switch counter {
+        case 0:
+            if PostCheckData.front_img_base64.count > 10 {
+                self.imageUploadPostcheckAPI(tag: "post_check/vehicle/front", base64: PostCheckData.front_img_base64, identify: "PostCheck Frontside")
+            }
+        case 1:
+            if PostCheckData.rear_img_base64.count > 10 {
+                self.imageUploadPostcheckAPI(tag: "pre_check/vehicle/rear", base64: PostCheckData.rear_img_base64, identify: "PostCheck Reaeside")
+            }
+        case 2:
+            if PostCheckData.passengerSide_img_base64.count > 10 {
+                self.imageUploadPostcheckAPI(tag: "pre_check/vehicle/passenger_side", base64: PostCheckData.passengerSide_img_base64, identify: "PostCheck Passengerside")
+            }
+        default:
+            if PostCheckData.driverSide_img_base64.count > 10 {
+                self.imageUploadPostcheckAPI(tag: "pre_check/vehicle/driver_side", base64: PostCheckData.driverSide_img_base64, identify: "PostCheck Driverside")
+            }
+        }
+    }
+    
+    @objc func imageUploadPostcheckAPI(tag: String, base64: String, identify: String) {
+        let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
+        print(baseurl)
+        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+        let parameters = ["tag": tag, "image": base64] as [String : Any]
+        AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
+            print(jsonVal)
+            if jsonVal["row_id"].stringValue != "" {
+                if self.imageUploadCounter == 3 {
+                    self.imageUploadForPostcheckElectricalIssue(arrbase64: PostCheckData.arrImgElectricalIssueBase64)
+                } else {
+                    self.imageUploadCounter += 1
+                    self.callImageUploadAPI(counter: self.imageUploadCounter)
+                }
+            } else {
+                self.imageUploadCounter = 0
+                NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+            }
+        } failure: { error in
+            self.imageUploadCounter = 0
+            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
+        }
+    }
+    
+    @objc func imageUploadForPostcheckElectricalIssue(arrbase64: [String]) {
+        var count = 0
+        if arrbase64.count > 0 {
+            if count != arrbase64.count - 1 {
+                for val in arrbase64 {
+                    let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
+                    print(baseurl)
+                    let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                    let parameters = ["tag": "post_check/issues/electrical/images", "image": val] as [String : Any]
+                    AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
+                        print(jsonVal)
+                        if jsonVal["row_id"].stringValue != "" {
+                            count += 1
+                        } else {
+                            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+                        }
+                    } failure: { error in
+                        self.imageUploadCounter = 0
+                        NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                        SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
+                    }
+                }
+            } else {
+                self.imageUploadForPostcheckExteriorIssue(arrbase64: PostCheckData.arrImageExteriorIssueBase64)
+            }
+        } else {
+            self.imageUploadForPostcheckExteriorIssue(arrbase64: PostCheckData.arrImageExteriorIssueBase64)
+        }
+    }
+    
+    @objc func imageUploadForPostcheckExteriorIssue(arrbase64: [String]) {
+        var count = 0
+        if arrbase64.count > 0 {
+            if count != arrbase64.count - 1 {
+                for val in arrbase64 {
+                    let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
+                    print(baseurl)
+                    let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                    let parameters = ["tag": "post_check/issues/exterior/images", "image": val] as [String : Any]
+                    AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
+                        print(jsonVal)
+                        if jsonVal["row_id"].stringValue != "" {
+                            count += 1
+                        } else {
+                            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+                        }
+                    } failure: { error in
+                        self.imageUploadCounter = 0
+                        NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                        SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
+                    }
+                }
+            } else {
+                self.imageUploadForPostcheckInteriorIssue(arrbase64: PostCheckData.arrImgInteriorIssueBase64)
+            }
+        } else {
+            self.imageUploadForPostcheckInteriorIssue(arrbase64: PostCheckData.arrImgInteriorIssueBase64)
+        }
+    }
+    
+    @objc func imageUploadForPostcheckInteriorIssue(arrbase64: [String]) {
+        var count = 0
+        if arrbase64.count > 0 {
+            if count != arrbase64.count - 1 {
+                for val in arrbase64 {
+                    let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
+                    print(baseurl)
+                    let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                    let parameters = ["tag": "post_check/issues/interior/images", "image": val] as [String : Any]
+                    AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
+                        print(jsonVal)
+                        if jsonVal["row_id"].stringValue != "" {
+                            count += 1
+                        } else {
+                            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+                        }
+                    } failure: { error in
+                        self.imageUploadCounter = 0
+                        NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                        SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
+                    }
+                }
+            } else {
+                self.imageUploadCounter = 0
+                self.imageUploadForPostcheckSentParts()
+            }
+        } else {
+            self.imageUploadCounter = 0
+            self.imageUploadForPostcheckSentParts()
+        }
+    }
+    
+    //MARK: SENT PARTS
+    @objc func imageUploadForPostcheckSentParts() {
+        var count = 0
+        if PostCheckData.sentParts_base64.count > 0 {
+                for val in PostCheckData.sentParts_base64 {
+                    arrSentParts.removeAll()
+                    if val.imgUnitBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/sent_parts/images/unit_position", base64: val.imgUnitBase64))
+                    }
+                    if val.imgPermBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/sent_parts/images/perm_conn", base64: val.imgPermBase64))
+                    }
+                    if val.imgEarthBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/sent_parts/images/earth_conn", base64: val.imgEarthBase64))
+                    }
+                    if val.imgIgnBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/sent_parts/images/ign_conn", base64: val.imgIgnBase64))
+                    }
+                    if val.imgLoomBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/sent_parts/images/loom", base64: val.imgLoomBase64))
+                    }
+                    if val.imgSerialBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/sent_parts/images/serial_imei", base64: val.imgSerialBase64))
+                    }
+                    self.callImgUploadParts()
+                }
+            
+            // call for buffer pars
+            self.imageUploadForPostcheckBufferParts()
+            
+        } else {
+            self.imageUploadForPostcheckBufferParts()
+        }
+    }
+    
+    @objc func callImgUploadParts() {
+        for val in arrSentParts {
+            let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
+            print(baseurl)
+            let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+            var parameters: [String : Any] = [:]
+            parameters = ["tag": val.tag, "id": val.id, "image": val.base64] as [String : Any]
+            AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
+                print(jsonVal)
+                if jsonVal["row_id"].stringValue != "" {
+                    
+                } else {
+                    NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                    SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+                }
+            } failure: { error in
+                self.imageUploadCounter = 0
+                NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
+            }
+        }
+    }
+    
+    //MARK: BUFFER PARTS
+    @objc func imageUploadForPostcheckBufferParts() {
+        if PostCheckData.bufferParts_base64.count > 0 {
+                for val in PostCheckData.bufferParts_base64 {
+                    arrSentParts.removeAll()
+                    if val.imgUnitBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/buffer_parts/images/unit_position", base64: val.imgUnitBase64))
+                    }
+                    if val.imgPermBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/buffer_parts/images/perm_conn", base64: val.imgPermBase64))
+                    }
+                    if val.imgEarthBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/buffer_parts/images/earth_conn", base64: val.imgEarthBase64))
+                    }
+                    if val.imgIgnBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/buffer_parts/images/ign_conn", base64: val.imgIgnBase64))
+                    }
+                    if val.imgLoomBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/buffer_parts/images/loom", base64: val.imgLoomBase64))
+                    }
+                    if val.imgSerialBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/buffer_parts/images/serial_imei", base64: val.imgSerialBase64))
+                    }
+                    self.callImgUploadParts()
+                }
+            // call for Returned parts
+            self.imageUploadForPostcheckReturnedParts()
+        } else {
+            self.imageUploadForPostcheckReturnedParts()
+        }
+    }
+    
+    //MARK: RETURNED PARTS
+    @objc func imageUploadForPostcheckReturnedParts() {
+        if PostCheckData.partsReturn_base64.count > 0 {
+                for val in PostCheckData.partsReturn_base64 {
+                    arrSentParts.removeAll()
+                    if val.imgUnitBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/return_parts/images/unit_position", base64: val.imgUnitBase64))
+                    }
+                    if val.imgPermBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/return_parts/images/perm_conn", base64: val.imgPermBase64))
+                    }
+                    if val.imgEarthBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/return_parts/images/earth_conn", base64: val.imgEarthBase64))
+                    }
+                    if val.imgIgnBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/return_parts/images/ign_conn", base64: val.imgIgnBase64))
+                    }
+                    if val.imgLoomBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/return_parts/images/loom", base64: val.imgLoomBase64))
+                    }
+                    if val.imgSerialBase64.count > 0 {
+                        arrSentParts.append((id: val.id, tag: "post_check/return_parts/images/serial_imei", base64: val.imgSerialBase64))
+                    }
+                    self.callImgUploadParts()
+                }
+            
+            // call for closure submit api
+            self.markeTheClosureSubmitAPI()
+            
+        } else {
+            self.markeTheClosureSubmitAPI()
+        }
+    }
+    
+    //MAQRK: CLOSURE SUBMITE API
+    @objc func markeTheClosureSubmitAPI() {
+        let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
+        print(baseurl)
+        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+        var parameters: [String : Any] = [:]
+        parameters = ["job_order_id": JobSheetData.jobId, "row_id": Closure.row_id] as [String : Any]
+        AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
+            print(jsonVal)
+            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+            if jsonVal["row_id"].stringValue != "" {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    let workReportVC = mainStoryboard.instantiateViewController(withIdentifier: "WorkReportController") as! WorkReportController
+                    NavigationHelper.helper.contentNavController!.pushViewController(workReportVC, animated: true)
+                }
+            } else {
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
             }
         } failure: { error in
             self.imageUploadCounter = 0

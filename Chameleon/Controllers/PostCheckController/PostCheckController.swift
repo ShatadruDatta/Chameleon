@@ -798,9 +798,7 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
             saveCell.datasource = "" as AnyObject
             saveCell.didSave = { save in
                 self.isSave = save
-                let signInVC = mainStoryboard.instantiateViewController(withIdentifier: "WorkReportController") as! WorkReportController
-                NavigationHelper.helper.contentNavController!.pushViewController(signInVC, animated: true)
-                //self.saveData()
+                self.saveData()
             }
             saveCell.didReset = { reset in
                 self.isReset = reset
