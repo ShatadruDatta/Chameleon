@@ -14,25 +14,9 @@
             filePath = "Chameleon/Controllers/ClosureController/ClosureController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "872"
-            endingLineNumber = "872"
+            startingLineNumber = "928"
+            endingLineNumber = "928"
             landmarkName = "imageUploadForPostcheckBufferParts()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "6A3806DB-C74B-4214-B0DB-E67F0A2C1789"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Chameleon/Controllers/ClosureController/ClosureController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "575"
-            endingLineNumber = "575"
-            landmarkName = "imageUploadForPrecheckElectricalIssue(base64:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -65,22 +49,6 @@
             startingLineNumber = "525"
             endingLineNumber = "525"
             landmarkName = "imageUploadPrecheckAPI(tag:base64:identify:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E9D42BE0-44DB-487E-8B89-3D51A5F0D1D4"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Chameleon/Controllers/ClosureController/ClosureController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "577"
-            endingLineNumber = "577"
-            landmarkName = "imageUploadForPrecheckElectricalIssue(base64:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
