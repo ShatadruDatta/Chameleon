@@ -13,6 +13,7 @@ struct Closure {
 
 class ClosureController: BaseTableViewController {
 
+    var count = 0
     var imageUploadCounter = 0
     var checkController: Bool = false
     @IBOutlet weak var viewPreCheck: UIView!
@@ -521,7 +522,7 @@ extension ClosureController {
             if jsonVal["row_id"].stringValue != "" {
                 print(self.imageUploadCounter)
                 if self.imageUploadCounter == 6 {
-                    self.imageUploadForPrecheckElectricalIssue(arrbase64: PreCheckData.arrImgElectricalIssueBase64)
+                    self.callImgUploadAPIPreCheckElectrical(arrbase64: PreCheckData.arrImgElectricalIssueBase64)
                 } else {
                     self.imageUploadCounter += 1
                     self.callImageUploadAPI(counter: self.imageUploadCounter)
@@ -538,37 +539,43 @@ extension ClosureController {
         }
     }
     
-    @objc func imageUploadForPrecheckElectricalIssue(arrbase64: [String]) {
-        var count = 0
+    @objc func callImgUploadAPIPreCheckElectrical(arrbase64: [String]) {
         if arrbase64.count > 0 {
-            if count != arrbase64.count - 1 {
-                for (index,val) in arrbase64.enumerated() {
-                    if index == count {
-                        let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
-                        print(baseurl)
-                        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
-                        let parameters = ["tag": "pre_check/issues/electrical/images", "image": val] as [String : Any]
-                        AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
-                            print(jsonVal)
-                            if jsonVal["row_id"].stringValue != "" {
-                                count += 1
-                            } else {
-                                NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
-                                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
-                            }
-                        } failure: { error in
-                            self.imageUploadCounter = 0
-                            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
-                            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
-                        }
-                    } 
+            if self.count != arrbase64.count {
+                print(arrbase64.count, self.count)
+                let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
+                print(baseurl)
+                let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                let parameters = ["tag": "pre_check/issues/electrical/images", "image": arrbase64[self.count]] as [String : Any]
+                AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
+                    print(jsonVal)
+                    if jsonVal["row_id"].stringValue != "" {
+                        self.count += 1
+                        self.callImgUploadAPIPreCheckElectrical(arrbase64: PreCheckData.arrImgElectricalIssueBase64)
+                    } else {
+                        NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                        SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+                    }
+                } failure: { error in
+                    self.imageUploadCounter = 0
+                    NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil)
+                    SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
                 }
             } else {
-                self.imageUploadForPrecheckExteriorIssue(arrbase64: PreCheckData.arrImageExteriorIssueBase64)
+                print(self.count)
+                print("NO PENDING")
             }
         } else {
-            self.imageUploadForPrecheckExteriorIssue(arrbase64: PreCheckData.arrImageExteriorIssueBase64)
+            print(self.count)
+            print("NO IMAGE")
         }
+    }
+    
+    @objc func imageUploadForPrecheckElectricalIssue(base64: String) {
+        
+//        else {
+//            self.imageUploadForPrecheckExteriorIssue(arrbase64: PreCheckData.arrImageExteriorIssueBase64)
+//        }
     }
     
     @objc func imageUploadForPrecheckExteriorIssue(arrbase64: [String]) {

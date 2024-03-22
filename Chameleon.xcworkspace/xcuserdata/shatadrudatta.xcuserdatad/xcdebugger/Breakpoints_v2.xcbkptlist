@@ -14,8 +14,8 @@
             filePath = "Chameleon/Controllers/ClosureController/ClosureController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "865"
-            endingLineNumber = "865"
+            startingLineNumber = "872"
+            endingLineNumber = "872"
             landmarkName = "imageUploadForPostcheckBufferParts()"
             landmarkType = "7">
          </BreakpointContent>
@@ -30,102 +30,40 @@
             filePath = "Chameleon/Controllers/ClosureController/ClosureController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "544"
-            endingLineNumber = "544"
-            landmarkName = "imageUploadForPrecheckElectricalIssue(arrbase64:)"
+            startingLineNumber = "575"
+            endingLineNumber = "575"
+            landmarkName = "imageUploadForPrecheckElectricalIssue(base64:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D584AAD8-9277-492A-9169-1D1778EC2AD3"
+            uuid = "9763C39E-FBA3-4EA7-BBBB-1C06F671E3F0"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Chameleon/Controllers/ClosureController/ClosureController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "552"
-            endingLineNumber = "552"
-            landmarkName = "imageUploadForPrecheckElectricalIssue(arrbase64:)"
+            startingLineNumber = "469"
+            endingLineNumber = "469"
+            landmarkName = "closureAPI()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4A1ABEDE-F31E-408A-B22E-3BBD72A9F4CB"
+            uuid = "F193EBA2-6C0A-439B-AB28-8D826746901E"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Chameleon/Controllers/ClosureController/ClosureController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "548"
-            endingLineNumber = "548"
-            landmarkName = "imageUploadForPrecheckElectricalIssue(arrbase64:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E9670E3C-2B8C-43D0-ADF6-B94DA62E35B1"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Chameleon/Controllers/ClosureController/ClosureController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "542"
-            endingLineNumber = "542"
-            landmarkName = "imageUploadForPrecheckElectricalIssue(arrbase64:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "E9670E3C-2B8C-43D0-ADF6-B94DA62E35B1 - 1118a3b4bb2e49be"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Chameleon.ClosureController.imageUploadForPrecheckElectricalIssue(arrbase64: Swift.Array&lt;Swift.String&gt;) -&gt; ()"
-                  moduleName = "Chameleon"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/shatadrudatta/Desktop/Chameleon/Project/Chameleon/Chameleon/Controllers/ClosureController/ClosureController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "542"
-                  endingLineNumber = "542">
-               </Location>
-               <Location
-                  uuid = "E9670E3C-2B8C-43D0-ADF6-B94DA62E35B1 - 6b66601f5b4afd2d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (SwiftyJSON.JSON) -&gt; () in Chameleon.ClosureController.imageUploadForPrecheckElectricalIssue(arrbase64: Swift.Array&lt;Swift.String&gt;) -&gt; ()"
-                  moduleName = "Chameleon"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/shatadrudatta/Desktop/Chameleon/Project/Chameleon/Chameleon/Controllers/ClosureController/ClosureController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "542"
-                  endingLineNumber = "542">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "11C3E178-579F-42D4-832A-0ED1E3716DAD"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Chameleon/Controllers/ClosureController/ClosureController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "524"
-            endingLineNumber = "524"
+            startingLineNumber = "525"
+            endingLineNumber = "525"
             landmarkName = "imageUploadPrecheckAPI(tag:base64:identify:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -133,16 +71,48 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "272EA0C6-AD3B-46D2-BF62-1FCA3D4B7BF6"
+            uuid = "E9D42BE0-44DB-487E-8B89-3D51A5F0D1D4"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Chameleon/Controllers/PrecheckController/PrecheckController.swift"
+            filePath = "Chameleon/Controllers/ClosureController/ClosureController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1398"
-            endingLineNumber = "1398"
-            landmarkName = "save2()"
+            startingLineNumber = "577"
+            endingLineNumber = "577"
+            landmarkName = "imageUploadForPrecheckElectricalIssue(base64:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EF2F2CD9-CC95-4289-B6E6-574749C552AE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chameleon/Controllers/ClosureController/ClosureController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "551"
+            endingLineNumber = "551"
+            landmarkName = "callImgUploadAPIPreCheckElectrical(arrbase64:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C87A4319-7AD9-476D-B0B8-11A9E71D2B9D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chameleon/Controllers/ClosureController/ClosureController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "544"
+            endingLineNumber = "544"
+            landmarkName = "callImgUploadAPIPreCheckElectrical(arrbase64:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

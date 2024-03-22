@@ -120,8 +120,7 @@ class PrecheckController: BaseViewController {
     }
     
     @IBAction func postcheck(_ sender: UIButton) {
-        let postcheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckController") as! PostCheckController
-        NavigationHelper.helper.contentNavController!.pushViewController(postcheckVC, animated: true)
+        self.save2()
     }
     
     @IBAction func menu(_ sender: UIButton) {
