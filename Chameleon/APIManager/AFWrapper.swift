@@ -26,7 +26,7 @@ class AFWrapper: NSObject {
                 }
             }
         } else {
-            // No code now
+            NoInternetController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!) { contextVal in } didFinish: { txt in }
         }
     }
     
@@ -42,20 +42,6 @@ class AFWrapper: NSObject {
     class func requestPOSTURL(_ strURL : String, params : [String : Any]?, headers : [String : String]?, success:@escaping (JSON) -> Void, failure:@escaping (String) -> Void){
         
         if Reachability.isConnectedToNetwork() {
-//            Alamofire.request(strURL, method: .post, parameters: params, encoding:  URLEncoding.httpBody, headers: headers).responseJSON { (responseObject) -> Void in
-//                //JSONEncoding.default
-//                print(responseObject)
-//                
-//                if responseObject.result.isSuccess {
-//                    let resJson = JSON(responseObject.result.value!)
-//                    success(resJson, responseObject.data!)
-//                }
-//                if responseObject.result.isFailure {
-//                    let error : Error = responseObject.result.error!
-//                    failure(error)
-//                }
-//            }
-            print(params?.getJsonString() ?? [:])
             let jsonData = try? JSONSerialization.data(withJSONObject: params ?? [:])
             let url = URL(string: strURL)! //PUT Your URL
             var request = URLRequest(url: url)
@@ -82,9 +68,8 @@ class AFWrapper: NSObject {
 
             task.resume()
         } else {
-            // No code now
+            NoInternetController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!) { contextVal in } didFinish: { txt in }
         }
-        
     }
 }
 

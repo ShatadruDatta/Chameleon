@@ -738,6 +738,17 @@ extension CGFloat {
 // MARK: - Alert Controller
 extension UIViewController {
     
+    func presentAlertJobSubmission(title: String, message : String)
+    {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let OKAction = UIAlertAction(title: "Ok", style: .default) {
+            (action: UIAlertAction) in
+            let workReportVC = mainStoryboard.instantiateViewController(withIdentifier: "WorkReportController") as! WorkReportController
+            NavigationHelper.helper.contentNavController!.pushViewController(workReportVC, animated: true)
+        }
+        alertController.addAction(OKAction)
+        self.present(alertController, animated: true, completion: nil)
+    }
     
     func presentAlertWithTitle(title: String, message : String)
     {
