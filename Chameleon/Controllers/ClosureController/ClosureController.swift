@@ -412,7 +412,11 @@ extension ClosureController {
     
     // MARK: Save
     @IBAction func save(_ sender: UIButton) {
-        self.createSentPartsJsonParam()
+        if Reachability.isConnectedToNetwork() {
+            self.createSentPartsJsonParam()
+        } else {
+            NoInternetController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!) { contextVal in } didFinish: { txt in }
+        }
     }
     
     @objc func createSentPartsJsonParam() {

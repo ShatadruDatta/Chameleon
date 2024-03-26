@@ -40,35 +40,39 @@ class WorkViewController: BaseViewController {
     
     //  MARK: WorkViewAPI
     @objc func workView() {
-        self.activity.startAnimating()
-        self.tblViewWorklist.isHidden = true
-        let baseurl = "\(baseurl)/v1/joborder?filter=\(workStatus)"
-        print(baseurl)
-        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
-        AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data in
-            print(jsonVal)
-            self.workDataModel = nil
-            self.activity.stopAnimating()
-            do {
-                let decoder = JSONDecoder()
-                let data = try decoder.decode(WorkViewDataModel.self, from: data)
-                workDataModel = data
-                if workDataModel?.result.count ?? 0 > 0 {
-                    self.tblViewWorklist.isHidden = false
-                    self.lblNoDataFound.isHidden = true
-                    self.tblViewWorklist.reloadData()
-                } else {
-                    self.tblViewWorklist.isHidden = true
-                    self.lblNoDataFound.isHidden = false
-                }
-            } catch {
-                self.tblViewWorklist.isHidden = true
-                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
-            }
-        } failure: { error in
-            self.activity.stopAnimating()
+        if Reachability.isConnectedToNetwork() {
+            self.activity.startAnimating()
             self.tblViewWorklist.isHidden = true
-            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error.localizedDescription)
+            let baseurl = "\(baseurl)/v1/joborder?filter=\(workStatus)"
+            print(baseurl)
+            let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+            AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data in
+                print(jsonVal)
+                self.workDataModel = nil
+                self.activity.stopAnimating()
+                do {
+                    let decoder = JSONDecoder()
+                    let data = try decoder.decode(WorkViewDataModel.self, from: data)
+                    workDataModel = data
+                    if workDataModel?.result.count ?? 0 > 0 {
+                        self.tblViewWorklist.isHidden = false
+                        self.lblNoDataFound.isHidden = true
+                        self.tblViewWorklist.reloadData()
+                    } else {
+                        self.tblViewWorklist.isHidden = true
+                        self.lblNoDataFound.isHidden = false
+                    }
+                } catch {
+                    self.tblViewWorklist.isHidden = true
+                    SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+                }
+            } failure: { error in
+                self.activity.stopAnimating()
+                self.tblViewWorklist.isHidden = true
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error.localizedDescription)
+            }
+        } else {
+            NoInternetController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!) { contextVal in } didFinish: { txt in }
         }
     }
     

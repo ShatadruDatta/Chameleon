@@ -38,7 +38,11 @@ class NoInternetController: BaseViewController {
     }
     
     @objc func tryAgain(_ sender: UIButton) {
-        self.didSubmitValue(contextVal: "Dismiss")
+        if Reachability.isConnectedToNetwork() {
+            self.didSubmitValue(contextVal: "Dismiss")
+        } else {
+            self.presentAlertWithTitle(title: "No Internet Connection", message: "Network still no available!")
+        }
     }
     
     // MARK: Convert lines drawable to image

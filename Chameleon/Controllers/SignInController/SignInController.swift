@@ -58,7 +58,6 @@ class SignInController: BaseViewController {
     @objc func checkCred() {
         if txtUsername.text != "" {
             if txtPassword.text != "" {
-                activity.startAnimating()
                 let username = txtUsername.text
                 let password = txtPassword.text
                 let credBase64 = "\(username ?? "")|\(password ?? "")".toBase64()
@@ -73,21 +72,26 @@ class SignInController: BaseViewController {
     
     // MARK: SignIn API
     @objc func signInApi(usernamePasswordBase64: String) {
-        let baseurl = "\(baseurl)/v1/token?\(accessParam)\(usernamePasswordBase64)"
-        print(baseurl)
-        let headers = ["x-api-key": apiKey]
-        AFWrapper.requestGETURL(baseurl, headers: headers) { jsonVal, _  in
-            print(jsonVal)
-            self.activity.stopAnimating()
-            Chameleon.token = jsonVal["token"].stringValue
-            DispatchQueue.main.async {
-                let workViewVC = mainStoryboard.instantiateViewController(withIdentifier: "WorkViewController") as! WorkViewController
-                NavigationHelper.helper.contentNavController!.pushViewController(workViewVC, animated: true)
+        if Reachability.isConnectedToNetwork() {
+            activity.startAnimating()
+            let baseurl = "\(baseurl)/v1/token?\(accessParam)\(usernamePasswordBase64)"
+            print(baseurl)
+            let headers = ["x-api-key": apiKey]
+            AFWrapper.requestGETURL(baseurl, headers: headers) { jsonVal, _  in
+                print(jsonVal)
+                self.activity.stopAnimating()
+                Chameleon.token = jsonVal["token"].stringValue
+                DispatchQueue.main.async {
+                    let workViewVC = mainStoryboard.instantiateViewController(withIdentifier: "WorkViewController") as! WorkViewController
+                    NavigationHelper.helper.contentNavController!.pushViewController(workViewVC, animated: true)
+                }
+            } failure: { error in
+                self.activity.stopAnimating()
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: "Please try again with proper credentials")
+                print(error)
             }
-        } failure: { error in
-            self.activity.stopAnimating()
-            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: "Please try again with proper credentials")
-            print(error)
+        } else {
+            NoInternetController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!) { contextVal in } didFinish: { txt in }
         }
     }
 }
