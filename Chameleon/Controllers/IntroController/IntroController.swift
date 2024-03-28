@@ -55,8 +55,5 @@ class IntroController: BaseViewController {
     @IBAction func signin(_ sender: UIButton) {
         let signInVC = mainStoryboard.instantiateViewController(withIdentifier: "SignInController") as! SignInController
         NavigationHelper.helper.contentNavController!.pushViewController(signInVC, animated: true)
-        
-//        let signInVC = mainStoryboard.instantiateViewController(withIdentifier: "WorkReportController") as! WorkReportController
-//        NavigationHelper.helper.contentNavController!.pushViewController(signInVC, animated: true)
     }
 }
