@@ -62,6 +62,7 @@
 		5F40B9AF2B3E256F004D9AE2 /* SignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F40B9AE2B3E256F004D9AE2 /* SignInController.swift */; };
 		5F6266ED2B6027120039A8FA /* ClosureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6266EC2B6027120039A8FA /* ClosureController.swift */; };
 		5F782AFC2B4CA4630088F3E3 /* JobSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F782AFB2B4CA4630088F3E3 /* JobSheetController.swift */; };
+		5F8B08662BB5C6230098FBEB /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8B08652BB5C6230098FBEB /* ProfileViewController.swift */; };
 		5F8ED62E2B8F60BE00A4B504 /* JobSheetModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED62D2B8F60BE00A4B504 /* JobSheetModels.swift */; };
 		5F8ED6332B90BB1C00A4B504 /* CameraHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED6322B90BB1C00A4B504 /* CameraHandler.swift */; };
 		5F8ED6362B91D9D300A4B504 /* PickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8ED6352B91D9D300A4B504 /* PickerViewController.swift */; };
@@ -159,6 +160,7 @@
 		5F40B9AE2B3E256F004D9AE2 /* SignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInController.swift; sourceTree = "<group>"; };
 		5F6266EC2B6027120039A8FA /* ClosureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosureController.swift; sourceTree = "<group>"; };
 		5F782AFB2B4CA4630088F3E3 /* JobSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSheetController.swift; sourceTree = "<group>"; };
+		5F8B08652BB5C6230098FBEB /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		5F8ED62D2B8F60BE00A4B504 /* JobSheetModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSheetModels.swift; sourceTree = "<group>"; };
 		5F8ED6322B90BB1C00A4B504 /* CameraHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraHandler.swift; sourceTree = "<group>"; };
 		5F8ED6352B91D9D300A4B504 /* PickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewController.swift; sourceTree = "<group>"; };
@@ -506,6 +508,7 @@
 			isa = PBXGroup;
 			children = (
 				5F40B9AE2B3E256F004D9AE2 /* SignInController.swift */,
+				5F8B08652BB5C6230098FBEB /* ProfileViewController.swift */,
 			);
 			path = SignInController;
 			sourceTree = "<group>";
@@ -911,6 +914,7 @@
 				5FECBDC42BB21DCA0034FA06 /* NoInternetController.swift in Sources */,
 				5F92787A2BAEE716008CF462 /* ChameleonModel.xcdatamodeld in Sources */,
 				5F0305752B3C5550000A012A /* BaseCollectionViewController.swift in Sources */,
+				5F8B08662BB5C6230098FBEB /* ProfileViewController.swift in Sources */,
 				5F0305742B3C5550000A012A /* BaseCollectionViewCell.swift in Sources */,
 				5F0305302B3C5550000A012A /* ApplicationTexts.swift in Sources */,
 			);
