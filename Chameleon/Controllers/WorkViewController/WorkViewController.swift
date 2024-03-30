@@ -34,7 +34,7 @@ class WorkViewController: BaseViewController {
         self.parentViewSegment.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)
         self.tblViewWorklist.estimatedRowHeight = 130.0
         self.tblViewWorklist.rowHeight = UITableView.automaticDimension
-        NavigationHelper.helper.tabBarViewController?.isShowBottomBar(isShow: true)
+        NavigationHelper.helper.tabBarViewController?.isShowBottomBar(isShow: false)
         self.workView()
     }
     

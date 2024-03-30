@@ -78,6 +78,8 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
                 cellMenu.datasource = arrMenuSecOne[indexPath.row] as AnyObject
                 if indexPath.row == 0 {
                     cellMenu.btnMenu.addTarget(self, action: #selector(homePage), for: .touchUpInside)
+                } else {
+                    cellMenu.btnMenu.addTarget(self, action: #selector(profilePage), for: .touchUpInside)
                 }
             } else if indexPath.section == 2 {
                 cellMenu.datasource = arrMenuSecTwo[indexPath.row] as AnyObject
@@ -98,6 +100,26 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
         } else {
             return 60.0
         }
+    }
+    
+    @objc func profilePage() {
+        let allViewController: [UIViewController] =  NavigationHelper.helper.contentNavController!.viewControllers as [UIViewController]
+        for aviewcontroller: UIViewController in allViewController
+        {
+            if aviewcontroller.isKind(of: ProfileViewController.classForCoder())
+            {
+                NavigationHelper.helper.contentNavController!.popToViewController(aviewcontroller, animated: true)
+                self.checkController = true
+                break
+            }
+        }
+        
+        if self.checkController == false {
+            let profPageVC = mainStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
+            NavigationHelper.helper.contentNavController!.pushViewController(profPageVC, animated: true)
+        }
+        self.checkController = false
+        NavigationHelper.helper.openSidePanel(open: false)
     }
     
     // MARK: HomePage
