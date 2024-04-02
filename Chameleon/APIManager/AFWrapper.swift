@@ -49,7 +49,7 @@ class AFWrapper: NSObject {
             request.setValue("\(String(describing: jsonData?.count))", forHTTPHeaderField: "Content-Length")
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.setValue("\(apiKey)", forHTTPHeaderField: "x-api-key")
-            request.setValue("\(Chameleon.token)", forHTTPHeaderField: "X-Token")
+            request.setValue("\(Chameleon.token)", forHTTPHeaderField: "x-token")
             // insert json data to the request
             request.httpBody = jsonData
 

@@ -459,7 +459,7 @@ extension ClosureController {
     @objc func closureAPI() {
         let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure"
         print(baseurl)
-        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+        let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
         // PreCheckParamater Create
         let preCheckParamater: [String: Any] = ["vehicle": ["make": PreCheckData.make, "model": PreCheckData.model, "reg": PreCheckData.reg, "odometer": PreCheckData.odometer, "odometer_unit": PreCheckData.miles, "reg_or_vin": ""], "issues": ["electrical": ["reasons": PreCheckData.electricalIssueTxt], "exterior": ["reasons": PreCheckData.exteriorIssueTxt], "interior": ["reasons": PreCheckData.interiorIssueTxt]]]
         // PostCheckParameter Create
@@ -519,7 +519,7 @@ extension ClosureController {
     @objc func imageUploadPrecheckAPI(tag: String, base64: String, identify: String) {
         let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
         print(baseurl)
-        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+        let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
         let parameters = ["tag": tag, "image": base64] as [String : Any]
         AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
             print(jsonVal)
@@ -549,7 +549,7 @@ extension ClosureController {
                 print(arrbase64.count, self.count)
                 let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
                 print(baseurl)
-                let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
                 let parameters = ["tag": "pre_check/issues/electrical/images", "image": arrbase64[self.count]] as [String : Any]
                 AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
                     print(jsonVal)
@@ -581,7 +581,7 @@ extension ClosureController {
                 print(arrbase64.count, self.count)
                 let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
                 print(baseurl)
-                let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
                 let parameters = ["tag": "pre_check/issues/exterior/images", "image": arrbase64[self.count]] as [String : Any]
                 AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
                     print(jsonVal)
@@ -613,7 +613,7 @@ extension ClosureController {
                 print(arrbase64.count, self.count)
                 let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
                 print(baseurl)
-                let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
                 let parameters = ["tag": "pre_check/issues/interior/images", "image": arrbase64[self.count]] as [String : Any]
                 AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
                     print(jsonVal)
@@ -644,7 +644,7 @@ extension ClosureController {
         if base64.count > 0 {
             let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
             print(baseurl)
-            let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+            let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
             let parameters = ["tag": "pre_check/customer_sign", "image": base64] as [String : Any]
             AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
                 print(jsonVal)
@@ -688,7 +688,7 @@ extension ClosureController {
     @objc func imageUploadPostcheckAPI(tag: String, base64: String, identify: String) {
         let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
         print(baseurl)
-        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+        let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
         let parameters = ["tag": tag, "image": base64] as [String : Any]
         AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
             print(jsonVal)
@@ -719,7 +719,7 @@ extension ClosureController {
                 print(arrbase64.count, self.count)
                 let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
                 print(baseurl)
-                let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
                 let parameters = ["tag": "post_check/issues/electrical/images", "image": arrbase64[self.count]] as [String : Any]
                 AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
                     print(jsonVal)
@@ -751,7 +751,7 @@ extension ClosureController {
                 print(arrbase64.count, self.count)
                 let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
                 print(baseurl)
-                let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
                 let parameters = ["tag": "post_check/issues/exterior/images", "image": arrbase64[self.count]] as [String : Any]
                 AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
                     print(jsonVal)
@@ -783,7 +783,7 @@ extension ClosureController {
                 print(arrbase64.count, self.count)
                 let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
                 print(baseurl)
-                let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
                 let parameters = ["tag": "post_check/issues/interior/images", "image": arrbase64[self.count]] as [String : Any]
                 AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
                     print(jsonVal)
@@ -815,7 +815,7 @@ extension ClosureController {
             if self.count != 2 {
                 let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
                 print(baseurl)
-                let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
                 var parameters: [String : Any] = [:]
                 if count == 0 {
                     parameters = ["tag": "post_check/engineer_sign", "image": base64] as [String : Any]
@@ -885,7 +885,7 @@ extension ClosureController {
             if self.count != arrSentParts.count {
                 let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
                 print(baseurl)
-                let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
                 var parameters: [String : Any] = [:]
                 let val = arrSentParts[self.count]
                 parameters = ["tag": val.tag, "id": val.id, "image": val.base64] as [String : Any]
@@ -951,7 +951,7 @@ extension ClosureController {
             if self.count != arrSentParts.count {
                 let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
                 print(baseurl)
-                let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
                 var parameters: [String : Any] = [:]
                 let val = arrSentParts[self.count]
                 parameters = ["tag": val.tag, "id": val.id, "image": val.base64] as [String : Any]
@@ -1021,7 +1021,7 @@ extension ClosureController {
             if self.count != arrSentParts.count {
                 let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/image"
                 print(baseurl)
-                let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+                let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
                 var parameters: [String : Any] = [:]
                 let val = arrSentParts[self.count]
                 parameters = ["tag": val.tag, "id": val.id, "image": val.base64] as [String : Any]
@@ -1061,7 +1061,7 @@ extension ClosureController {
     @objc func markeTheClosureSubmitAPI() {
         let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/\(Closure.row_id)/submit"
         print(baseurl)
-        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+        let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
         var parameters: [String : Any] = [:]
         parameters = ["job_order_id": JobSheetData.jobId, "row_id": Closure.row_id] as [String : Any]
         AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in

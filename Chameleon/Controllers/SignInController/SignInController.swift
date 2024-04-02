@@ -17,6 +17,7 @@ class SignInController: BaseViewController {
     @IBOutlet weak var txtPassword: CustomTextField!
     @IBOutlet weak var btnEye: UIButton!
     @IBOutlet weak var activity: UIActivityIndicatorView!
+    @IBOutlet weak var lblVersion: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +26,7 @@ class SignInController: BaseViewController {
         btnEye.isSelected = true
         btnEye.setImage(UIImage(named: "eye_close"), for: .normal)
         txtPassword.isSecureTextEntry = true
+        self.lblVersion.text = "Version: \(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1.0")"
     }
     
     override func viewWillAppear(_ animated: Bool) {

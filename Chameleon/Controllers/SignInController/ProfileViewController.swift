@@ -48,7 +48,7 @@ class ProfileViewController: BaseViewController {
             activity.startAnimating()
             let baseurl = "\(baseurl)/v1/profile"
             print(baseurl)
-            let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+            let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
             AFWrapper.requestGETURL(baseurl, headers: headers) { jsonVal, _  in
                 print(jsonVal)
                 self.activity.stopAnimating()

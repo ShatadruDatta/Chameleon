@@ -45,7 +45,7 @@ class WorkViewController: BaseViewController {
             self.tblViewWorklist.isHidden = true
             let baseurl = "\(baseurl)/v1/joborder?filter=\(workStatus)"
             print(baseurl)
-            let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+            let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
             AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data in
                 print(jsonVal)
                 self.workDataModel = nil

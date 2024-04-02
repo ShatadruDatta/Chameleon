@@ -89,7 +89,7 @@ class JobSheetController: BaseViewController {
         self.activity.startAnimating()
         let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)"
         print(baseurl)
-        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
+        let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
         AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data in
             print(jsonVal)
             self.activity.stopAnimating()
