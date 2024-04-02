@@ -50,6 +50,7 @@ class PrecheckController: BaseViewController {
     @IBOutlet weak var viewPreCheck: UIView!
     @IBOutlet weak var viewPostCheck: UIView!
     @IBOutlet weak var viewClosure: UIView!
+    @IBOutlet weak var imgPreCheck: UIImageView!
     var isReset: Bool = false
     var isSave: Bool = false
     var issueIndex: Int = -1
@@ -65,6 +66,7 @@ class PrecheckController: BaseViewController {
         
         self.viewPreCheck.layer.masksToBounds = false
         self.viewPreCheck.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)
+        self.imgPreCheck.setImageColor(color: .white)
         
         self.viewPostCheck.layer.masksToBounds = false
         self.viewPostCheck.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)
@@ -96,31 +98,8 @@ class PrecheckController: BaseViewController {
         NotificationCenter.default.removeObserver(self)
     }
     
-    @objc func generalImageUpload() {
-        let imageData: Data? = PreCheckData.dash_img.jpegData(compressionQuality: 0.4)
-        let imageStr = imageData?.base64EncodedString(options: .lineLength64Characters) ?? ""
-        let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)/closure/urn:uuid:ac2197c5-e5f7-11ee-8eda-6df9c98c9d32/image"
-        print(baseurl)
-        let headers = ["x-api-key" : apiKey, "X-Token": Chameleon.token]
-        let parameters = ["tag": "pre_check/vehicle/dash_board", "image": imageStr] as [String : Any]
-        AFWrapper.requestPOSTURL(baseurl, params: parameters, headers: headers) { jsonVal in
-            print(jsonVal)
-            
-           // SharedClass.sharedInstance.alert(view: self, title: "Successful", message: "Upload successfully done!")
-//            self.activity.stopAnimating()
-//            do {
-//
-//            } catch {
-//                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
-//            }
-        } failure: { error in
-            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error)
-            //self.activity.stopAnimating()
-        }
-    }
-    
     @IBAction func postcheck(_ sender: UIButton) {
-        self.save2()
+        //self.save2()
     }
     
     @IBAction func menu(_ sender: UIButton) {

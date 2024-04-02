@@ -42,6 +42,7 @@ class JobSheetController: BaseViewController {
     @IBOutlet weak var viewPostCheck: UIView!
     @IBOutlet weak var viewClosure: UIView!
     @IBOutlet weak var activity: UIActivityIndicatorView!
+    @IBOutlet weak var imgPreCheck: UIImageView!
     @Published var jobSheetDataModel: JobSheetModels?
     var street2DeliveryAdd: String = ""
     var street3DeliveryAdd: String = ""
@@ -61,6 +62,7 @@ class JobSheetController: BaseViewController {
         
         self.viewPreCheck.layer.masksToBounds = false
         self.viewPreCheck.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)
+        self.imgPreCheck.setImageColor(color: .white)
         
         self.viewPostCheck.layer.masksToBounds = false
         self.viewPostCheck.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)

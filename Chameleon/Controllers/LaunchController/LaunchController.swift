@@ -17,6 +17,12 @@ class LaunchController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         NavigationHelper.helper.mainContainerViewController!.bottomConstraint.constant = 0
+        DispatchQueue.background(background: {
+            // do something in background
+            self.productAPI()
+        }, completion:{
+            // when background job finished, do something in main thread
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -28,7 +34,7 @@ class LaunchController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            self.moveToIntroPage()
+            self.moveToSignInPage()
         }
     }
     
@@ -36,11 +42,26 @@ class LaunchController: BaseViewController {
         super.viewWillDisappear(animated)
     }
     
-    @objc func moveToIntroPage() {
-        let introVC = mainStoryboard.instantiateViewController(withIdentifier: "IntroController") as! IntroController
-        NavigationHelper.helper.contentNavController!.pushViewController(introVC, animated: true)
-        
-//        let introVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
-//        NavigationHelper.helper.contentNavController!.pushViewController(introVC, animated: true)
+    // MARK: ProductAPI
+    @objc func productAPI() {
+        let baseurl = "\(baseurl)/v1/product"
+        print(baseurl)
+        let headers = ["x-api-key" : apiKey]
+        AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data in
+            do {
+                let decoder = JSONDecoder()
+                let data = try decoder.decode(ProductModels.self, from: data)
+                ProductParts.shared.prodModels = data
+            } catch {
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+            }
+        } failure: { error in
+            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error.localizedDescription)
+        }
+    }
+    
+    @objc func moveToSignInPage() {
+        let signInVC = mainStoryboard.instantiateViewController(withIdentifier: "SignInController") as! SignInController
+        NavigationHelper.helper.contentNavController!.pushViewController(signInVC, animated: true)
     }
 }

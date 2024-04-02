@@ -367,7 +367,7 @@ class WorkListCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 160, height: 24)
+        return CGSize(width: collectionView.frame.size.width / 2 - 10, height: 24) //160
     }
 
 }

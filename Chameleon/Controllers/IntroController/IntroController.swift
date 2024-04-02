@@ -18,12 +18,6 @@ class IntroController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        DispatchQueue.background(background: {
-            // do something in background
-            self.productAPI()
-        }, completion:{
-            // when background job finished, do something in main thread
-        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -32,24 +26,6 @@ class IntroController: BaseViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-    }
-    
-    // MARK: ProductAPI
-    @objc func productAPI() {
-        let baseurl = "\(baseurl)/v1/product"
-        print(baseurl)
-        let headers = ["x-api-key" : apiKey]
-        AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data in
-            do {
-                let decoder = JSONDecoder()
-                let data = try decoder.decode(ProductModels.self, from: data)
-                ProductParts.shared.prodModels = data
-            } catch {
-                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
-            }
-        } failure: { error in
-            SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error.localizedDescription)
-        }
     }
     
     @IBAction func signin(_ sender: UIButton) {

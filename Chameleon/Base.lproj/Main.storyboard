@@ -653,10 +653,10 @@
                                                                         <constraint firstAttribute="height" constant="17" id="se2-Ue-avN"/>
                                                                     </constraints>
                                                                 </imageView>
-                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" text="Mr Lee Carter" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="20e-IJ-AJy">
-                                                                    <rect key="frame" x="36.999999999999993" y="13" width="94.333333333333314" height="23"/>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="249" text="Mr Lee Carter" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="20e-IJ-AJy">
+                                                                    <rect key="frame" x="37" y="13.000000000000002" width="192" height="27.666666666666671"/>
                                                                     <constraints>
-                                                                        <constraint firstAttribute="height" constant="23" id="hUj-DL-q3c"/>
+                                                                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="23" id="hUj-DL-q3c"/>
                                                                     </constraints>
                                                                     <fontDescription key="fontDescription" name="Poppins-SemiBold" family="Poppins" pointSize="14"/>
                                                                     <color key="textColor" red="0.32156862749999998" green="0.36470588240000001" blue="0.52156862745098043" alpha="1" colorSpace="calibratedRGB"/>
@@ -680,7 +680,7 @@
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
                                                                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" prefetchingEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S0B-2H-EhY">
-                                                                    <rect key="frame" x="15" y="46" width="329" height="70"/>
+                                                                    <rect key="frame" x="15" y="50.666666666666657" width="329" height="70"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="70" id="dlk-mQ-2zl"/>
@@ -776,14 +776,14 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="edN-vC-rCm">
-                                                                    <rect key="frame" x="15" y="121" width="217" height="23"/>
+                                                                    <rect key="frame" x="15" y="125.66666666666664" width="217" height="18.333333333333329"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <fontDescription key="fontDescription" name="Poppins-Medium" family="Poppins" pointSize="13"/>
                                                                     <color key="textColor" red="0.32156862749999998" green="0.36470588240000001" blue="0.51764705882352935" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="80J-gx-aJ9">
-                                                                    <rect key="frame" x="240" y="119" width="104" height="25"/>
+                                                                    <rect key="frame" x="240" y="123.66666666666666" width="104" height="25"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="104" id="Run-t6-58d"/>
@@ -825,6 +825,7 @@
                                                                 <constraint firstItem="dor-f0-vct" firstAttribute="leading" secondItem="RHy-SI-lkX" secondAttribute="leading" constant="15" id="iGu-21-ZPs"/>
                                                                 <constraint firstAttribute="trailing" secondItem="KQF-v8-jwb" secondAttribute="trailing" id="my7-g8-rkI"/>
                                                                 <constraint firstItem="hWO-xZ-Pyh" firstAttribute="leading" secondItem="f0W-FR-KVD" secondAttribute="trailing" constant="5" id="myL-HL-XcD"/>
+                                                                <constraint firstItem="f0W-FR-KVD" firstAttribute="leading" secondItem="20e-IJ-AJy" secondAttribute="trailing" constant="8.3300000000000001" id="yvW-Mm-Jv7"/>
                                                             </constraints>
                                                         </view>
                                                     </subviews>
@@ -1581,7 +1582,7 @@
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pre-check" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qaC-Jc-jm4">
                                                         <rect key="frame" x="36" y="0.0" width="89" height="44"/>
                                                         <fontDescription key="fontDescription" name="Poppins-Medium" family="Poppins" pointSize="13"/>
-                                                        <color key="textColor" red="0.76078431372549016" green="0.77254901960784317" blue="0.81960784313725488" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tou-Jn-h7i">
@@ -2626,6 +2627,7 @@
                     </view>
                     <connections>
                         <outlet property="activity" destination="RiX-pV-Ijh" id="JMs-bE-K48"/>
+                        <outlet property="imgPreCheck" destination="f5h-nv-mFy" id="2xO-Uj-fH4"/>
                         <outlet property="lblNcNumber" destination="Duo-sO-IL1" id="fID-Sc-NKP"/>
                         <outlet property="tblPrecheck" destination="I1r-4J-KxM" id="9x5-HG-mQP"/>
                         <outlet property="viewClosure" destination="0DL-iJ-1jS" id="BV3-Jg-r7U"/>
@@ -4438,6 +4440,7 @@
                     </view>
                     <connections>
                         <outlet property="activity" destination="7t9-hi-dS6" id="uSc-Da-odh"/>
+                        <outlet property="imgPreCheck" destination="IGu-Rr-GKh" id="wjv-Ab-2HK"/>
                         <outlet property="lblNcNumber" destination="Xgy-Y9-lLj" id="Eqd-e5-XJb"/>
                         <outlet property="tblPreCheck" destination="HGY-Jo-yPW" id="8WC-xb-TLq"/>
                         <outlet property="viewClosure" destination="jDD-5A-Fq0" id="jf4-vx-cbg"/>
@@ -6248,6 +6251,8 @@
                     </view>
                     <connections>
                         <outlet property="activity" destination="OsH-Jb-cpg" id="zxw-9B-MZG"/>
+                        <outlet property="imgPostCheck" destination="ivF-sc-Wkv" id="EfC-jj-ZDP"/>
+                        <outlet property="imgPreCheck" destination="28K-8p-Jx5" id="4LU-uo-hoV"/>
                         <outlet property="lblNcNumber" destination="GTD-dQ-SA4" id="6IM-OU-1z0"/>
                         <outlet property="tblPostCheck" destination="cOA-Ml-NVD" id="49u-kO-7Af"/>
                         <outlet property="viewClosure" destination="bnX-DQ-bE9" id="gfo-rR-Lso"/>

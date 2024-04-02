@@ -50,6 +50,8 @@ class PostCheckController: BaseViewController {
     @IBOutlet weak var activity: UIActivityIndicatorView!
     var isReset: Bool = false
     var isSave: Bool = false
+    @IBOutlet weak var imgPreCheck: UIImageView!
+    @IBOutlet weak var imgPostCheck: UIImageView!
     @IBOutlet weak var lblNcNumber: UILabel!
     @IBOutlet weak var tblPostCheck: UITableView!
     @IBOutlet weak var viewPreCheck: UIView!
@@ -72,9 +74,11 @@ class PostCheckController: BaseViewController {
         
         self.viewPreCheck.layer.masksToBounds = false
         self.viewPreCheck.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)
+        self.imgPreCheck.setImageColor(color: .white)
         
         self.viewPostCheck.layer.masksToBounds = false
         self.viewPostCheck.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)
+        self.imgPostCheck.setImageColor(color: .white)
         
         self.viewClosure.layer.masksToBounds = false
         self.viewClosure.dropShadow(color: .lightGray, opacity: 0.3 ,offSet: CGSize.init(width: 4, height: 4), radius: 10.0)
@@ -106,24 +110,24 @@ class PostCheckController: BaseViewController {
     }
     
     @IBAction func closure(_ sender: UIButton) {
-        let closureVC = mainStoryboard.instantiateViewController(withIdentifier: "ClosureController") as! ClosureController
-        NavigationHelper.helper.contentNavController!.pushViewController(closureVC, animated: true)
+//        let closureVC = mainStoryboard.instantiateViewController(withIdentifier: "ClosureController") as! ClosureController
+//        NavigationHelper.helper.contentNavController!.pushViewController(closureVC, animated: true)
     }
     
     @IBAction func precheck(_ sender: UIButton) {
-        let allViewController: [UIViewController] =  NavigationHelper.helper.contentNavController!.viewControllers as [UIViewController]
-        for aviewcontroller: UIViewController in allViewController {
-            if aviewcontroller.isKind(of: PrecheckController.classForCoder()) {
-                NavigationHelper.helper.contentNavController!.popToViewController(aviewcontroller, animated: true)
-                self.checkController = true
-                break
-            }
-        }
-        if self.checkController == false {
-            let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
-            NavigationHelper.helper.contentNavController!.pushViewController(precheckVC, animated: true)
-        }
-        self.checkController = false
+//        let allViewController: [UIViewController] =  NavigationHelper.helper.contentNavController!.viewControllers as [UIViewController]
+//        for aviewcontroller: UIViewController in allViewController {
+//            if aviewcontroller.isKind(of: PrecheckController.classForCoder()) {
+//                NavigationHelper.helper.contentNavController!.popToViewController(aviewcontroller, animated: true)
+//                self.checkController = true
+//                break
+//            }
+//        }
+//        if self.checkController == false {
+//            let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
+//            NavigationHelper.helper.contentNavController!.pushViewController(precheckVC, animated: true)
+//        }
+//        self.checkController = false
     }
     
     @IBAction func menu(_ sender: UIButton) {
