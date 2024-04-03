@@ -24,6 +24,7 @@ struct JobSheetData {
     static var ins_vehicle_det_vehicle_model: String = ""
     static var ins_vehicle_det_vin: String = ""
     static var ins_vehicle_det_yom: String = ""
+    static var check_Deinstallation_available = false
     static var deins_vehicle_det_color: String = ""
     static var deins_vehicle_det_fuelType: String = ""
     static var deins_vehicle_det_reg: String = ""
@@ -127,20 +128,27 @@ class JobSheetController: BaseViewController {
                 JobSheetData.ins_vehicle_det_vehicle_model = jsonVal["installation_vehicle_details"]["vehicle_model"].stringValue
                 JobSheetData.ins_vehicle_det_vin = jsonVal["installation_vehicle_details"]["vin"].stringValue
                 JobSheetData.ins_vehicle_det_yom = jsonVal["installation_vehicle_details"]["yom"].stringValue
-                JobSheetData.deins_vehicle_det_reg = jsonVal["de_installation_vehicle_details"]["reg"].stringValue
-                JobSheetData.deins_vehicle_det_color = jsonVal["de_installation_vehicle_details"]["colour"].stringValue
-                JobSheetData.deins_vehicle_det_fuelType = jsonVal["de_installation_vehicle_details"]["fuel_type"].stringValue
-                JobSheetData.deins_vehicle_det_vehicle = jsonVal["de_installation_vehicle_details"]["vehicle"].stringValue
-                JobSheetData.deins_vehicle_det_vehicle_make = jsonVal["de_installation_vehicle_details"]["vehicle_make"].stringValue
-                JobSheetData.deins_vehicle_det_vehicle_model = jsonVal["de_installation_vehicle_details"]["vehicle_model"].stringValue
                 JobSheetData.deins_vehicle_det_vin = jsonVal["installation_vehicle_details"]["vin"].stringValue
                 JobSheetData.deins_vehicle_det_yom = jsonVal["installation_vehicle_details"]["yom"].stringValue
+                if jsonVal.dictionary!.keyExists("de_installation_vehicle_details") {
+                    JobSheetData.check_Deinstallation_available = true
+                    JobSheetData.deins_vehicle_det_reg = jsonVal["de_installation_vehicle_details"]["reg"].stringValue
+                    JobSheetData.deins_vehicle_det_color = jsonVal["de_installation_vehicle_details"]["colour"].stringValue
+                    JobSheetData.deins_vehicle_det_fuelType = jsonVal["de_installation_vehicle_details"]["fuel_type"].stringValue
+                    JobSheetData.deins_vehicle_det_vehicle = jsonVal["de_installation_vehicle_details"]["vehicle"].stringValue
+                    JobSheetData.deins_vehicle_det_vehicle_make = jsonVal["de_installation_vehicle_details"]["vehicle_make"].stringValue
+                    JobSheetData.deins_vehicle_det_vehicle_model = jsonVal["de_installation_vehicle_details"]["vehicle_model"].stringValue
+                } else {
+                    JobSheetData.check_Deinstallation_available = false
+                }
+                arrPartsSerial.removeAll()
                 if jsonVal["part_list"].count > 0 {
-                    arrPartsSerial.removeAll()
                     for val in jsonVal["part_list"].arrayValue {
                         self.partsCount += 1
                         arrPartsSerial.append((id: self.partsCount, ncNo: jsonVal["nc_bnc_number"].stringValue, serialPart1: val["serial1"].stringValue, serialPart2: val["serial2"].stringValue, prodName: val["product_id"]["name"].stringValue, prodId: val["product_id"]["id"].intValue, quantity: val["quantity"].intValue, returnedBy: "", used: true, imgUnit: UIImage(named: "ImgCapBg") ?? UIImage(), isImgUnit: false, imgPerm: UIImage(named: "ImgCapBg") ?? UIImage(), isImgPerm: false, imgEarth: UIImage(named: "ImgCapBg") ?? UIImage(), isImgEarth: false, imgIgn: UIImage(named: "ImgCapBg") ?? UIImage(), isImgIgn: false, imgSerial: UIImage(named: "ImgCapBg") ?? UIImage(), isImgSerial: false, imgLoom: UIImage(named: "ImgCapBg") ?? UIImage(), isImgLoom: false, comments: ""))
                     }
+                } else {
+                    arrPartsSerial.append((id: 0, ncNo: "NA", serialPart1: "NA", serialPart2: "NA", prodName: "Not Available", prodId: 0, quantity: 0, returnedBy: "", used: false, imgUnit: UIImage(), isImgUnit: false, imgPerm: UIImage(), isImgPerm: false, imgEarth: UIImage(), isImgEarth: false, imgIgn: UIImage(), isImgIgn: false, imgSerial: UIImage(), isImgSerial: false, imgLoom: UIImage(), isImgLoom: false, comments: ""))
                 }
                 self.tblPrecheck.isHidden = false
                 self.tblPrecheck.reloadData()
@@ -170,6 +178,8 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
         switch section {
         case 0:
             return 0
+        case 4:
+            return JobSheetData.check_Deinstallation_available ? 40.0 : 0.0
         default:
             return 40
         }
@@ -221,8 +231,10 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
          switch section {
          case 1:
              return 2
-         case 0,3,4:
+         case 0,3:
              return 1
+         case 4:
+             return JobSheetData.check_Deinstallation_available ? 1 : 0
          case 2:
              return arrPartsSerial.count
          default:
@@ -263,7 +275,11 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
              }
          } else if indexPath.section == 2 {
              let partsCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "PartsCell", for: indexPath) as! PartsCell
-             partsCell.datasource = "\(arrPartsSerial[indexPath.row].prodName)\n Serial Number : \(arrPartsSerial[indexPath.row].serialPart1)" as AnyObject
+             if arrPartsSerial[indexPath.row].prodName == "Not Available" {
+                 partsCell.datasource = "\(arrPartsSerial[indexPath.row].prodName)" as AnyObject
+             } else {
+                 partsCell.datasource = "\(arrPartsSerial[indexPath.row].prodName)\n Serial Number : \(arrPartsSerial[indexPath.row].serialPart1)" as AnyObject
+             }
              if indexPath.row % 2 == 0 {
                  partsCell.viewBG.backgroundColor = UIColor.init(hexString: "F0EEF5")
              } else {
@@ -275,22 +291,22 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
              installCell.datasource = "" as AnyObject
              // Installation Details
              installCell.lblDetail.text = "Details Vehicle: \(JobSheetData.ins_vehicle_det_vehicle)"
-             installCell.lblReg.text = JobSheetData.ins_vehicle_det_reg
-             installCell.lblYOM.text = JobSheetData.ins_vehicle_det_yom
-             installCell.lblColour.text = JobSheetData.ins_vehicle_det_color
-             installCell.lblVIN.text = JobSheetData.ins_vehicle_det_vin
-             installCell.lblFuel.text = JobSheetData.ins_vehicle_det_fuelType
+             installCell.lblReg.text = JobSheetData.ins_vehicle_det_reg.count > 0 ? JobSheetData.ins_vehicle_det_reg : "NA"
+             installCell.lblYOM.text = JobSheetData.ins_vehicle_det_yom.count > 0 ? JobSheetData.ins_vehicle_det_yom : "NA"
+             installCell.lblColour.text = JobSheetData.ins_vehicle_det_color.count > 0 ? JobSheetData.ins_vehicle_det_color : "NA"
+             installCell.lblVIN.text = JobSheetData.ins_vehicle_det_vin.count > 0 ? JobSheetData.ins_vehicle_det_vin : "NA"
+             installCell.lblFuel.text = JobSheetData.ins_vehicle_det_fuelType.count > 0 ? JobSheetData.ins_vehicle_det_fuelType : "NA"
              return installCell
          } else if indexPath.section == 4 {
              let installCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "InstallationCell", for: indexPath) as! InstallationCell
              installCell.datasource = "" as AnyObject
              // Deinstallation Details
              installCell.lblDetail.text = "Details Vehicle: \(JobSheetData.deins_vehicle_det_vehicle)"
-             installCell.lblReg.text = JobSheetData.deins_vehicle_det_reg
-             installCell.lblYOM.text = JobSheetData.deins_vehicle_det_yom
-             installCell.lblColour.text = JobSheetData.deins_vehicle_det_color
-             installCell.lblVIN.text = JobSheetData.deins_vehicle_det_vin
-             installCell.lblFuel.text = JobSheetData.deins_vehicle_det_fuelType
+             installCell.lblReg.text = JobSheetData.deins_vehicle_det_reg.count > 0 ? JobSheetData.deins_vehicle_det_reg : "NA"
+             installCell.lblYOM.text = JobSheetData.deins_vehicle_det_yom.count > 0 ? JobSheetData.deins_vehicle_det_yom : "NA"
+             installCell.lblColour.text = JobSheetData.deins_vehicle_det_color.count > 0 ? JobSheetData.deins_vehicle_det_color : "NA"
+             installCell.lblVIN.text = JobSheetData.deins_vehicle_det_vin.count > 0 ? JobSheetData.deins_vehicle_det_vin : "NA"
+             installCell.lblFuel.text = JobSheetData.deins_vehicle_det_fuelType.count > 0 ? JobSheetData.deins_vehicle_det_fuelType : "NA"
              return installCell
          } else {
              let noteCell = self.tblPrecheck.dequeueReusableCell(withIdentifier: "PartsCell", for: indexPath) as! PartsCell

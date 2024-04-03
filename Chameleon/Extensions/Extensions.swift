@@ -230,12 +230,6 @@ extension Dictionary {
         if anArray.containsStr(obj: key) {
             return true
         }
-        //        for i in 0..<anArray.count
-        //        {
-        //            if ((anArray[i] as AnyObject).caseInsensitiveCompare(key ?? "")).rawValue == 0 {
-        //                return true
-        //            }
-        //        }
         return false
     }
     
