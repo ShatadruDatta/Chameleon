@@ -112,7 +112,7 @@ struct Address: Codable {
 struct Service: Codable {
     let id: Int
     let name, service: String
-    let engineerFee: Int
+    let engineerFee: Double
 
     enum CodingKeys: String, CodingKey {
         case id, name, service

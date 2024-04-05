@@ -33,6 +33,10 @@ struct JobSheetData {
     static var deins_vehicle_det_vehicle_model: String = ""
     static var deins_vehicle_det_vin: String = ""
     static var deins_vehicle_det_yom: String = ""
+    static var customerName: String = ""
+    static var engineerName: String = ""
+    static var engineerId: String = ""
+    static var emailAdd: String = ""
 }
 
 class JobSheetController: BaseViewController {
@@ -118,8 +122,13 @@ class JobSheetController: BaseViewController {
                     let time: Date? = dateFormatterGetTime.date(from: appointment[1])
                     JobSheetData.time = dateFormatterSetTime.string(from: time ?? Date())
                 }
+                JobSheetData.customerName = jsonVal["customer"]["name"].stringValue
+                JobSheetData.engineerName = jsonVal["engineer_id"]["name"].stringValue
+                JobSheetData.engineerId = jsonVal["engineer_id"]["id"].stringValue
                 JobSheetData.ref_no = jsonVal["client_order_ref"].stringValue
                 JobSheetData.service = jsonVal["service"]["service"].stringValue
+                
+                JobSheetData.emailAdd = jsonVal["installation_address"]["email"].stringValue
                 JobSheetData.ins_vehicle_det_reg = jsonVal["installation_vehicle_details"]["reg"].stringValue
                 JobSheetData.ins_vehicle_det_color = jsonVal["installation_vehicle_details"]["colour"].stringValue
                 JobSheetData.ins_vehicle_det_fuelType = jsonVal["installation_vehicle_details"]["fuel_type"].stringValue
@@ -130,6 +139,7 @@ class JobSheetController: BaseViewController {
                 JobSheetData.ins_vehicle_det_yom = jsonVal["installation_vehicle_details"]["yom"].stringValue
                 JobSheetData.deins_vehicle_det_vin = jsonVal["installation_vehicle_details"]["vin"].stringValue
                 JobSheetData.deins_vehicle_det_yom = jsonVal["installation_vehicle_details"]["yom"].stringValue
+                
                 if jsonVal.dictionary!.keyExists("de_installation_vehicle_details") {
                     JobSheetData.check_Deinstallation_available = true
                     JobSheetData.deins_vehicle_det_reg = jsonVal["de_installation_vehicle_details"]["reg"].stringValue
@@ -141,6 +151,7 @@ class JobSheetController: BaseViewController {
                 } else {
                     JobSheetData.check_Deinstallation_available = false
                 }
+                
                 arrPartsSerial.removeAll()
                 if jsonVal["part_list"].count > 0 {
                     for val in jsonVal["part_list"].arrayValue {
@@ -252,7 +263,7 @@ extension JobSheetController: UITableViewDelegate, UITableViewDataSource {
              custCell.lblDate.text = JobSheetData.date
              custCell.lblTime.text = JobSheetData.time
              custCell.lblService.text = self.jobSheetDataModel?.service.name
-             custCell.lblFee.text = "£\(self.jobSheetDataModel?.service.engineerFee ?? 0)"
+             custCell.lblFee.text = "£\(String(format: "%.2f", self.jobSheetDataModel?.service.engineerFee ?? 0.00))"
              return custCell
          } else if indexPath.section == 1 {
              switch indexPath.row {

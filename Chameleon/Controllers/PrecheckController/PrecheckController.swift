@@ -40,7 +40,7 @@ struct PreCheckData {
     static var arrImgInteriorIssueBase64: [String] = []
     static var customerSignature = UIImage()
     static var customerSignature_base64 = ""
-    static var customerName = ""
+    static var customerName = JobSheetData.customerName
 }
 
 class PrecheckController: BaseViewController {
@@ -543,6 +543,7 @@ extension PrecheckController: UITableViewDelegate, UITableViewDataSource {
                             custSignCell.imgSign.contentMode = .scaleAspectFit
                             self.tblPreCheck.reloadData()
                         } didFinish: { txt in }}}
+                custSignCell.txtName.text = PreCheckData.customerName
                 custSignCell.didEndWriteText = { val in
                     PreCheckData.customerName = val
                 }

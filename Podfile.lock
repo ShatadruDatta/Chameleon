@@ -1,11 +1,13 @@
 PODS:
   - Alamofire (4.9.1)
+  - iOSDropDown (0.4.0)
   - SJFluidSegmentedControl (1.1.2)
   - SlideMenuControllerSwift (4.0.0)
   - SwiftyJSON (5.0.1)
 
 DEPENDENCIES:
   - Alamofire
+  - iOSDropDown
   - SJFluidSegmentedControl
   - SlideMenuControllerSwift
   - SwiftyJSON
@@ -13,16 +15,18 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Alamofire
+    - iOSDropDown
     - SJFluidSegmentedControl
     - SlideMenuControllerSwift
     - SwiftyJSON
 
 SPEC CHECKSUMS:
   Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
+  iOSDropDown: ce9daa584eaa5567cafc1b633e3cc7eb6d9cea42
   SJFluidSegmentedControl: efd26ea5f0832c715e2750314a2dc0cc81e39ae5
   SlideMenuControllerSwift: 021d6318201c53d4d4d3710517d43d6c556c7dd0
   SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
 
-PODFILE CHECKSUM: 9a8e3f0865262aeeee2c1eea22d2598026d76847
+PODFILE CHECKSUM: a4c54780c48de68386875f8a79ec58d3fcdf4a8f
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.15.2

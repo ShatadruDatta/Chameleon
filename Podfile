@@ -8,6 +8,7 @@ target 'Chameleon' do
   pod 'SwiftyJSON'
   pod 'SlideMenuControllerSwift'
   pod 'SJFluidSegmentedControl'
+  pod 'iOSDropDown'
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|

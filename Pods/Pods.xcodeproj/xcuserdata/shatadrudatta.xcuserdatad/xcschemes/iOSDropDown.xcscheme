@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BA0B277F3DFF73E9CEEEDF53A3F852BB"
-               BuildableName = "Pods_Chameleon_ChameleonUITests.framework"
-               BlueprintName = "Pods-Chameleon-ChameleonUITests"
+               BlueprintIdentifier = "3C76CE6CD60B1CE55A174F03CC59AE17"
+               BuildableName = "iOSDropDown.framework"
+               BlueprintName = "iOSDropDown"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

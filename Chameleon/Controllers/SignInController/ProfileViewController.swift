@@ -20,6 +20,7 @@ class ProfileViewController: BaseViewController {
     var imgProf_base64 = ""
     override func viewDidLoad() {
         super.viewDidLoad()
+        // PROFILE SCREEN ALL BUTTON USER INTERACTION IS DISABLED FROM STORYBOARD PLEASE ENSURE ENABLED ON WORKING PROFILE UPDATE RELATED TASKS
         imgProfile.layer.cornerRadius = 82.0
         imgProfile.layer.borderWidth = 3.0
         imgProfile.layer.borderColor = UIColor.white.cgColor
@@ -28,10 +29,12 @@ class ProfileViewController: BaseViewController {
     }
     
     @IBAction func back(_ sender: UIButton) {
+        // PROFILE SCREEN ALL BUTTON USER INTERACTION IS DISABLED FROM STORYBOARD PLEASE ENSURE ENABLED ON WORKING PROFILE UPDATE RELATED TASKS
         NavigationHelper.helper.contentNavController!.popViewController(animated: true)
     }
     
     @IBAction func btnCamera(_ sender: UIButton) {
+        // PROFILE SCREEN ALL BUTTON USER INTERACTION IS DISABLED FROM STORYBOARD PLEASE ENSURE ENABLED ON WORKING PROFILE UPDATE RELATED TASKS
         CameraHandler.shared.showActionSheet(vc: self)
         CameraHandler.shared.imagePickedBlock = { (image) in
             self.imgProfile.image = image

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import iOSDropDown
 
 struct PostCheckData {
     static var front_img = UIImage()
@@ -33,13 +34,13 @@ struct PostCheckData {
     static var declaration = ""
     static var engineerSignature = UIImage()
     static var engineerSignature_base64 = ""
-    static var engineerName = ""
-    static var engineerCode = ""
+    static var engineerName = JobSheetData.engineerName
+    static var engineerCode = JobSheetData.engineerId
     static var customerSignature = UIImage()
     static var customerSignature_base64 = ""
-    static var customerName = ""
+    static var customerName = PreCheckData.customerName
     static var customerPosition = ""
-    static var emailAddress = ""
+    static var emailAddress = JobSheetData.emailAdd
     static var isSendCopy = false
     static var bufferParts_base64: [(id: String, partsName: String, serialNo: String, consumed: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
     static var partsReturn_base64: [(id: String, partsName: String, serialNo: String, returnedBy: String, imgUnitBase64: String, imgPermBase64: String, imgEarthBase64: String, imgIgnBase64: String, imgSerialBase64: String, imgLoomBase64: String)] = []
@@ -565,8 +566,7 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                     }
                 }
                 partsRowCell.didSendSignalConsumed = { val in
-                    PickerViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, arrPickerVal: ["Yes", "No"]) { val in
-                        
+                    PickerViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, arrPickerVal: ["Engineer", "Customer", "Customer To CHW", "Engineer To CHW"]) { val in
                         self.tblPostCheck.reloadData()
                     } didFinish: { txt in
                         
@@ -741,9 +741,11 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                             signCell.imgSign.contentMode = .scaleAspectFit
                             self.tblPostCheck.reloadData()
                         } didFinish: { txt in }}}
+                signCell.txtEngCode.text = PostCheckData.engineerCode
                 signCell.didEndWriteTextEngCode = { val in
                     PostCheckData.engineerCode = val
                 }
+                signCell.txtEngName.text = PostCheckData.engineerName
                 signCell.didEndWriteTextEngName = { val in
                     PostCheckData.engineerName = val
                 }
@@ -783,12 +785,14 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                             signCell.imgSign.contentMode = .scaleAspectFit
                             self.tblPostCheck.reloadData()
                         } didFinish: { txt in }}}
+                signCell.txtName.text = PostCheckData.customerName
                 signCell.didEndWriteTextName = { val in
                     PostCheckData.customerName = val
                 }
                 signCell.didEndWriteTextPosition = { val in
                     PostCheckData.customerPosition = val
                 }
+                signCell.txtEmailAdd.text = PostCheckData.emailAddress
                 signCell.didEndWriteTextEmailAddress = { val in
                     PostCheckData.emailAddress = val
                 }
