@@ -7,17 +7,21 @@
 
 import UIKit
 
+struct ProfileData {
+    static var firstName: String = ""
+    static var lastName: String = ""
+    static var code: Int = 0
+    static var mobNo: String = ""
+    static var emailAdd: String = ""
+    static var imgProf_base64: String = ""
+    static var imgProf: UIImage = UIImage()
+}
+
 class ProfileViewController: BaseViewController {
     @IBOutlet weak var activity: UIActivityIndicatorView!
     @IBOutlet weak var tblProfile: UITableView!
     @IBOutlet weak var imgProfile: UIImageView!
     @IBOutlet weak var btnBack: UIButton!
-    var firstName = ""
-    var lastName = ""
-    var mobNo = ""
-    var emailAdd = ""
-    var imgProf: UIImage = UIImage()
-    var imgProf_base64 = ""
     override func viewDidLoad() {
         super.viewDidLoad()
         // PROFILE SCREEN ALL BUTTON USER INTERACTION IS DISABLED FROM STORYBOARD PLEASE ENSURE ENABLED ON WORKING PROFILE UPDATE RELATED TASKS
@@ -25,7 +29,14 @@ class ProfileViewController: BaseViewController {
         imgProfile.layer.borderWidth = 3.0
         imgProfile.layer.borderColor = UIColor.white.cgColor
         btnBack.layer.cornerRadius = 5.0
-        self.profileAPI()
+        if ProfileData.firstName.count == 0 || ProfileData.imgProf_base64.count == 0 {
+            self.profileAPI()
+        } else {
+            let dataDecoded: NSData = NSData(base64Encoded: ProfileData.imgProf_base64, options: NSData.Base64DecodingOptions(rawValue: 0))!
+            ProfileData.imgProf = UIImage(data: dataDecoded as Data)!
+            self.imgProfile.image = ProfileData.imgProf
+            self.tblProfile.reloadData()
+        }
     }
     
     @IBAction func back(_ sender: UIButton) {
@@ -39,7 +50,7 @@ class ProfileViewController: BaseViewController {
         CameraHandler.shared.imagePickedBlock = { (image) in
             self.imgProfile.image = image
             DispatchQueue.background(background: {
-                self.imgProf_base64 = image.toBase64() ?? ""
+                ProfileData.imgProf_base64 = image.toBase64() ?? ""
             }, completion:{
             })
         }
@@ -56,15 +67,16 @@ class ProfileViewController: BaseViewController {
                 print(jsonVal)
                 self.activity.stopAnimating()
                 if jsonVal["result"]["id"].intValue > 0 {
-                    self.firstName = jsonVal["result"]["first_name"].stringValue
-                    self.lastName = jsonVal["result"]["last_name"].stringValue
-                    self.mobNo = jsonVal["result"]["mobile"].stringValue
-                    self.emailAdd = jsonVal["result"]["email"].stringValue
+                    ProfileData.firstName = jsonVal["result"]["first_name"].stringValue
+                    ProfileData.lastName = jsonVal["result"]["last_name"].stringValue
+                    ProfileData.mobNo = jsonVal["result"]["mobile"].stringValue
+                    ProfileData.emailAdd = jsonVal["result"]["email"].stringValue
+                    ProfileData.code = jsonVal["result"]["id"].intValue
                     if jsonVal["result"]["image"].stringValue.count > 0 {
-                        self.imgProf_base64 = jsonVal["result"]["image"].stringValue
-                        let dataDecoded: NSData = NSData(base64Encoded: self.imgProf_base64, options: NSData.Base64DecodingOptions(rawValue: 0))!
-                        self.imgProf = UIImage(data: dataDecoded as Data)!
-                        self.imgProfile.image = self.imgProf
+                        ProfileData.imgProf_base64 = jsonVal["result"]["image"].stringValue
+                        let dataDecoded: NSData = NSData(base64Encoded: ProfileData.imgProf_base64, options: NSData.Base64DecodingOptions(rawValue: 0))!
+                        ProfileData.imgProf = UIImage(data: dataDecoded as Data)!
+                        self.imgProfile.image = ProfileData.imgProf
                     }
                     self.tblProfile.reloadData()
                 } else {
@@ -106,9 +118,9 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             cellFirstName.datasource = "name_icon" as AnyObject
             cellFirstName.lblTitle.text = "First Name"
             cellFirstName.txtField.placeholder = "First Name"
-            cellFirstName.txtField.text = self.firstName
+            cellFirstName.txtField.text = ProfileData.firstName
             cellFirstName.didEndWriteTextEngName = { val in
-                self.firstName = val
+                ProfileData.firstName = val
             }
             return cellFirstName
         case 1:
@@ -116,9 +128,9 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             cellLastName.datasource = "name_icon" as AnyObject
             cellLastName.lblTitle.text = "Last Name"
             cellLastName.txtField.placeholder = "Last Name"
-            cellLastName.txtField.text = self.lastName
+            cellLastName.txtField.text = ProfileData.lastName
             cellLastName.didEndWriteTextEngName = { val in
-                self.lastName = val
+                ProfileData.lastName = val
             }
             return cellLastName
         case 2:
@@ -126,9 +138,9 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             cellMobNo.datasource = "call_icon" as AnyObject
             cellMobNo.lblTitle.text = "Mobile Number"
             cellMobNo.txtField.placeholder = "Mobile Number"
-            cellMobNo.txtField.text = self.mobNo
+            cellMobNo.txtField.text = ProfileData.mobNo
             cellMobNo.didEndWriteTextEngName = { val in
-                self.mobNo = val
+                ProfileData.mobNo = val
             }
             return cellMobNo
         case 3:
@@ -136,9 +148,9 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             cellEmailAdd.datasource = "mail_icon" as AnyObject
             cellEmailAdd.lblTitle.text = "Email Address"
             cellEmailAdd.txtField.placeholder = "Email Address"
-            cellEmailAdd.txtField.text = self.emailAdd
+            cellEmailAdd.txtField.text = ProfileData.emailAdd
             cellEmailAdd.didEndWriteTextEngName = { val in
-                self.emailAdd = val
+                ProfileData.emailAdd = val
             }
             return cellEmailAdd
         default:
@@ -150,10 +162,10 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc func saveProfileData() {
-        if !self.firstName.isEmpty {
-            if !self.lastName.isEmpty {
-                if !self.mobNo.isEmpty {
-                    if !self.emailAdd.isEmpty {
+        if !ProfileData.firstName.isEmpty {
+            if !ProfileData.lastName.isEmpty {
+                if !ProfileData.mobNo.isEmpty {
+                    if !ProfileData.emailAdd.isEmpty {
                         
                     } else {
                         self.presentAlertWithTitle(title: APP_TITLE, message: "Email address is mandatory!")

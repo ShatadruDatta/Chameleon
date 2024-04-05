@@ -15,9 +15,8 @@ class MenuController: BaseViewController {
     @IBOutlet weak var tblMenu: UITableView!
     var isOpen = false
     var checkController = false
-    var arrMenuSecOne = ["Home", "Edit Profile", "FAQ", "Help"]
-    var arrMenuSecTwo = ["Account", "Settings"]
-    var arrMenuSecThree = ["Log Out"]
+    var arrMenuSecOne = ["Home", "Edit Profile", "FAQ", "Help", "Settings"]
+    var arrMenuSecTwo = ["Log Out"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,7 +39,7 @@ class MenuController: BaseViewController {
 extension MenuController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 4
+        return 3
     }
    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -49,17 +48,9 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
             return 1
         case 1:
             return arrMenuSecOne.count
-        case 2:
-            return arrMenuSecTwo.count
         default:
-            return arrMenuSecThree.count
+            return arrMenuSecTwo.count
         }
-    }
-    
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        let viewBottomBorder = UIView(frame: CGRect(x: 0, y:0, width: tableView.frame.width, height: 1))
-        viewBottomBorder.backgroundColor = section == 3 ? .clear : UIColor.init(hexString: "dddddd")
-        return viewBottomBorder
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -72,21 +63,18 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
             cellProfile.datasource = "" as AnyObject
             cellProfile.selectionStyle = .none
             return cellProfile
+        } else if indexPath.section == 2 {
+            let cellLogout = tableView.dequeueReusableCell(withIdentifier: "LogoutCell", for: indexPath) as! LogoutCell
+            cellLogout.datasource = "" as AnyObject
+            cellLogout.btnLogout.addTarget(self, action: #selector(logOut), for: .touchUpInside)
+            return cellLogout
         } else {
             let cellMenu = tableView.dequeueReusableCell(withIdentifier: "MenuCell", for: indexPath) as! MenuCell
-            if indexPath.section == 1 {
-                cellMenu.datasource = arrMenuSecOne[indexPath.row] as AnyObject
-                if indexPath.row == 0 {
-                    cellMenu.btnMenu.addTarget(self, action: #selector(homePage), for: .touchUpInside)
-                } else {
-                    cellMenu.btnMenu.addTarget(self, action: #selector(profilePage), for: .touchUpInside)
-                }
-            } else if indexPath.section == 2 {
-                cellMenu.datasource = arrMenuSecTwo[indexPath.row] as AnyObject
+            cellMenu.datasource = arrMenuSecOne[indexPath.row] as AnyObject
+            if indexPath.row == 0 {
+                cellMenu.btnMenu.addTarget(self, action: #selector(homePage), for: .touchUpInside)
             } else {
-                cellMenu.datasource = arrMenuSecThree[indexPath.row] as AnyObject
-                cellMenu.lblMenu.textColor = UIColor.init(hexString: "c22f22")
-                cellMenu.btnMenu.addTarget(self, action: #selector(logOut), for: .touchUpInside)
+                cellMenu.btnMenu.addTarget(self, action: #selector(profilePage), for: .touchUpInside)
             }
             cellMenu.selectionStyle = .none
             return cellMenu
@@ -96,7 +84,9 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
-            return 90.0
+            return 200.0
+        } else if indexPath.section == 2 {
+            return 100.0
         } else {
             return 60.0
         }
@@ -198,11 +188,34 @@ class ProfileCell: BaseTableViewCell {
     @IBOutlet weak var imgProfile: UIImageView!
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var lblSubTitle: UILabel!
+    @IBOutlet weak var lblEnggId: UILabel!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
-                imgProfile.layer.cornerRadius = 25.0
-                imgProfile.backgroundColor = .green
+                imgProfile.layer.cornerRadius = 50.0
+                imgProfile.layer.borderWidth = 4.0
+                imgProfile.layer.borderColor = UIColor.white.cgColor
+                if ProfileData.imgProf_base64.count > 0 {
+                    let dataDecoded: NSData = NSData(base64Encoded: ProfileData.imgProf_base64, options: NSData.Base64DecodingOptions(rawValue: 0))!
+                    ProfileData.imgProf = UIImage(data: dataDecoded as Data)!
+                    imgProfile.image = ProfileData.imgProf
+                }
+                lblTitle.text = "\(ProfileData.firstName) \(ProfileData.lastName)"
+                lblSubTitle.text = "Engineer"
+                lblEnggId.text = "User ID \(ProfileData.code)"
+            }
+        }
+    }
+}
+
+
+//MARK: LogoutCell
+class LogoutCell: BaseTableViewCell {
+    
+    @IBOutlet weak var btnLogout: UIButton!
+    override var datasource: AnyObject? {
+        didSet {
+            if datasource != nil {
             }
         }
     }

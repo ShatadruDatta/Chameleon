@@ -36,6 +36,12 @@ class WorkViewController: BaseViewController {
         self.tblViewWorklist.rowHeight = UITableView.automaticDimension
         NavigationHelper.helper.tabBarViewController?.isShowBottomBar(isShow: false)
         self.workView()
+        DispatchQueue.background(background: {
+            // do something in background
+            self.profileAPI()
+        }, completion:{
+            // when background job finished, do something in main thread
+        })
     }
     
     //  MARK: WorkViewAPI
@@ -76,7 +82,39 @@ class WorkViewController: BaseViewController {
         }
     }
     
+    // MARK: Profile API
+    @objc func profileAPI() {
+        if Reachability.isConnectedToNetwork() {
+            let baseurl = "\(baseurl)/v1/profile"
+            print(baseurl)
+            let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
+            AFWrapper.requestGETURL(baseurl, headers: headers) { jsonVal, _  in
+                print(jsonVal)
+                if jsonVal["result"]["id"].intValue > 0 {
+                    ProfileData.firstName = jsonVal["result"]["first_name"].stringValue
+                    ProfileData.lastName = jsonVal["result"]["last_name"].stringValue
+                    ProfileData.mobNo = jsonVal["result"]["mobile"].stringValue
+                    ProfileData.emailAdd = jsonVal["result"]["email"].stringValue
+                    ProfileData.code = jsonVal["result"]["id"].intValue
+                    if jsonVal["result"]["image"].stringValue.count > 0 {
+                        ProfileData.imgProf_base64 = jsonVal["result"]["image"].stringValue
+                        let dataDecoded: NSData = NSData(base64Encoded: ProfileData.imgProf_base64, options: NSData.Base64DecodingOptions(rawValue: 0))!
+                        ProfileData.imgProf = UIImage(data: dataDecoded as Data)!
+                    }
+                } else {
+                    SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+                }
+            } failure: { error in
+                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: "Something problem!")
+                print(error)
+            }
+        } else {
+            NoInternetController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!) { contextVal in } didFinish: { txt in }
+        }
+    }
+    
     @IBAction func menu(_ sender: UIButton) {
+        NavigationHelper.helper.reloadMenu()
         NavigationHelper.helper.openSidePanel(open: true)
     }
 }

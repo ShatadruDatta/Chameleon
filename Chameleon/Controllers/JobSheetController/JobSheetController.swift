@@ -174,6 +174,7 @@ class JobSheetController: BaseViewController {
     }
     
     @IBAction func menu(_ sender: UIButton) {
+        NavigationHelper.helper.reloadMenu()
         NavigationHelper.helper.openSidePanel(open: true)
     }
 }
