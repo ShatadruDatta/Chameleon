@@ -95,76 +95,83 @@ class JobSheetController: BaseViewController {
         let baseurl = "\(baseurl)/v1/joborder/\(JobSheetData.jobId)"
         print(baseurl)
         let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
-        AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data in
+        AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data, statusCode  in
             print(jsonVal)
             self.activity.stopAnimating()
-            do {
-                let decoder = JSONDecoder()
-                let data = try decoder.decode(JobSheetModels.self, from: data)
-                jobSheetDataModel = data
-                self.street2DeliveryAdd = jsonVal["delivery_address"]["street2"].stringValue
-                self.street3DeliveryAdd = jsonVal["delivery_address"]["street3"].stringValue
-                self.street2InstallationAdd = jsonVal["installation_address"]["street2"].stringValue
-                self.street3InstallationAdd = jsonVal["installation_address"]["street3"].stringValue
-                let appointment = jsonVal["appointment"].stringValue.components(separatedBy: " ")
-                if appointment.count == 2 {
-                    let dateFormatterGet = DateFormatter()
-                    dateFormatterGet.dateFormat = "yyyy-MM-dd"
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "dd MMM, yyyy"
-                    let date: Date? = dateFormatterGet.date(from: appointment[0])
-                    JobSheetData.date = dateFormatter.string(from: date ?? Date())
-                    
-                    let dateFormatterGetTime = DateFormatter()
-                    dateFormatterGetTime.dateFormat = "HH:mm:ss"
-                    let dateFormatterSetTime = DateFormatter()
-                    dateFormatterSetTime.dateFormat = "hh:mm a"
-                    let time: Date? = dateFormatterGetTime.date(from: appointment[1])
-                    JobSheetData.time = dateFormatterSetTime.string(from: time ?? Date())
-                }
-                JobSheetData.customerName = jsonVal["customer"]["name"].stringValue
-                JobSheetData.engineerName = jsonVal["engineer_id"]["name"].stringValue
-                JobSheetData.engineerId = jsonVal["engineer_id"]["id"].stringValue
-                JobSheetData.ref_no = jsonVal["client_order_ref"].stringValue
-                JobSheetData.service = jsonVal["service"]["service"].stringValue
-                
-                JobSheetData.emailAdd = jsonVal["installation_address"]["email"].stringValue
-                JobSheetData.ins_vehicle_det_reg = jsonVal["installation_vehicle_details"]["reg"].stringValue
-                JobSheetData.ins_vehicle_det_color = jsonVal["installation_vehicle_details"]["colour"].stringValue
-                JobSheetData.ins_vehicle_det_fuelType = jsonVal["installation_vehicle_details"]["fuel_type"].stringValue
-                JobSheetData.ins_vehicle_det_vehicle = jsonVal["installation_vehicle_details"]["vehicle"].stringValue
-                JobSheetData.ins_vehicle_det_vehicle_make = jsonVal["installation_vehicle_details"]["vehicle_make"].stringValue
-                JobSheetData.ins_vehicle_det_vehicle_model = jsonVal["installation_vehicle_details"]["vehicle_model"].stringValue
-                JobSheetData.ins_vehicle_det_vin = jsonVal["installation_vehicle_details"]["vin"].stringValue
-                JobSheetData.ins_vehicle_det_yom = jsonVal["installation_vehicle_details"]["yom"].stringValue
-                JobSheetData.deins_vehicle_det_vin = jsonVal["installation_vehicle_details"]["vin"].stringValue
-                JobSheetData.deins_vehicle_det_yom = jsonVal["installation_vehicle_details"]["yom"].stringValue
-                
-                if jsonVal.dictionary!.keyExists("de_installation_vehicle_details") {
-                    JobSheetData.check_Deinstallation_available = true
-                    JobSheetData.deins_vehicle_det_reg = jsonVal["de_installation_vehicle_details"]["reg"].stringValue
-                    JobSheetData.deins_vehicle_det_color = jsonVal["de_installation_vehicle_details"]["colour"].stringValue
-                    JobSheetData.deins_vehicle_det_fuelType = jsonVal["de_installation_vehicle_details"]["fuel_type"].stringValue
-                    JobSheetData.deins_vehicle_det_vehicle = jsonVal["de_installation_vehicle_details"]["vehicle"].stringValue
-                    JobSheetData.deins_vehicle_det_vehicle_make = jsonVal["de_installation_vehicle_details"]["vehicle_make"].stringValue
-                    JobSheetData.deins_vehicle_det_vehicle_model = jsonVal["de_installation_vehicle_details"]["vehicle_model"].stringValue
-                } else {
-                    JobSheetData.check_Deinstallation_available = false
-                }
-                
-                arrPartsSerial.removeAll()
-                if jsonVal["part_list"].count > 0 {
-                    for val in jsonVal["part_list"].arrayValue {
-                        self.partsCount += 1
-                        arrPartsSerial.append((id: self.partsCount, ncNo: jsonVal["nc_bnc_number"].stringValue, serialPart1: val["serial1"].stringValue, serialPart2: val["serial2"].stringValue, prodName: val["product_id"]["name"].stringValue, prodId: val["product_id"]["id"].intValue, quantity: val["quantity"].intValue, returnedBy: "", used: true, imgUnit: UIImage(named: "ImgCapBg") ?? UIImage(), isImgUnit: false, imgPerm: UIImage(named: "ImgCapBg") ?? UIImage(), isImgPerm: false, imgEarth: UIImage(named: "ImgCapBg") ?? UIImage(), isImgEarth: false, imgIgn: UIImage(named: "ImgCapBg") ?? UIImage(), isImgIgn: false, imgSerial: UIImage(named: "ImgCapBg") ?? UIImage(), isImgSerial: false, imgLoom: UIImage(named: "ImgCapBg") ?? UIImage(), isImgLoom: false, comments: ""))
+            if statusCode == 200 {
+                do {
+                    let decoder = JSONDecoder()
+                    let data = try decoder.decode(JobSheetModels.self, from: data)
+                    jobSheetDataModel = data
+                    self.street2DeliveryAdd = jsonVal["delivery_address"]["street2"].stringValue
+                    self.street3DeliveryAdd = jsonVal["delivery_address"]["street3"].stringValue
+                    self.street2InstallationAdd = jsonVal["installation_address"]["street2"].stringValue
+                    self.street3InstallationAdd = jsonVal["installation_address"]["street3"].stringValue
+                    let appointment = jsonVal["appointment"].stringValue.components(separatedBy: " ")
+                    if appointment.count == 2 {
+                        let dateFormatterGet = DateFormatter()
+                        dateFormatterGet.dateFormat = "yyyy-MM-dd"
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "dd MMM, yyyy"
+                        let date: Date? = dateFormatterGet.date(from: appointment[0])
+                        JobSheetData.date = dateFormatter.string(from: date ?? Date())
+                        
+                        let dateFormatterGetTime = DateFormatter()
+                        dateFormatterGetTime.dateFormat = "HH:mm:ss"
+                        let dateFormatterSetTime = DateFormatter()
+                        dateFormatterSetTime.dateFormat = "hh:mm a"
+                        let time: Date? = dateFormatterGetTime.date(from: appointment[1])
+                        JobSheetData.time = dateFormatterSetTime.string(from: time ?? Date())
                     }
-                } else {
-                    arrPartsSerial.append((id: 0, ncNo: "NA", serialPart1: "NA", serialPart2: "NA", prodName: "Not Available", prodId: 0, quantity: 0, returnedBy: "", used: false, imgUnit: UIImage(), isImgUnit: false, imgPerm: UIImage(), isImgPerm: false, imgEarth: UIImage(), isImgEarth: false, imgIgn: UIImage(), isImgIgn: false, imgSerial: UIImage(), isImgSerial: false, imgLoom: UIImage(), isImgLoom: false, comments: ""))
+                    JobSheetData.customerName = jsonVal["customer"]["name"].stringValue
+                    JobSheetData.engineerName = jsonVal["engineer_id"]["name"].stringValue
+                    JobSheetData.engineerId = jsonVal["engineer_id"]["id"].stringValue
+                    JobSheetData.ref_no = jsonVal["client_order_ref"].stringValue
+                    JobSheetData.service = jsonVal["service"]["service"].stringValue
+                    
+                    JobSheetData.emailAdd = jsonVal["installation_address"]["email"].stringValue
+                    JobSheetData.ins_vehicle_det_reg = jsonVal["installation_vehicle_details"]["reg"].stringValue
+                    JobSheetData.ins_vehicle_det_color = jsonVal["installation_vehicle_details"]["colour"].stringValue
+                    JobSheetData.ins_vehicle_det_fuelType = jsonVal["installation_vehicle_details"]["fuel_type"].stringValue
+                    JobSheetData.ins_vehicle_det_vehicle = jsonVal["installation_vehicle_details"]["vehicle"].stringValue
+                    JobSheetData.ins_vehicle_det_vehicle_make = jsonVal["installation_vehicle_details"]["vehicle_make"].stringValue
+                    JobSheetData.ins_vehicle_det_vehicle_model = jsonVal["installation_vehicle_details"]["vehicle_model"].stringValue
+                    JobSheetData.ins_vehicle_det_vin = jsonVal["installation_vehicle_details"]["vin"].stringValue
+                    JobSheetData.ins_vehicle_det_yom = jsonVal["installation_vehicle_details"]["yom"].stringValue
+                    JobSheetData.deins_vehicle_det_vin = jsonVal["installation_vehicle_details"]["vin"].stringValue
+                    JobSheetData.deins_vehicle_det_yom = jsonVal["installation_vehicle_details"]["yom"].stringValue
+                    
+                    if jsonVal.dictionary!.keyExists("de_installation_vehicle_details") {
+                        JobSheetData.check_Deinstallation_available = true
+                        JobSheetData.deins_vehicle_det_reg = jsonVal["de_installation_vehicle_details"]["reg"].stringValue
+                        JobSheetData.deins_vehicle_det_color = jsonVal["de_installation_vehicle_details"]["colour"].stringValue
+                        JobSheetData.deins_vehicle_det_fuelType = jsonVal["de_installation_vehicle_details"]["fuel_type"].stringValue
+                        JobSheetData.deins_vehicle_det_vehicle = jsonVal["de_installation_vehicle_details"]["vehicle"].stringValue
+                        JobSheetData.deins_vehicle_det_vehicle_make = jsonVal["de_installation_vehicle_details"]["vehicle_make"].stringValue
+                        JobSheetData.deins_vehicle_det_vehicle_model = jsonVal["de_installation_vehicle_details"]["vehicle_model"].stringValue
+                    } else {
+                        JobSheetData.check_Deinstallation_available = false
+                    }
+                    
+                    arrPartsSerial.removeAll()
+                    if jsonVal["part_list"].count > 0 {
+                        for val in jsonVal["part_list"].arrayValue {
+                            self.partsCount += 1
+                            arrPartsSerial.append((id: self.partsCount, ncNo: jsonVal["nc_bnc_number"].stringValue, serialPart1: val["serial1"].stringValue, serialPart2: val["serial2"].stringValue, prodName: val["product_id"]["name"].stringValue, prodId: val["product_id"]["id"].intValue, quantity: val["quantity"].intValue, returnedBy: "", used: true, imgUnit: UIImage(named: "ImgCapBg") ?? UIImage(), isImgUnit: false, imgPerm: UIImage(named: "ImgCapBg") ?? UIImage(), isImgPerm: false, imgEarth: UIImage(named: "ImgCapBg") ?? UIImage(), isImgEarth: false, imgIgn: UIImage(named: "ImgCapBg") ?? UIImage(), isImgIgn: false, imgSerial: UIImage(named: "ImgCapBg") ?? UIImage(), isImgSerial: false, imgLoom: UIImage(named: "ImgCapBg") ?? UIImage(), isImgLoom: false, comments: ""))
+                        }
+                    } else {
+                        arrPartsSerial.append((id: 0, ncNo: "NA", serialPart1: "NA", serialPart2: "NA", prodName: "Not Available", prodId: 0, quantity: 0, returnedBy: "", used: false, imgUnit: UIImage(), isImgUnit: false, imgPerm: UIImage(), isImgPerm: false, imgEarth: UIImage(), isImgEarth: false, imgIgn: UIImage(), isImgIgn: false, imgSerial: UIImage(), isImgSerial: false, imgLoom: UIImage(), isImgLoom: false, comments: ""))
+                    }
+                    self.tblPrecheck.isHidden = false
+                    self.tblPrecheck.reloadData()
+                } catch {
+                    self.tblPrecheck.isHidden = true
+                    SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
                 }
-                self.tblPrecheck.isHidden = false
-                self.tblPrecheck.reloadData()
-            } catch {
-                self.tblPrecheck.isHidden = true
+            } else if statusCode == 400 || statusCode == 403 || statusCode == 429 || statusCode == 500
+                        || statusCode == 503 {
+                self.presentAlertForLogout(title: "Failure", message: jsonVal["message"].stringValue)
+            } else {
                 SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
             }
         } failure: { error in

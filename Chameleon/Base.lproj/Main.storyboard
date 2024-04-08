@@ -1418,26 +1418,18 @@
                                                             <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nOc-uR-rjd">
-                                                            <rect key="frame" x="0.0" y="0.0" width="200" height="40"/>
-                                                        </button>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="aVH-ql-kx1" firstAttribute="centerY" secondItem="ePd-s9-CD6" secondAttribute="centerY" id="4Y2-bw-vSl"/>
-                                                        <constraint firstAttribute="trailing" secondItem="nOc-uR-rjd" secondAttribute="trailing" id="EIw-XF-u2h"/>
                                                         <constraint firstItem="9yE-f0-O6p" firstAttribute="top" secondItem="ePd-s9-CD6" secondAttribute="top" id="aA5-lv-ptT"/>
                                                         <constraint firstItem="aVH-ql-kx1" firstAttribute="leading" secondItem="ePd-s9-CD6" secondAttribute="leading" constant="25" id="bLt-Eb-GeU"/>
                                                         <constraint firstItem="9yE-f0-O6p" firstAttribute="leading" secondItem="aVH-ql-kx1" secondAttribute="trailing" constant="4" id="gU9-Vh-kdu"/>
-                                                        <constraint firstItem="nOc-uR-rjd" firstAttribute="leading" secondItem="ePd-s9-CD6" secondAttribute="leading" id="r5S-FX-G4L"/>
-                                                        <constraint firstItem="nOc-uR-rjd" firstAttribute="top" secondItem="ePd-s9-CD6" secondAttribute="top" id="s9p-1w-iAu"/>
                                                         <constraint firstAttribute="trailing" secondItem="9yE-f0-O6p" secondAttribute="trailing" id="uLG-Fn-lbL"/>
-                                                        <constraint firstAttribute="bottom" secondItem="nOc-uR-rjd" secondAttribute="bottom" id="v5S-ID-BPD"/>
                                                         <constraint firstAttribute="bottom" secondItem="9yE-f0-O6p" secondAttribute="bottom" id="yUK-VQ-cgF"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <connections>
-                                                    <outlet property="btnMenu" destination="nOc-uR-rjd" id="hW3-uA-Ox9"/>
                                                     <outlet property="imgIcon" destination="aVH-ql-kx1" id="Dew-ht-Jk3"/>
                                                     <outlet property="lblMenu" destination="9yE-f0-O6p" id="fma-jv-zqT"/>
                                                 </connections>
@@ -1577,6 +1569,7 @@
                                 </constraints>
                             </view>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="9hk-RH-t6A"/>
                         <color key="backgroundColor" red="0.1450980392" green="0.27450980390000002" blue="0.61568627450000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="Rml-K8-FWx" firstAttribute="top" secondItem="3F3-L5-3NP" secondAttribute="top" id="Ef8-YO-D6h"/>

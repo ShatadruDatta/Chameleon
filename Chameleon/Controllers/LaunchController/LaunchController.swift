@@ -47,13 +47,19 @@ class LaunchController: BaseViewController {
         let baseurl = "\(baseurl)/v1/product"
         print(baseurl)
         let headers = ["x-api-key" : apiKey]
-        AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data in
-            do {
-                let decoder = JSONDecoder()
-                let data = try decoder.decode(ProductModels.self, from: data)
-                ProductParts.shared.prodModels = data
-            } catch {
-                SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+        AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data, statusCode  in
+            if statusCode == 200 {
+                do {
+                    let decoder = JSONDecoder()
+                    let data = try decoder.decode(ProductModels.self, from: data)
+                    ProductParts.shared.prodModels = data
+                } catch {
+                    SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
+                }
             }
         } failure: { error in
             SharedClass.sharedInstance.alert(view: self, title: "Failure", message: error.localizedDescription)
@@ -61,7 +67,13 @@ class LaunchController: BaseViewController {
     }
     
     @objc func moveToSignInPage() {
-        let signInVC = mainStoryboard.instantiateViewController(withIdentifier: "SignInController") as! SignInController
-        NavigationHelper.helper.contentNavController!.pushViewController(signInVC, animated: true)
+        if OBJ_FOR_KEY(key: "TOKEN") ?? "" != "" {
+            Chameleon.token = OBJ_FOR_KEY(key: "TOKEN") ?? ""
+            let workViewVC = mainStoryboard.instantiateViewController(withIdentifier: "WorkViewController") as! WorkViewController
+            NavigationHelper.helper.contentNavController!.pushViewController(workViewVC, animated: true)
+        } else {
+            let signInVC = mainStoryboard.instantiateViewController(withIdentifier: "SignInController") as! SignInController
+            NavigationHelper.helper.contentNavController!.pushViewController(signInVC, animated: true)
+        }
     }
 }

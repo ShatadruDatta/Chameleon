@@ -12,13 +12,13 @@ import SwiftyJSON
 
 class AFWrapper: NSObject {
     
-    class func requestGETURL(_ strURL: String, headers : [String : String]?, success: @escaping (JSON, Data) -> Void, failure: @escaping (Error) -> Void) {
+    class func requestGETURL(_ strURL: String, headers : [String : String]?, success: @escaping (JSON, Data, Int) -> Void, failure: @escaping (Error) -> Void) {
         
         if Reachability.isConnectedToNetwork() {
             Alamofire.request(strURL, method: .get, encoding: URLEncoding.default, headers: headers).responseJSON { (responseObject) -> Void in
                 if responseObject.result.isSuccess {
                     let resJson = JSON(responseObject.result.value!)
-                    success(resJson, responseObject.data!)
+                    success(resJson, responseObject.data!, responseObject.response!.statusCode)
                 }
                 if responseObject.result.isFailure {
                     let error : Error = responseObject.result.error!

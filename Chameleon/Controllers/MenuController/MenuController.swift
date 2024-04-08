@@ -24,6 +24,9 @@ class MenuController: BaseViewController {
         NavigationHelper.helper.reloadData = {
             self.tblMenu.reloadData()
         }
+        NavigationHelper.helper.logout = {
+            self.loggedOut()
+        }
         // Do any additional setup after loading the view.
     }
     
@@ -71,16 +74,27 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
         } else {
             let cellMenu = tableView.dequeueReusableCell(withIdentifier: "MenuCell", for: indexPath) as! MenuCell
             cellMenu.datasource = arrMenuSecOne[indexPath.row] as AnyObject
-            if indexPath.row == 0 {
-                cellMenu.btnMenu.addTarget(self, action: #selector(homePage), for: .touchUpInside)
-            } else {
-                cellMenu.btnMenu.addTarget(self, action: #selector(profilePage), for: .touchUpInside)
-            }
             cellMenu.selectionStyle = .none
             return cellMenu
         }
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 1 {
+            switch indexPath.row {
+            case 0:
+                self.homePage()
+            case 1:
+                self.profilePage()
+            case 2:
+                self.faq()
+            case 3:
+                self.helpPage()
+            default:
+                self.settingsPage()
+            }
+        }
+    }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
@@ -90,6 +104,24 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
         } else {
             return 60.0
         }
+    }
+    
+    @objc func faq() {
+        guard let url = URL(string: "https://chameleoncodewing.co.uk/") else {
+          return
+        }
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
+    
+    @objc func helpPage() {
+        guard let url = URL(string: "https://chameleoncodewing.co.uk/") else {
+          return
+        }
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
+    
+    @objc func settingsPage() {
+        self.presentAlertWithTitle(title: APP_TITLE, message: "Work in progress!!")
     }
     
     @objc func profilePage() {
@@ -126,7 +158,7 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if self.checkController == false {
-            let homePageVC = mainStoryboard.instantiateViewController(withIdentifier: "SignInController") as! WorkViewController
+            let homePageVC = mainStoryboard.instantiateViewController(withIdentifier: "WorkViewController") as! WorkViewController
             NavigationHelper.helper.contentNavController!.pushViewController(homePageVC, animated: true)
         }
         self.checkController = false
@@ -158,6 +190,8 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
         
         if self.checkController == false {
             let loginPageVC = mainStoryboard.instantiateViewController(withIdentifier: "SignInController") as! SignInController
+            REMOVE_OBJ_FOR_KEY(key: "TOKEN")
+            Chameleon.token = ""
             NavigationHelper.helper.contentNavController!.pushViewController(loginPageVC, animated: true)
         }
         self.checkController = false
@@ -169,7 +203,6 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
 class MenuCell: BaseTableViewCell {
     
     @IBOutlet weak var lblMenu: UILabel!
-    @IBOutlet weak var btnMenu: UIButton!
     @IBOutlet weak var imgIcon: UIImageView!
     
     override var datasource: AnyObject? {

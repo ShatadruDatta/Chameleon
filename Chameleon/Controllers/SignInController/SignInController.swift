@@ -79,13 +79,17 @@ class SignInController: BaseViewController {
             let baseurl = "\(baseurl)/v1/token?\(accessParam)\(usernamePasswordBase64)"
             print(baseurl)
             let headers = ["x-api-key": apiKey]
-            AFWrapper.requestGETURL(baseurl, headers: headers) { jsonVal, _  in
-                print(jsonVal)
+            AFWrapper.requestGETURL(baseurl, headers: headers) { jsonVal, _, statusCode   in
                 self.activity.stopAnimating()
-                Chameleon.token = jsonVal["token"].stringValue
-                DispatchQueue.main.async {
-                    let workViewVC = mainStoryboard.instantiateViewController(withIdentifier: "WorkViewController") as! WorkViewController
-                    NavigationHelper.helper.contentNavController!.pushViewController(workViewVC, animated: true)
+                if statusCode == 200 {
+                    SET_OBJ_FOR_KEY(obj: jsonVal["token"].stringValue, key: "TOKEN")
+                    Chameleon.token = OBJ_FOR_KEY(key: "TOKEN") ?? ""
+                    DispatchQueue.main.async {
+                        let workViewVC = mainStoryboard.instantiateViewController(withIdentifier: "WorkViewController") as! WorkViewController
+                        NavigationHelper.helper.contentNavController!.pushViewController(workViewVC, animated: true)
+                    }
+                } else {
+                    SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
                 }
             } failure: { error in
                 self.activity.stopAnimating()

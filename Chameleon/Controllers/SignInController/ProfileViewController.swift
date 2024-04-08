@@ -15,6 +15,7 @@ struct ProfileData {
     static var emailAdd: String = ""
     static var imgProf_base64: String = ""
     static var imgProf: UIImage = UIImage()
+    static var profileAPICalled: Bool = false
 }
 
 class ProfileViewController: BaseViewController {
@@ -29,12 +30,14 @@ class ProfileViewController: BaseViewController {
         imgProfile.layer.borderWidth = 3.0
         imgProfile.layer.borderColor = UIColor.white.cgColor
         btnBack.layer.cornerRadius = 5.0
-        if ProfileData.firstName.count == 0 || ProfileData.imgProf_base64.count == 0 {
+        if !ProfileData.profileAPICalled {
             self.profileAPI()
         } else {
-            let dataDecoded: NSData = NSData(base64Encoded: ProfileData.imgProf_base64, options: NSData.Base64DecodingOptions(rawValue: 0))!
-            ProfileData.imgProf = UIImage(data: dataDecoded as Data)!
-            self.imgProfile.image = ProfileData.imgProf
+            if ProfileData.imgProf_base64.count > 0 {
+                let dataDecoded: NSData = NSData(base64Encoded: ProfileData.imgProf_base64, options: NSData.Base64DecodingOptions(rawValue: 0))!
+                ProfileData.imgProf = UIImage(data: dataDecoded as Data)!
+                self.imgProfile.image = ProfileData.imgProf
+            }
             self.tblProfile.reloadData()
         }
     }
@@ -63,22 +66,26 @@ class ProfileViewController: BaseViewController {
             let baseurl = "\(baseurl)/v1/profile"
             print(baseurl)
             let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
-            AFWrapper.requestGETURL(baseurl, headers: headers) { jsonVal, _  in
+            AFWrapper.requestGETURL(baseurl, headers: headers) { jsonVal, _, statusCode  in
                 print(jsonVal)
                 self.activity.stopAnimating()
-                if jsonVal["result"]["id"].intValue > 0 {
-                    ProfileData.firstName = jsonVal["result"]["first_name"].stringValue
-                    ProfileData.lastName = jsonVal["result"]["last_name"].stringValue
-                    ProfileData.mobNo = jsonVal["result"]["mobile"].stringValue
-                    ProfileData.emailAdd = jsonVal["result"]["email"].stringValue
-                    ProfileData.code = jsonVal["result"]["id"].intValue
-                    if jsonVal["result"]["image"].stringValue.count > 0 {
-                        ProfileData.imgProf_base64 = jsonVal["result"]["image"].stringValue
-                        let dataDecoded: NSData = NSData(base64Encoded: ProfileData.imgProf_base64, options: NSData.Base64DecodingOptions(rawValue: 0))!
-                        ProfileData.imgProf = UIImage(data: dataDecoded as Data)!
-                        self.imgProfile.image = ProfileData.imgProf
+                if statusCode == 200 {
+                    if jsonVal["result"]["id"].intValue > 0 {
+                        ProfileData.firstName = jsonVal["result"]["first_name"].stringValue
+                        ProfileData.lastName = jsonVal["result"]["last_name"].stringValue
+                        ProfileData.mobNo = jsonVal["result"]["mobile"].stringValue
+                        ProfileData.emailAdd = jsonVal["result"]["email"].stringValue
+                        ProfileData.code = jsonVal["result"]["id"].intValue
+                        if jsonVal["result"]["image"].stringValue.count > 0 {
+                            ProfileData.imgProf_base64 = jsonVal["result"]["image"].stringValue
+                            let dataDecoded: NSData = NSData(base64Encoded: ProfileData.imgProf_base64, options: NSData.Base64DecodingOptions(rawValue: 0))!
+                            ProfileData.imgProf = UIImage(data: dataDecoded as Data)!
+                            self.imgProfile.image = ProfileData.imgProf
+                        }
+                        self.tblProfile.reloadData()
+                    } else {
+                        SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
                     }
-                    self.tblProfile.reloadData()
                 } else {
                     SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
                 }

@@ -52,24 +52,31 @@ class WorkViewController: BaseViewController {
             let baseurl = "\(baseurl)/v1/joborder?filter=\(workStatus)"
             print(baseurl)
             let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
-            AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data in
+            AFWrapper.requestGETURL(baseurl, headers: headers) { [self] jsonVal, data, statusCode in
                 print(jsonVal)
                 self.workDataModel = nil
                 self.activity.stopAnimating()
-                do {
-                    let decoder = JSONDecoder()
-                    let data = try decoder.decode(WorkViewDataModel.self, from: data)
-                    workDataModel = data
-                    if workDataModel?.result.count ?? 0 > 0 {
-                        self.tblViewWorklist.isHidden = false
-                        self.lblNoDataFound.isHidden = true
-                        self.tblViewWorklist.reloadData()
-                    } else {
+                if statusCode == 200 {
+                    do {
+                        let decoder = JSONDecoder()
+                        let data = try decoder.decode(WorkViewDataModel.self, from: data)
+                        workDataModel = data
+                        if workDataModel?.result.count ?? 0 > 0 {
+                            self.tblViewWorklist.isHidden = false
+                            self.lblNoDataFound.isHidden = true
+                            self.tblViewWorklist.reloadData()
+                        } else {
+                            self.tblViewWorklist.isHidden = true
+                            self.lblNoDataFound.isHidden = false
+                        }
+                    } catch {
                         self.tblViewWorklist.isHidden = true
-                        self.lblNoDataFound.isHidden = false
+                        SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
                     }
-                } catch {
-                    self.tblViewWorklist.isHidden = true
+                } else if statusCode == 400 || statusCode == 403 || statusCode == 429 || statusCode == 500
+                || statusCode == 503 {
+                    self.presentAlertForLogout(title: "Failure", message: jsonVal["message"].stringValue)
+                } else {
                     SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
                 }
             } failure: { error in
@@ -88,23 +95,31 @@ class WorkViewController: BaseViewController {
             let baseurl = "\(baseurl)/v1/profile"
             print(baseurl)
             let headers = ["x-api-key" : apiKey, "x-token": Chameleon.token]
-            AFWrapper.requestGETURL(baseurl, headers: headers) { jsonVal, _  in
+            AFWrapper.requestGETURL(baseurl, headers: headers) { jsonVal, _ , statusCode in
                 print(jsonVal)
-                if jsonVal["result"]["id"].intValue > 0 {
-                    ProfileData.firstName = jsonVal["result"]["first_name"].stringValue
-                    ProfileData.lastName = jsonVal["result"]["last_name"].stringValue
-                    ProfileData.mobNo = jsonVal["result"]["mobile"].stringValue
-                    ProfileData.emailAdd = jsonVal["result"]["email"].stringValue
-                    ProfileData.code = jsonVal["result"]["id"].intValue
-                    if jsonVal["result"]["image"].stringValue.count > 0 {
-                        ProfileData.imgProf_base64 = jsonVal["result"]["image"].stringValue
-                        let dataDecoded: NSData = NSData(base64Encoded: ProfileData.imgProf_base64, options: NSData.Base64DecodingOptions(rawValue: 0))!
-                        ProfileData.imgProf = UIImage(data: dataDecoded as Data)!
+                if statusCode == 200 {
+                    ProfileData.profileAPICalled = true
+                    if jsonVal["result"]["id"].intValue > 0 {
+                        ProfileData.firstName = jsonVal["result"]["first_name"].stringValue
+                        ProfileData.lastName = jsonVal["result"]["last_name"].stringValue
+                        ProfileData.mobNo = jsonVal["result"]["mobile"].stringValue
+                        ProfileData.emailAdd = jsonVal["result"]["email"].stringValue
+                        ProfileData.code = jsonVal["result"]["id"].intValue
+                        if jsonVal["result"]["image"].stringValue.count > 0 {
+                            ProfileData.imgProf_base64 = jsonVal["result"]["image"].stringValue
+                            let dataDecoded: NSData = NSData(base64Encoded: ProfileData.imgProf_base64, options: NSData.Base64DecodingOptions(rawValue: 0))!
+                            ProfileData.imgProf = UIImage(data: dataDecoded as Data)!
+                        }
+                    } else {
+                        ProfileData.profileAPICalled = false
+                        SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
                     }
                 } else {
+                    ProfileData.profileAPICalled = false
                     SharedClass.sharedInstance.alert(view: self, title: "Failure", message: jsonVal["message"].stringValue)
                 }
             } failure: { error in
+                ProfileData.profileAPICalled = false
                 SharedClass.sharedInstance.alert(view: self, title: "Failure", message: "Something problem!")
                 print(error)
             }
