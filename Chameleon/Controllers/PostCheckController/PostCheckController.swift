@@ -116,19 +116,19 @@ class PostCheckController: BaseViewController {
     }
     
     @IBAction func precheck(_ sender: UIButton) {
-//        let allViewController: [UIViewController] =  NavigationHelper.helper.contentNavController!.viewControllers as [UIViewController]
-//        for aviewcontroller: UIViewController in allViewController {
-//            if aviewcontroller.isKind(of: PrecheckController.classForCoder()) {
-//                NavigationHelper.helper.contentNavController!.popToViewController(aviewcontroller, animated: true)
-//                self.checkController = true
-//                break
-//            }
-//        }
-//        if self.checkController == false {
-//            let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
-//            NavigationHelper.helper.contentNavController!.pushViewController(precheckVC, animated: true)
-//        }
-//        self.checkController = false
+        let allViewController: [UIViewController] =  NavigationHelper.helper.contentNavController!.viewControllers as [UIViewController]
+        for aviewcontroller: UIViewController in allViewController {
+            if aviewcontroller.isKind(of: PrecheckController.classForCoder()) {
+                NavigationHelper.helper.contentNavController!.popToViewController(aviewcontroller, animated: true)
+                self.checkController = true
+                break
+            }
+        }
+        if self.checkController == false {
+            let precheckVC = mainStoryboard.instantiateViewController(withIdentifier: "PrecheckController") as! PrecheckController
+            NavigationHelper.helper.contentNavController!.pushViewController(precheckVC, animated: true)
+        }
+        self.checkController = false
     }
     
     @IBAction func menu(_ sender: UIButton) {
@@ -147,7 +147,7 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
         case 0:
             return 3
         case 1:
-            return arrPartsSerial.count
+            return arrPartsSerial.count > 0 ? 2 : 0
         case 2:
             return 2 + PostCheckData.arrBufferParts.count
         case 3:
@@ -272,8 +272,8 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                     imgCell.imgCamera2.isHidden = false
                     imgCell.btnDel2.isHidden = true
                 }
-                imgCell.lblImg1.text = "Front"
-                imgCell.lblImg2.text = "Rear"
+                imgCell.lblImg1.text = "Front*"
+                imgCell.lblImg2.text = "Rear*"
                 imgCell.didFirstImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
@@ -328,8 +328,8 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                     imgCell.imgCamera2.isHidden = false
                     imgCell.btnDel2.isHidden = true
                 }
-                imgCell.lblImg1.text = "Passenger Side"
-                imgCell.lblImg2.text = "Driver Side"
+                imgCell.lblImg1.text = "Passenger Side*"
+                imgCell.lblImg2.text = "Driver Side*"
                 imgCell.didFirstImg = { val in
                     CameraHandler.shared.showActionSheet(vc: self)
                     CameraHandler.shared.imagePickedBlock = { (image) in
@@ -532,7 +532,7 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                 partsHeaderCell.lblConsumed.text = "Returned by"
                 partsHeaderCell.didAddRow = { add in
                     self.arrPartsReturnId += 1
-                    PostCheckData.arrPartsToReturn.append((id: self.arrPartsReturnId, partsName: "", serialNo: "", returnedBy: "Yes", imgUnit: UIImage(named: "ImgCapBg") ?? UIImage(), isImgUnit: false, imgPerm: UIImage(named: "ImgCapBg") ?? UIImage(), isImgPerm: false, imgEarth: UIImage(named: "ImgCapBg") ?? UIImage(), isImgEarth: false, imgIgn: UIImage(named: "ImgCapBg") ?? UIImage(), isImgIgn: false, imgSerial: UIImage(named: "ImgCapBg") ?? UIImage(), isImgSerial: false, imgLoom: UIImage(named: "ImgCapBg") ?? UIImage(), isImgLoom: false, comments: ""))
+                    PostCheckData.arrPartsToReturn.append((id: self.arrPartsReturnId, partsName: "", serialNo: "", returnedBy: "Engineer", imgUnit: UIImage(named: "ImgCapBg") ?? UIImage(), isImgUnit: false, imgPerm: UIImage(named: "ImgCapBg") ?? UIImage(), isImgPerm: false, imgEarth: UIImage(named: "ImgCapBg") ?? UIImage(), isImgEarth: false, imgIgn: UIImage(named: "ImgCapBg") ?? UIImage(), isImgIgn: false, imgSerial: UIImage(named: "ImgCapBg") ?? UIImage(), isImgSerial: false, imgLoom: UIImage(named: "ImgCapBg") ?? UIImage(), isImgLoom: false, comments: ""))
                     self.tblPostCheck.reloadData()
                 }
                 return partsHeaderCell
@@ -567,12 +567,39 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                     }
                 }
                 partsRowCell.didSendSignalConsumed = { val in
-                    PickerViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, arrPickerVal: ["Engineer", "Customer", "Customer To CHW", "Engineer To CHW"]) { val in
-                        self.tblPostCheck.reloadData()
+                    PickerViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, arrPickerVal: ["Engineer/\(indexPath.row)", "Customer/\(indexPath.row)", "Customer To CHW/\(indexPath.row)", "Engineer To CHW/\(indexPath.row)"]) { val in
+                        let index: Int = Int(val.components(separatedBy: "/")[1]) ?? 0
+                        let returned = val.components(separatedBy: "/")[0]
+                        for (indexPart, partsVal) in PostCheckData.arrPartsToReturn.enumerated() {
+                            if indexPart == index - 2 {
+                                PostCheckData.arrPartsToReturn.remove(at: indexPart)
+                                PostCheckData.arrPartsToReturn.insert((id: partsVal.id, partsName: partsVal.partsName, serialNo: partsVal.serialNo, returnedBy: returned, imgUnit: partsVal.imgUnit, isImgUnit: partsVal.isImgUnit, imgPerm: partsVal.imgPerm, isImgPerm: partsVal.isImgPerm, imgEarth: partsVal.imgEarth, isImgEarth: partsVal.isImgEarth, imgIgn: partsVal.imgIgn, isImgIgn: partsVal.isImgIgn, imgSerial: partsVal.imgSerial, isImgSerial: partsVal.isImgSerial, imgLoom: partsVal.imgLoom, isImgLoom: partsVal.isImgLoom, comments: partsVal.comments), at: indexPart)
+                                self.tblPostCheck.reloadData()
+                            }
+                        }
                     } didFinish: { txt in
                         
                     }
                 }
+                
+                /**
+                 partsRowCell.didSendSignalConsumed = { val in
+                     PickerViewController.showAddOrClearPopUp(sourceViewController: NavigationHelper.helper.mainContainerViewController!, arrPickerVal: ["Yes/\(indexPath.row)", "No/\(indexPath.row)"]) { val in
+                         let index: Int = Int(val.components(separatedBy: "/")[1]) ?? 0
+                         let consumed = val.components(separatedBy: "/")[0]
+                         for (indexPart, partsVal) in PostCheckData.arrBufferParts.enumerated() {
+                             if indexPart == index - 2 {
+                                 PostCheckData.arrBufferParts.remove(at: indexPart)
+                                 PostCheckData.arrBufferParts.insert((id: partsVal.id, partsName: partsVal.partsName, serialNo: partsVal.serialNo, consumed: consumed, imgUnit: partsVal.imgUnit, isImgUnit: partsVal.isImgUnit, imgPerm: partsVal.imgPerm, isImgPerm: partsVal.isImgPerm, imgEarth: partsVal.imgEarth, isImgEarth: partsVal.isImgEarth, imgIgn: partsVal.imgIgn, isImgIgn: partsVal.isImgIgn, imgSerial: partsVal.imgSerial, isImgSerial: partsVal.isImgSerial, imgLoom: partsVal.imgLoom, isImgLoom: partsVal.isImgLoom, comments: partsVal.comments), at: indexPart)
+                                 self.tblPostCheck.reloadData()
+                             }
+                         }
+                     } didFinish: { txt in
+                         
+                     }
+                 }
+                 */
+                
                 partsRowCell.didSendSignal = { chk, index in
                     let postPartVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckPartController") as! PostCheckPartController
                     postPartVC.index = index - 2

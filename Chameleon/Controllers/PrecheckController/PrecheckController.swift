@@ -81,16 +81,9 @@ class PrecheckController: BaseViewController {
         super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PrecheckController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PrecheckController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        if JobSheetData.service.first == "D" {
-            PreCheckData.model = JobSheetData.deins_vehicle_det_vehicle_model
-            PreCheckData.make = JobSheetData.deins_vehicle_det_vehicle_make
-            PreCheckData.reg = JobSheetData.deins_vehicle_det_reg
-        } else {
-            PreCheckData.model = JobSheetData.ins_vehicle_det_vehicle_model
-            PreCheckData.make = JobSheetData.ins_vehicle_det_vehicle_make
-            PreCheckData.reg = JobSheetData.deins_vehicle_det_reg
-        }
-        
+        PreCheckData.model = JobSheetData.ins_vehicle_det_vehicle_model
+        PreCheckData.make = JobSheetData.ins_vehicle_det_vehicle_make
+        PreCheckData.reg = JobSheetData.ins_vehicle_det_reg
     }
     
     override func viewWillDisappear(_ animated: Bool) {

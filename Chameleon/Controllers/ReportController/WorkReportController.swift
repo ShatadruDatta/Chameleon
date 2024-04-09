@@ -58,7 +58,7 @@ extension WorkReportController: UITableViewDelegate, UITableViewDataSource {
         case 2:
             return 3
         case 3:
-            return 3
+            return JobSheetData.check_Deinstallation_available ? 3 : 0
         case 4:
             return 9
         case 5:
