@@ -387,19 +387,21 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                 partsCell.arrPartsSerial = arrPartsSerial
                 partsCell.didCaptureCamera = { check, partsIndex in
                     let postPartVC = mainStoryboard.instantiateViewController(withIdentifier: "PostCheckPartController") as! PostCheckPartController
-                    postPartVC.unitPosition = arrPartsSerial[partsIndex - 1].imgUnit
-                    postPartVC.isUnitPositionImg = arrPartsSerial[partsIndex - 1].isImgUnit
-                    postPartVC.permConn = arrPartsSerial[partsIndex - 1].imgPerm
-                    postPartVC.isPermConnImg = arrPartsSerial[partsIndex - 1].isImgPerm
-                    postPartVC.earthConn = arrPartsSerial[partsIndex - 1].imgEarth
-                    postPartVC.isEarthConnImg = arrPartsSerial[partsIndex - 1].isImgEarth
-                    postPartVC.ignConn = arrPartsSerial[partsIndex - 1].imgIgn
-                    postPartVC.isIgnConnImg = arrPartsSerial[partsIndex - 1].isImgIgn
-                    postPartVC.serial = arrPartsSerial[partsIndex - 1].imgSerial
-                    postPartVC.isSerialImg = arrPartsSerial[partsIndex - 1].isImgSerial
-                    postPartVC.loom = arrPartsSerial[partsIndex - 1].imgLoom
-                    postPartVC.isLoomImg = arrPartsSerial[partsIndex - 1].isImgLoom
-                    postPartVC.commnets = arrPartsSerial[partsIndex - 1].comments
+                    postPartVC.unitPosition = arrPartsSerial[partsIndex].imgUnit
+                    postPartVC.isUnitPositionImg = arrPartsSerial[partsIndex].isImgUnit
+                    postPartVC.permConn = arrPartsSerial[partsIndex].imgPerm
+                    postPartVC.isPermConnImg = arrPartsSerial[partsIndex].isImgPerm
+                    postPartVC.earthConn = arrPartsSerial[partsIndex].imgEarth
+                    postPartVC.isEarthConnImg = arrPartsSerial[partsIndex].isImgEarth
+                    postPartVC.ignConn = arrPartsSerial[partsIndex].imgIgn
+                    postPartVC.isIgnConnImg = arrPartsSerial[partsIndex].isImgIgn
+                    postPartVC.serial = arrPartsSerial[partsIndex].imgSerial
+                    postPartVC.isSerialImg = arrPartsSerial[partsIndex].isImgSerial
+                    postPartVC.loom = arrPartsSerial[partsIndex].imgLoom
+                    postPartVC.isLoomImg = arrPartsSerial[partsIndex].isImgLoom
+                    postPartVC.commnets = arrPartsSerial[partsIndex].comments
+                    postPartVC.index = partsIndex
+                    postPartVC.isSentParts = true
                     postPartVC.didCaptureData = { index, unitPosition, isImgUnit, permConn, isImgPerm, earthConn, isImgEarth, ignConn, isImgIgn, serial, isImgSerial, loom, isImgLoom, comments in
                         for (partsIndex, val) in arrPartsSerial.enumerated() {
                             if partsIndex == index {
@@ -450,7 +452,6 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                 partsRowCell.txtParts.text = PostCheckData.arrBufferParts[indexPath.row - 2].partsName
                 partsRowCell.txtSerial.text = PostCheckData.arrBufferParts[indexPath.row - 2].serialNo
                 partsRowCell.txtConsumed.text = PostCheckData.arrBufferParts[indexPath.row - 2].consumed
-                
                 partsRowCell.parts = { check, index in
                     let prodPartsVC = mainStoryboard.instantiateViewController(withIdentifier: "ProductController") as! ProductController
                     prodPartsVC.didSelectProd = { parts in
@@ -463,6 +464,10 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                         }
                     }
                     NavigationHelper.helper.contentNavController!.pushViewController(prodPartsVC, animated: true)
+                }
+                partsRowCell.deletePartsSignal = { check, index in
+                    PostCheckData.arrBufferParts.remove(at: index - 2)
+                    self.tblPostCheck.reloadData()
                 }
                 partsRowCell.serialNo = { serialNo, index in
                     for (indexPart, partsVal) in PostCheckData.arrBufferParts.enumerated() {
@@ -514,6 +519,7 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                     }
                     NavigationHelper.helper.contentNavController!.pushViewController(postPartVC, animated: true)
                 }
+                
                 return partsRowCell
             }
         } else if indexPath.section == 3 {
@@ -557,6 +563,12 @@ extension PostCheckController: UITableViewDelegate, UITableViewDataSource {
                     }
                     NavigationHelper.helper.contentNavController!.pushViewController(prodPartsVC, animated: true)
                 }
+                
+                partsRowCell.deletePartsSignal = { check, index in
+                    PostCheckData.arrPartsToReturn.remove(at: index - 2)
+                    self.tblPostCheck.reloadData()
+                }
+                
                 partsRowCell.serialNo = { serialNo, index in
                     for (indexPart, partsVal) in PostCheckData.arrPartsToReturn.enumerated() {
                         if indexPart == index - 2 {
@@ -882,15 +894,12 @@ class SentPartsCell: BaseTableViewCell, UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let partsCell = self.collParts.dequeueReusableCell(withReuseIdentifier: "SentPartsCollectionCell", for: indexPath) as! SentPartsCollectionCell
         partsCell.datasource = "" as AnyObject
-        partsCell.partsIndex = index
+        partsCell.partsIndex = indexPath.item
         partsCell.lblPart.text = "Part: \(arrPartsSerial[indexPath.item].prodName)"
         partsCell.lblSerial.text = "Serial: \(arrPartsSerial[indexPath.item].serialPart1)"
         partsCell.lblReturnedBy.text = "Returned By: \(arrPartsSerial[indexPath.item].returnedBy)"
-        if arrPartsSerial[indexPath.item].used == true {
-            partsCell.segmentIndex = 0
-        } else {
-            partsCell.segmentIndex = 1
-        }
+        print("INDEX SEGMENT:- \(arrPartsSerial[indexPath.item].used)")
+        partsCell.segment.selectedSegmentIndex = arrPartsSerial[indexPath.item].used == true ? 0 : 1
         partsCell.didCaptureCamera = { check, partsIndex in
             self.didCaptureCamera!(check, partsIndex)
         }
@@ -946,10 +955,7 @@ class SentPartsCollectionCell: BaseCollectionViewCell {
                 let titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
                 segment.setTitleTextAttributes(titleTextAttributes, for: .normal)
                 segment.setTitleTextAttributes(titleTextAttributes, for: .selected)
-                segment.layer.cornerRadius = 15.0
-                segment.layer.masksToBounds = true
                 btnCamera.addTarget(self, action: #selector(cameraParts), for: .touchUpInside)
-                segment.selectedSegmentIndex = segmentIndex
                 segment.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
             }
         }
@@ -994,7 +1000,8 @@ class BufferPartsRowCell: BaseTableViewCell, UITextFieldDelegate {
     @IBOutlet weak var btnParts: UIButton!
     @IBOutlet weak var txtSerial: CustomTextField!
     @IBOutlet weak var txtConsumed: CustomTextField!
-    @IBOutlet weak var btnDots: UIButton!
+    @IBOutlet weak var btnCamera: UIButton!
+    @IBOutlet weak var btnDelete: UIButton!
     @IBOutlet weak var parentView: UIView!
     var index: Int!
     var didSendSignalConsumed:((Bool) -> ())!
@@ -1002,12 +1009,14 @@ class BufferPartsRowCell: BaseTableViewCell, UITextFieldDelegate {
     var parts:((Bool, Int) -> ())!
     var serialNo:((String, Int) -> ())!
     var didSendSignal:((Bool, Int) -> ())!
+    @objc var deletePartsSignal:((Bool, Int) -> ())!
     override var datasource: AnyObject? {
         didSet {
             if datasource != nil {
                 parentView.layer.cornerRadius = 10.0
-                btnDots.addTarget(self, action: #selector(dots), for: .touchUpInside)
+                btnCamera.addTarget(self, action: #selector(cameraGallery), for: .touchUpInside)
                 btnParts.addTarget(self, action: #selector(products), for: .touchUpInside)
+                btnDelete.addTarget(self, action: #selector(deleteParts), for: .touchUpInside)
             }
         }
     }
@@ -1016,8 +1025,12 @@ class BufferPartsRowCell: BaseTableViewCell, UITextFieldDelegate {
         self.parts!(true, index)
     }
     
-    @objc func dots(_ sender: UIButton) {
+    @objc func cameraGallery(_ sender: UIButton) {
         self.didSendSignal!(true, index)
+    }
+    
+    @objc func deleteParts(_ sender: UIButton) {
+        self.deletePartsSignal!(true, index)
     }
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {

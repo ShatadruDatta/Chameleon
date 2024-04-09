@@ -28,6 +28,7 @@ class PostCheckPartController: BaseViewController {
     var loom = UIImage(named: "ImgCapBg")
     var isLoomImg = false
     var commnets = ""
+    var isSentParts: Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tblViewPostPart.reloadData()
@@ -296,8 +297,17 @@ extension PostCheckPartController: UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc func save(_ sender: UIButton) {
-        self.didCaptureData!(index, self.unitPosition ?? UIImage(), self.isUnitPositionImg, self.permConn ?? UIImage(), self.isPermConnImg, self.earthConn ?? UIImage(), self.isEarthConnImg, self.ignConn ?? UIImage(), self.isIgnConnImg, self.serial ?? UIImage(), self.isSerialImg, self.loom ?? UIImage(), self.isLoomImg, self.commnets)
-        NavigationHelper.helper.contentNavController!.popViewController(animated: true)
+        if !isSentParts {
+            self.didCaptureData!(index, self.unitPosition ?? UIImage(), self.isUnitPositionImg, self.permConn ?? UIImage(), self.isPermConnImg, self.earthConn ?? UIImage(), self.isEarthConnImg, self.ignConn ?? UIImage(), self.isIgnConnImg, self.serial ?? UIImage(), self.isSerialImg, self.loom ?? UIImage(), self.isLoomImg, self.commnets)
+            NavigationHelper.helper.contentNavController!.popViewController(animated: true)
+        } else {
+            guard self.isUnitPositionImg, self.isPermConnImg, self.isEarthConnImg, self.isIgnConnImg, self.isSerialImg, self.isLoomImg else {
+                self.presentAlertWithTitle(title: APP_TITLE, message: "For sent parts section, it is mandatory to fill all the images!")
+                return
+            }
+            self.didCaptureData!(index, self.unitPosition ?? UIImage(), self.isUnitPositionImg, self.permConn ?? UIImage(), self.isPermConnImg, self.earthConn ?? UIImage(), self.isEarthConnImg, self.ignConn ?? UIImage(), self.isIgnConnImg, self.serial ?? UIImage(), self.isSerialImg, self.loom ?? UIImage(), self.isLoomImg, self.commnets)
+            NavigationHelper.helper.contentNavController!.popViewController(animated: true)
+        }
     }
 }
 
